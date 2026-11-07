@@ -85,7 +85,7 @@
             <div class="lg:col-span-5 flex justify-center">
                 <div data-tilt class="relative w-full max-w-md glass-panel-glow p-6 sm:p-8 rounded-3xl transform-3d transition-transform duration-300">
                     <!-- Detalhe superior da placa -->
-                    <div class="flex items-center justify-between pb-4 border-b border-white/10">
+                    <div class="flex flex-wrap items-center justify-between gap-2 pb-4 border-b border-white/10">
                         <div class="flex items-center gap-2">
                             <span class="w-3 h-3 rounded-full bg-foco-green-500 animate-ping"></span>
                             <span class="text-xs font-mono font-bold tracking-wider text-slate-300 uppercase">Sistema Foco Live</span>
@@ -310,9 +310,11 @@
             <div class="w-20 h-1 bg-foco-yellow-500 mx-auto mt-4 rounded-full"></div>
         </div>
 
-        <!-- Tabela Responsiva Estilizada em Glassmorphism -->
+        <!-- Matriz Comparativa (100% Responsiva: Tabela no Desktop e Cards no Celular) -->
         <div class="glass-panel rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
-            <div class="overflow-x-auto">
+            
+            <!-- VISUALIZAÇÃO DESKTOP / TABLET (Tabela Completa) -->
+            <div class="hidden md:block overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-foco-navy-900 border-b border-white/10 text-xs font-mono uppercase tracking-wider text-slate-400">
@@ -380,6 +382,98 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- VISUALIZAÇÃO MOBILE (Cards 100% Responsivos: Sem Rolagem Horizontal Forçada) -->
+            <div class="block md:hidden divide-y divide-white/10">
+                <!-- Card 1: Gestão de Fluxo -->
+                <div class="p-5 space-y-3">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-blue-400"></span>
+                        <h3 class="text-base font-bold text-white">Gestão de Fluxo</h3>
+                    </div>
+
+                    <div class="space-y-2 text-xs">
+                        <div class="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
+                            <span class="text-[10px] font-mono uppercase font-bold text-rose-400 block mb-1">Cenário Anterior (Convencional):</span>
+                            <p class="text-slate-300 leading-relaxed">Planos fixos baseados em horários. Retenção ociosa e formação crônica de filas.</p>
+                        </div>
+
+                        <div class="p-3 rounded-xl bg-foco-green-500/10 border border-foco-green-500/30">
+                            <span class="text-[10px] font-mono uppercase font-bold text-foco-green-400 block mb-1">Solução Inteligente FOCO:</span>
+                            <p class="text-slate-200 leading-relaxed">
+                                <strong class="text-foco-green-400">Modo adaptativo com parametrização flexível</strong>, variação de verde dinâmica por câmeras de visão computacional. Sincronismo e onda verde em tempo real.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Resiliência Energética -->
+                <div class="p-5 space-y-3">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                        <h3 class="text-base font-bold text-white">Resiliência Energética</h3>
+                    </div>
+
+                    <div class="space-y-2 text-xs">
+                        <div class="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
+                            <span class="text-[10px] font-mono uppercase font-bold text-rose-400 block mb-1">Cenário Anterior (Convencional):</span>
+                            <p class="text-slate-300 leading-relaxed">Queda total em apagões da rede elétrica concessionária, exigindo presença imediata de viaturas e agentes.</p>
+                        </div>
+
+                        <div class="p-3 rounded-xl bg-foco-green-500/10 border border-foco-green-500/30">
+                            <span class="text-[10px] font-mono uppercase font-bold text-foco-green-400 block mb-1">Solução Inteligente FOCO:</span>
+                            <p class="text-slate-200 leading-relaxed">
+                                <strong class="text-foco-green-400">Autonomia contínua garantida</strong> via Nobreak Senoidal Puro e bancos de baterias de Lítio (LiFePO4). Zero apagões viários.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Consumo Energético -->
+                <div class="p-5 space-y-3">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-foco-yellow-400"></span>
+                        <h3 class="text-base font-bold text-white">Consumo Energético</h3>
+                    </div>
+
+                    <div class="space-y-2 text-xs">
+                        <div class="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
+                            <span class="text-[10px] font-mono uppercase font-bold text-rose-400 block mb-1">Cenário Anterior (Convencional):</span>
+                            <p class="text-slate-300 leading-relaxed">Dependência total da rede da concessionária com custo fixo mensal elevado aos cofres públicos.</p>
+                        </div>
+
+                        <div class="p-3 rounded-xl bg-foco-green-500/10 border border-foco-green-500/30">
+                            <span class="text-[10px] font-mono uppercase font-bold text-foco-yellow-400 block mb-1">Solução Inteligente FOCO:</span>
+                            <p class="text-slate-200 leading-relaxed">
+                                <strong class="text-foco-yellow-400">Redução drástica do consumo</strong> através de captação híbrida auto sustentável (painéis solares fotovoltaicos MPPT e microgeradores eólicos urbanos).
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4: Gestão e Manutenção -->
+                <div class="p-5 space-y-3">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>
+                        <h3 class="text-base font-bold text-white">Gestão e Manutenção</h3>
+                    </div>
+
+                    <div class="space-y-2 text-xs">
+                        <div class="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
+                            <span class="text-[10px] font-mono uppercase font-bold text-rose-400 block mb-1">Cenário Anterior (Convencional):</span>
+                            <p class="text-slate-300 leading-relaxed">Manutenção puramente reativa e fiscalização presencial lenta com chamados via papel ou telefone manual.</p>
+                        </div>
+
+                        <div class="p-3 rounded-xl bg-foco-green-500/10 border border-foco-green-500/30">
+                            <span class="text-[10px] font-mono uppercase font-bold text-cyan-400 block mb-1">Solução Inteligente FOCO:</span>
+                            <p class="text-slate-200 leading-relaxed">
+                                <strong class="text-cyan-400">Plataforma WEB em Nuvem Segura DIGICON</strong> com telemetria em tempo real, ordens de serviço automatizadas por app e controle centralizado.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </section>

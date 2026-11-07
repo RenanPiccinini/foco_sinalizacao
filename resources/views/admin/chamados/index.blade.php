@@ -33,31 +33,31 @@
             </div>
         </div>
 
-        <!-- Badges de Métricas do Menu Chamados -->
-        <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
-            <a href="{{ route('admin.chamados.index') }}" class="p-4 rounded-2xl glass-panel hover:border-white/20 transition {{ $status === 'todos' ? 'border-foco-yellow-500/50 bg-white/5' : '' }}">
-                <span class="text-[11px] font-mono uppercase text-slate-400 block">Total</span>
-                <span class="text-2xl font-black font-mono text-white mt-1 block">{{ $stats['total'] }}</span>
+        <!-- Badges de Métricas do Menu Chamados (100% Responsivas) -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3">
+            <a href="{{ route('admin.chamados.index') }}" class="p-3.5 sm:p-4 rounded-2xl glass-panel hover:border-white/20 transition {{ $status === 'todos' ? 'border-foco-yellow-500/50 bg-white/5' : '' }}">
+                <span class="text-[10px] sm:text-[11px] font-mono uppercase text-slate-400 block">Total</span>
+                <span class="text-xl sm:text-2xl font-black font-mono text-white mt-1 block">{{ $stats['total'] }}</span>
             </a>
 
-            <a href="{{ route('admin.chamados.index', ['status' => 'Aberto']) }}" class="p-4 rounded-2xl glass-panel hover:border-amber-500/50 transition {{ $status === 'Aberto' ? 'border-amber-500 bg-amber-500/10' : '' }}">
-                <span class="text-[11px] font-mono uppercase text-amber-400 block">Abertos</span>
-                <span class="text-2xl font-black font-mono text-amber-400 mt-1 block">{{ $stats['abertos'] }}</span>
+            <a href="{{ route('admin.chamados.index', ['status' => 'Aberto']) }}" class="p-3.5 sm:p-4 rounded-2xl glass-panel hover:border-amber-500/50 transition {{ $status === 'Aberto' ? 'border-amber-500 bg-amber-500/10' : '' }}">
+                <span class="text-[10px] sm:text-[11px] font-mono uppercase text-amber-400 block">Abertos</span>
+                <span class="text-xl sm:text-2xl font-black font-mono text-amber-400 mt-1 block">{{ $stats['abertos'] }}</span>
             </a>
 
-            <a href="{{ route('admin.chamados.index', ['status' => 'Em Atendimento']) }}" class="p-4 rounded-2xl glass-panel hover:border-cyan-500/50 transition {{ $status === 'Em Atendimento' ? 'border-cyan-500 bg-cyan-500/10' : '' }}">
-                <span class="text-[11px] font-mono uppercase text-cyan-400 block">Em Atendimento</span>
-                <span class="text-2xl font-black font-mono text-cyan-400 mt-1 block">{{ $stats['em_atendimento'] }}</span>
+            <a href="{{ route('admin.chamados.index', ['status' => 'Em Atendimento']) }}" class="p-3.5 sm:p-4 rounded-2xl glass-panel hover:border-cyan-500/50 transition {{ $status === 'Em Atendimento' ? 'border-cyan-500 bg-cyan-500/10' : '' }}">
+                <span class="text-[10px] sm:text-[11px] font-mono uppercase text-cyan-400 block">Em Atendimento</span>
+                <span class="text-xl sm:text-2xl font-black font-mono text-cyan-400 mt-1 block">{{ $stats['em_atendimento'] }}</span>
             </a>
 
-            <a href="{{ route('admin.chamados.index', ['status' => 'Concluído']) }}" class="p-4 rounded-2xl glass-panel hover:border-foco-green-500/50 transition {{ $status === 'Concluído' ? 'border-foco-green-500 bg-foco-green-500/10' : '' }}">
-                <span class="text-[11px] font-mono uppercase text-foco-green-400 block">Concluídos</span>
-                <span class="text-2xl font-black font-mono text-foco-green-400 mt-1 block">{{ $stats['concluidos'] }}</span>
+            <a href="{{ route('admin.chamados.index', ['status' => 'Concluído']) }}" class="p-3.5 sm:p-4 rounded-2xl glass-panel hover:border-foco-green-500/50 transition {{ $status === 'Concluído' ? 'border-foco-green-500 bg-foco-green-500/10' : '' }}">
+                <span class="text-[10px] sm:text-[11px] font-mono uppercase text-foco-green-400 block">Concluídos</span>
+                <span class="text-xl sm:text-2xl font-black font-mono text-foco-green-400 mt-1 block">{{ $stats['concluidos'] }}</span>
             </a>
 
-            <a href="{{ route('admin.chamados.index', ['prioridade' => 'Crítica']) }}" class="p-4 rounded-2xl glass-panel hover:border-rose-500/50 transition {{ $prioridade === 'Crítica' ? 'border-rose-500 bg-rose-500/10' : '' }}">
-                <span class="text-[11px] font-mono uppercase text-rose-400 block">Críticos</span>
-                <span class="text-2xl font-black font-mono text-rose-400 mt-1 block">{{ $stats['criticos'] }}</span>
+            <a href="{{ route('admin.chamados.index', ['prioridade' => 'Crítica']) }}" class="col-span-2 sm:col-span-1 p-3.5 sm:p-4 rounded-2xl glass-panel hover:border-rose-500/50 transition {{ $prioridade === 'Crítica' ? 'border-rose-500 bg-rose-500/10' : '' }}">
+                <span class="text-[10px] sm:text-[11px] font-mono uppercase text-rose-400 block">Críticos</span>
+                <span class="text-xl sm:text-2xl font-black font-mono text-rose-400 mt-1 block">{{ $stats['criticos'] }}</span>
             </a>
         </div>
 
@@ -107,9 +107,11 @@
             </form>
         </div>
 
-        <!-- Tabela Principal de Chamados Abertos no Site -->
+        <!-- Lista Principal de Chamados (100% Responsiva: Tabela no Desktop e Cards no Celular) -->
         <div class="glass-panel rounded-3xl border border-white/10 overflow-hidden shadow-2xl">
-            <div class="overflow-x-auto">
+            
+            <!-- VISUALIZAÇÃO DESKTOP / TABLET (Tabela Completa de 8 Colunas) -->
+            <div class="hidden md:block overflow-x-auto">
                 <table class="w-full text-left border-collapse text-xs">
                     <thead>
                         <tr class="bg-foco-navy-900/90 border-b border-white/10 text-slate-400 font-mono uppercase tracking-wider">
@@ -195,6 +197,77 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- VISUALIZAÇÃO MOBILE (Cards 100% Responsivos: Todas as Informações Visíveis Sem Rolagem Lateral) -->
+            <div class="block md:hidden divide-y divide-white/10">
+                @forelse($chamados as $item)
+                <div class="p-4 sm:p-5 space-y-3 hover:bg-white/5 transition">
+                    <!-- Topo do Card Mobile: Protocolo + Status + Prioridade -->
+                    <div class="flex items-center justify-between gap-2">
+                        <a href="{{ route('admin.chamados.show', $item['id']) }}" class="font-mono font-bold text-sm text-foco-yellow-400 hover:underline flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-foco-yellow-400 animate-ping"></span>
+                            <span>{{ $item['protocolo'] }}</span>
+                        </a>
+
+                        <div class="flex items-center gap-1.5">
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $item['prioridade'] === 'Crítica' ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' : ($item['prioridade'] === 'Alta' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : 'bg-slate-500/20 text-slate-300') }}">
+                                {{ $item['prioridade'] }}
+                            </span>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $item['status'] === 'Aberto' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : ($item['status'] === 'Em Atendimento' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30') }}">
+                                {{ $item['status'] }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Título & Categoria -->
+                    <div>
+                        <h3 class="text-sm font-bold text-white leading-snug">{{ $item['titulo'] }}</h3>
+                        <span class="text-[11px] font-mono text-cyan-400 block mt-0.5">{{ $item['categoria'] }}</span>
+                    </div>
+
+                    <!-- Detalhes do Município & Cruzamento -->
+                    <div class="p-2.5 rounded-xl bg-foco-navy-900 border border-white/5 space-y-1 text-xs">
+                        <div class="flex items-start gap-1.5 text-slate-300">
+                            <svg class="w-3.5 h-3.5 text-foco-yellow-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            <div>
+                                <strong class="text-white font-medium">{{ $item['municipio'] }}</strong>
+                                <span class="block text-[11px] text-slate-400">{{ $item['localizacao'] }}</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-1.5 text-[11px] text-slate-400 pt-1 border-t border-white/5">
+                            <svg class="w-3 h-3 text-slate-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                            <span>Solicitante: <strong class="text-slate-300">{{ $item['solicitante_nome'] }}</strong> ({{ $item['solicitante_orgao'] }})</span>
+                        </div>
+                    </div>
+
+                    <!-- Rodapé do Card Mobile: Data + Ações -->
+                    <div class="flex items-center justify-between pt-1 text-xs">
+                        <span class="text-[11px] font-mono text-slate-400 flex items-center gap-1">
+                            <svg class="w-3 h-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            {{ $item['created_at'] }}
+                        </span>
+
+                        <div class="flex items-center gap-2">
+                            <a href="{{ route('admin.chamados.imprimir-os', $item['id']) }}" target="_blank" title="Imprimir OS" class="p-2 rounded-lg text-slate-300 hover:text-white bg-white/5 border border-white/10 inline-flex items-center">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                            </a>
+
+                            <a href="{{ route('admin.chamados.show', $item['id']) }}" class="px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold bg-foco-yellow-500 text-foco-navy-950 hover:bg-foco-yellow-400 transition shadow-glow-yellow">
+                                Ver Detalhes →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                @empty
+                <div class="py-12 px-4 text-center text-slate-400 space-y-2">
+                    <svg class="w-8 h-8 text-slate-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <p class="font-medium text-white">Nenhum chamado encontrado para os filtros selecionados.</p>
+                    <a href="{{ route('admin.chamados.index') }}" class="text-xs text-foco-yellow-400 hover:underline block">Limpar filtros</a>
+                </div>
+                @endforelse
+            </div>
+
         </div>
 
         <!-- MODAL: REGISTRAR CHAMADO INTERNO PELA CENTRAL -->

@@ -144,34 +144,49 @@
         <!-- ============================================== -->
         <div class="flex-1 flex flex-col min-w-0 lg:pl-72">
             
-            <!-- Barra Superior do Gerenciador -->
-            <header class="sticky top-0 z-30 glass-panel border-b border-white/10 px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <!-- Botão Toggle Mobile -->
-                    <button @click="sidebarOpen = !sidebarOpen" type="button" class="p-2 rounded-xl bg-white/5 text-slate-300 hover:text-white lg:hidden">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            <!-- Barra Superior do Gerenciador (100% Responsiva) -->
+            <header class="sticky top-0 z-30 glass-panel border-b border-white/10 px-3 sm:px-6 lg:px-8 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                <div class="flex items-center justify-between sm:justify-start gap-3 w-full sm:w-auto">
+                    <!-- Botão Toggle Mobile Sidebar -->
+                    <button @click="sidebarOpen = !sidebarOpen" type="button" class="p-2 rounded-xl bg-white/5 text-slate-300 hover:text-white lg:hidden border border-white/10 shrink-0" aria-label="Abrir Menu">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                     </button>
 
-                    <div class="hidden sm:flex items-center gap-2 text-xs font-mono">
+                    <!-- Telemetria & Status Nuvem Digicon (Visível no Computador e no Celular) -->
+                    <div class="flex items-center gap-2 text-[11px] sm:text-xs font-mono">
                         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-foco-green-500/10 text-foco-green-400 border border-foco-green-500/30">
                             <span class="w-1.5 h-1.5 rounded-full bg-foco-green-400 animate-ping"></span>
-                            Nuvem Digicon: 100% Online
+                            <span class="font-bold">Digicon Nuvem:</span>
+                            <span>100% Online</span>
                         </span>
-                        <span class="text-slate-500">•</span>
-                        <span class="text-slate-400">Onda Verde Adaptativa Ativa</span>
+                        <span class="text-slate-600 hidden xs:inline">•</span>
+                        <span class="text-slate-400 hidden xs:inline">Onda Verde Ativa</span>
+                    </div>
+
+                    <!-- Botão Mobile para Novo Chamado no Site -->
+                    <div class="flex sm:hidden items-center gap-2 shrink-0">
+                        <a href="{{ route('site.chamados') }}" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold bg-foco-yellow-500/10 hover:bg-foco-yellow-500 text-foco-yellow-400 hover:text-foco-navy-950 border border-foco-yellow-500/30 transition">
+                            <span>+ Chamado</span>
+                        </a>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-3">
-                    <!-- Link Rápido para Novo Chamado no Site -->
-                    <a href="{{ route('site.chamados') }}" target="_blank" class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-bold bg-white/5 hover:bg-white/10 text-foco-yellow-400 border border-foco-yellow-500/30 transition">
+                <div class="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto pt-1 sm:pt-0 border-t border-white/5 sm:border-t-0">
+                    <!-- Link Rápido para Novo Chamado no Site (Desktop/Tablet) -->
+                    <a href="{{ route('site.chamados') }}" target="_blank" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-bold bg-white/5 hover:bg-foco-yellow-500 hover:text-foco-navy-950 text-foco-yellow-400 border border-foco-yellow-500/30 transition">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                         <span>+ Abrir Chamado no Site</span>
                     </a>
 
-                    <!-- Status Usuário -->
-                    <div class="flex items-center gap-2 pl-2 border-l border-white/10">
+                    <!-- Sub-info no mobile sobre Onda Verde se tela for muito pequena -->
+                    <span class="text-[10px] font-mono text-slate-400 xs:hidden">Onda Verde Ativa</span>
+
+                    <!-- Status e Nome do Administrador (Visível no Computador e no Celular) -->
+                    <div class="flex items-center gap-2 pl-2 sm:border-l sm:border-white/10 shrink-0">
                         <div class="w-2.5 h-2.5 rounded-full bg-foco-green-400"></div>
-                        <span class="text-xs font-medium text-slate-300 hidden sm:inline">{{ auth()->user()->name ?? 'Administrador' }}</span>
+                        <span class="text-xs font-medium text-slate-200 max-w-[130px] sm:max-w-none truncate" title="{{ auth()->user()->name ?? 'Administrador' }}">
+                            {{ auth()->user()->name ?? 'Administrador' }}
+                        </span>
                     </div>
                 </div>
             </header>

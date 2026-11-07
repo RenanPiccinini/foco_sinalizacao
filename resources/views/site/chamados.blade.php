@@ -65,15 +65,15 @@
             </p>
         </div>
 
-        <!-- Seletor de Abas (Abrir vs Consultar) -->
-        <div class="flex justify-center mb-8">
-            <div class="glass-panel p-1.5 rounded-2xl border border-white/10 flex gap-2">
-                <button type="button" @click="tab = 'abrir'" :class="tab === 'abrir' ? 'bg-foco-yellow-500 text-foco-navy-950 shadow-glow-yellow font-extrabold' : 'text-slate-300 hover:text-white font-medium'" class="px-6 py-3 rounded-xl text-sm transition-all flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        <!-- Seletor de Abas (Abrir vs Consultar - 100% Responsivo) -->
+        <div class="flex justify-center mb-8 px-2">
+            <div class="glass-panel p-1.5 rounded-2xl border border-white/10 flex flex-col xs:flex-row gap-2 w-full max-w-md sm:max-w-none sm:w-auto">
+                <button type="button" @click="tab = 'abrir'" :class="tab === 'abrir' ? 'bg-foco-yellow-500 text-foco-navy-950 shadow-glow-yellow font-extrabold' : 'text-slate-300 hover:text-white font-medium'" class="px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm transition-all flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                     <span>Abrir Novo Chamado</span>
                 </button>
-                <button type="button" @click="tab = 'consultar'" :class="tab === 'consultar' ? 'bg-foco-yellow-500 text-foco-navy-950 shadow-glow-yellow font-extrabold' : 'text-slate-300 hover:text-white font-medium'" class="px-6 py-3 rounded-xl text-sm transition-all flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <button type="button" @click="tab = 'consultar'" :class="tab === 'consultar' ? 'bg-foco-yellow-500 text-foco-navy-950 shadow-glow-yellow font-extrabold' : 'text-slate-300 hover:text-white font-medium'" class="px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm transition-all flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                     <span>Consultar Protocolo</span>
                 </button>
             </div>
@@ -339,10 +339,12 @@
                     <h4 class="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider mb-3">Linha do Tempo de Atualizações</h4>
                     <div class="space-y-2 font-mono text-xs">
                         @foreach($chamadoBuscado['historico'] as $hist)
-                        <div class="flex items-start gap-3 p-2.5 rounded-lg bg-white/5 border border-white/5">
-                            <span class="text-foco-yellow-400 shrink-0 font-bold">{{ $hist['data'] }}</span>
-                            <span class="text-slate-300">{{ $hist['evento'] }}</span>
-                            <span class="ml-auto text-slate-500">({{ $hist['usuario'] }})</span>
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-3 p-2.5 rounded-lg bg-white/5 border border-white/5">
+                            <div class="flex items-start gap-2">
+                                <span class="text-foco-yellow-400 shrink-0 font-bold">{{ $hist['data'] }}</span>
+                                <span class="text-slate-300">{{ $hist['evento'] }}</span>
+                            </div>
+                            <span class="text-slate-500 text-[11px] self-end sm:self-auto">({{ $hist['usuario'] }})</span>
                         </div>
                         @endforeach
                     </div>

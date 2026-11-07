@@ -98,7 +98,8 @@
                 </a>
             </div>
 
-            <div class="overflow-x-auto mt-4">
+            <!-- VISUALIZAÇÃO DESKTOP: Tabela com Rolagem Suave -->
+            <div class="hidden md:block overflow-x-auto mt-4">
                 <table class="w-full text-left border-collapse text-xs">
                     <thead>
                         <tr class="text-slate-400 font-mono uppercase tracking-wider border-b border-white/10">
@@ -138,18 +139,49 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- VISUALIZAÇÃO MOBILE: Cards 100% Responsivos com Todos os Dados Visíveis -->
+            <div class="block md:hidden divide-y divide-white/5 mt-4">
+                @foreach($recentes as $c)
+                <div class="py-3.5 space-y-2">
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="font-mono font-bold text-xs text-foco-yellow-400">{{ $c['protocolo'] }}</span>
+                        <div class="flex items-center gap-1.5">
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $c['prioridade'] === 'Crítica' ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' : ($c['prioridade'] === 'Alta' ? 'bg-amber-500/20 text-amber-300' : 'bg-slate-500/20 text-slate-300') }}">
+                                {{ $c['prioridade'] }}
+                            </span>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $c['status'] === 'Aberto' ? 'bg-amber-500/20 text-amber-300' : ($c['status'] === 'Em Atendimento' ? 'bg-cyan-500/20 text-cyan-300' : 'bg-emerald-500/20 text-emerald-300') }}">
+                                {{ $c['status'] }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <p class="font-medium text-white text-xs leading-snug">{{ $c['titulo'] }}</p>
+                        <p class="text-[11px] text-slate-400 mt-0.5">{{ $c['municipio'] }}</p>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-1 text-[11px] font-mono text-slate-400">
+                        <span>{{ $c['created_at'] }}</span>
+                        <a href="{{ route('admin.chamados.show', $c['id']) }}" class="px-2.5 py-1 rounded bg-white/5 hover:bg-foco-yellow-500 hover:text-foco-navy-950 text-foco-yellow-400 font-bold transition">
+                            Ver Detalhes →
+                        </a>
+                    </div>
+                </div>
+                @endforeach
+            </div>
         </div>
 
         <!-- Seção: Controladores em Destaque & Onda Verde -->
         <div class="glass-panel rounded-3xl p-6 sm:p-8 border border-white/10 shadow-2xl">
-            <div class="flex items-center justify-between pb-4 border-b border-white/10 mb-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-4 border-b border-white/10 mb-4">
                 <div>
                     <h3 class="text-lg font-bold text-white">Nós Semafóricos em Monitoramento Direto</h3>
                     <p class="text-xs text-slate-400">Telemetria 4G / Baterias de Lítio LiFePO4 / Onda Verde</p>
                 </div>
-                <span class="text-xs font-mono text-foco-green-400 flex items-center gap-1.5">
+                <span class="text-xs font-mono text-foco-green-400 flex items-center gap-1.5 self-start sm:self-auto">
                     <span class="w-2 h-2 rounded-full bg-foco-green-400 animate-ping"></span>
-                    Central DIGICON Nuvem Sincronizada
+                    <span>Central DIGICON Nuvem Sincronizada</span>
                 </span>
             </div>
 

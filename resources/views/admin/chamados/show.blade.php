@@ -1,10 +1,10 @@
 <x-app-layout>
     <div class="space-y-6 max-w-5xl mx-auto">
         
-        <!-- Breadcrumb e Voltar -->
-        <div class="flex items-center justify-between pb-4 border-b border-white/10">
+        <!-- Breadcrumb e Voltar (100% Responsivo) -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-white/10">
             <div class="flex items-center gap-2 text-xs font-mono">
-                <a href="{{ route('admin.chamados.index') }}" class="text-foco-yellow-400 hover:underline flex items-center gap-1">
+                <a href="{{ route('admin.chamados.index') }}" class="text-foco-yellow-400 hover:underline flex items-center gap-1 font-bold">
                     ← Voltar para Chamados
                 </a>
                 <span class="text-slate-600">/</span>
@@ -13,6 +13,10 @@
 
             <div class="flex items-center gap-2">
                 <span class="text-xs text-slate-400 font-mono">Cadastrado em: {{ $chamado['created_at'] }}</span>
+                <a href="{{ route('admin.chamados.imprimir-os', $chamado['id']) }}" target="_blank" class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-white/5 hover:bg-white/10 text-slate-200 border border-white/10 transition inline-flex items-center gap-1">
+                    <svg class="w-3.5 h-3.5 text-foco-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                    <span>Imprimir OS</span>
+                </a>
             </div>
         </div>
 

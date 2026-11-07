@@ -61,6 +61,154 @@
             </div>
         </div>
 
+        <!-- SIMULADOR INTERATIVO: ONDA VERDE ADAPTATIVA (TECNOLOGIA FOCO) -->
+        <div class="glass-panel-glow p-8 sm:p-10 rounded-3xl mb-16 border border-foco-yellow-500/30 shadow-2xl" x-data="{
+            modo: 'foco', // 'foco' ou 'convencional'
+            velocidade: 50,
+            simulando: true,
+            progresso: 15,
+            interval: null,
+            init() {
+                this.interval = setInterval(() => {
+                    this.progresso = (this.progresso + (this.modo === 'foco' ? 1.4 : 0.7)) % 100;
+                }, 100);
+            }
+        }">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6 border-b border-white/10">
+                <div>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-foco-green-500/10 text-foco-green-400 border border-foco-green-500/30 text-xs font-mono font-bold mb-2">
+                        <span class="w-2 h-2 rounded-full bg-foco-green-400 animate-ping"></span>
+                        Laboratório Virtual de Engenharia de Tráfego
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Simulador Comparativo de Onda Verde</h2>
+                    <p class="text-xs sm:text-sm text-slate-300 mt-1">Veja em tempo real a diferença de retenção e fluidez viária entre sistemas convencionais e a engenharia adaptativa Foco.</p>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-3">
+                    <button type="button" @click="modo = 'foco'" :class="modo === 'foco' ? 'bg-foco-green-500 text-foco-navy-950 font-black shadow-glow-green' : 'bg-white/5 text-slate-300 hover:text-white'" class="px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-foco-navy-950"></span>
+                        <span>Onda Verde FOCO</span>
+                    </button>
+
+                    <button type="button" @click="modo = 'convencional'" :class="modo === 'convencional' ? 'bg-rose-500 text-white font-black shadow-glow-red' : 'bg-white/5 text-slate-300 hover:text-white'" class="px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-white"></span>
+                        <span>Planos Fixos Antigos</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Pista de Simulação Interativa -->
+            <div class="my-8 p-6 rounded-2xl bg-foco-navy-950 border border-white/10 relative overflow-hidden">
+                <!-- Vias e Faixas de Trânsito -->
+                <div class="space-y-4">
+                    <div class="grid grid-cols-4 gap-2 text-center text-[10px] sm:text-xs font-mono text-slate-400 px-1 sm:px-2 pb-1">
+                        <div>
+                            <span class="block font-bold text-slate-300">Cruz. 1</span>
+                            <span class="block text-[9px] sm:text-[11px] text-slate-400">Av. Brasil</span>
+                        </div>
+                        <div>
+                            <span class="block font-bold text-slate-300">Cruz. 2</span>
+                            <span class="block text-[9px] sm:text-[11px] text-slate-400">Rua 1500</span>
+                        </div>
+                        <div>
+                            <span class="block font-bold text-slate-300">Cruz. 3</span>
+                            <span class="block text-[9px] sm:text-[11px] text-slate-400">Av. Central</span>
+                        </div>
+                        <div>
+                            <span class="block font-bold text-slate-300">Cruz. 4</span>
+                            <span class="block text-[9px] sm:text-[11px] text-slate-400">Rua 2000</span>
+                        </div>
+                    </div>
+
+                    <!-- Linha com os 4 nós semafóricos -->
+                    <div class="relative py-8 border-y-2 border-dashed border-white/20 bg-slate-900/60 rounded-xl">
+                        
+                        <!-- Carrinho em deslocamento na via -->
+                        <div class="absolute top-1/2 -translate-y-1/2 transition-all duration-100 flex items-center gap-1 z-20" :style="'left: ' + progresso + '%'">
+                            <div class="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md text-[9px] sm:text-[10px] font-mono font-bold shadow-lg" :class="modo === 'foco' ? 'bg-foco-yellow-500 text-foco-navy-950' : 'bg-slate-300 text-slate-900'">
+                                🚗 Fluxo
+                            </div>
+                            <span class="w-2 h-2 rounded-full" :class="modo === 'foco' ? 'bg-foco-green-400 animate-ping' : 'bg-rose-400 animate-ping'"></span>
+                        </div>
+
+                        <!-- 4 Postes Semafóricos Posicionados na Via -->
+                        <div class="grid grid-cols-4 gap-2 sm:gap-4 relative z-10 px-2 sm:px-8">
+                            <!-- Semáforo 1 -->
+                            <div class="flex flex-col items-center">
+                                <div class="w-8 p-1.5 rounded-xl bg-slate-950 border border-white/20 space-y-1.5 shadow-xl">
+                                    <div class="w-5 h-5 rounded-full" :class="modo === 'foco' ? 'bg-rose-950' : 'traffic-lens-red'"></div>
+                                    <div class="w-5 h-5 rounded-full bg-amber-950"></div>
+                                    <div class="w-5 h-5 rounded-full" :class="modo === 'foco' ? 'traffic-lens-green' : 'bg-emerald-950'"></div>
+                                </div>
+                                <span class="text-[10px] font-mono mt-2" :class="modo === 'foco' ? 'text-foco-green-400 font-bold' : 'text-rose-400 font-bold'">
+                                    <span x-text="modo === 'foco' ? 'VERDE (Onda)' : 'VERMELHO'"></span>
+                                </span>
+                            </div>
+
+                            <!-- Semáforo 2 -->
+                            <div class="flex flex-col items-center">
+                                <div class="w-8 p-1.5 rounded-xl bg-slate-950 border border-white/20 space-y-1.5 shadow-xl">
+                                    <div class="w-5 h-5 rounded-full" :class="modo === 'foco' ? 'bg-rose-950' : 'bg-rose-950'"></div>
+                                    <div class="w-5 h-5 rounded-full" :class="modo === 'foco' ? 'bg-amber-950' : 'traffic-lens-yellow'"></div>
+                                    <div class="w-5 h-5 rounded-full" :class="modo === 'foco' ? 'traffic-lens-green' : 'bg-emerald-950'"></div>
+                                </div>
+                                <span class="text-[10px] font-mono mt-2" :class="modo === 'foco' ? 'text-foco-green-400 font-bold' : 'text-amber-400 font-bold'">
+                                    <span x-text="modo === 'foco' ? 'VERDE (Onda)' : 'AMARELO'"></span>
+                                </span>
+                            </div>
+
+                            <!-- Semáforo 3 -->
+                            <div class="flex flex-col items-center">
+                                <div class="w-8 p-1.5 rounded-xl bg-slate-950 border border-white/20 space-y-1.5 shadow-xl">
+                                    <div class="w-5 h-5 rounded-full" :class="modo === 'foco' ? 'bg-rose-950' : 'traffic-lens-red'"></div>
+                                    <div class="w-5 h-5 rounded-full bg-amber-950"></div>
+                                    <div class="w-5 h-5 rounded-full" :class="modo === 'foco' ? 'traffic-lens-green' : 'bg-emerald-950'"></div>
+                                </div>
+                                <span class="text-[10px] font-mono mt-2" :class="modo === 'foco' ? 'text-foco-green-400 font-bold' : 'text-rose-400 font-bold'">
+                                    <span x-text="modo === 'foco' ? 'VERDE (Onda)' : 'VERMELHO'"></span>
+                                </span>
+                            </div>
+
+                            <!-- Semáforo 4 -->
+                            <div class="flex flex-col items-center">
+                                <div class="w-8 p-1.5 rounded-xl bg-slate-950 border border-white/20 space-y-1.5 shadow-xl">
+                                    <div class="w-5 h-5 rounded-full" :class="modo === 'foco' ? 'bg-rose-950' : 'bg-rose-950'"></div>
+                                    <div class="w-5 h-5 rounded-full bg-amber-950"></div>
+                                    <div class="w-5 h-5 rounded-full" :class="modo === 'foco' ? 'traffic-lens-green' : 'traffic-lens-green'"></div>
+                                </div>
+                                <span class="text-[10px] font-mono mt-2 text-foco-green-400 font-bold">
+                                    VERDE
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Indicadores em Tempo Real da Simulação (100% Responsivo) -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 font-mono text-xs">
+                <div class="p-3 sm:p-4 rounded-xl bg-foco-navy-900 border border-white/5">
+                    <span class="text-slate-400 block text-[10px] sm:text-[11px]">Paradas no Corredor:</span>
+                    <strong class="text-xs sm:text-base block mt-0.5" :class="modo === 'foco' ? 'text-foco-green-400' : 'text-rose-400'" x-text="modo === 'foco' ? '0 Paradas (Fluxo)' : '3 Retenções'"></strong>
+                </div>
+
+                <div class="p-3 sm:p-4 rounded-xl bg-foco-navy-900 border border-white/5">
+                    <span class="text-slate-400 block text-[10px] sm:text-[11px]">Velocidade Comercial:</span>
+                    <strong class="text-xs sm:text-base block mt-0.5" :class="modo === 'foco' ? 'text-cyan-400' : 'text-amber-400'" x-text="modo === 'foco' ? '52 km/h (Média)' : '18 km/h'"></strong>
+                </div>
+
+                <div class="p-3 sm:p-4 rounded-xl bg-foco-navy-900 border border-white/5">
+                    <span class="text-slate-400 block text-[10px] sm:text-[11px]">Economia Combustível:</span>
+                    <strong class="text-xs sm:text-base block mt-0.5" :class="modo === 'foco' ? 'text-emerald-400' : 'text-slate-400'" x-text="modo === 'foco' ? '+28% Eficiência' : 'Desperdício Alto'"></strong>
+                </div>
+
+                <div class="p-3 sm:p-4 rounded-xl bg-foco-navy-900 border border-white/5">
+                    <span class="text-slate-400 block text-[10px] sm:text-[11px]">Emissão Poluentes:</span>
+                    <strong class="text-xs sm:text-base block mt-0.5" :class="modo === 'foco' ? 'text-foco-yellow-400' : 'text-rose-400'" x-text="modo === 'foco' ? '-35% CO₂' : 'Pico de Emissões'"></strong>
+                </div>
+            </div>
+        </div>
+
         <!-- Detalhamento dos 5 Pilares Fundamentais -->
         <div class="space-y-12">
             
