@@ -131,3 +131,4 @@ class ChamadoSeeder extends Seeder
         }
     }
 }
+

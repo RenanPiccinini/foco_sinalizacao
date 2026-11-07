@@ -89,3 +89,4 @@ class Chamado extends Model
         };
     }
 }
+
