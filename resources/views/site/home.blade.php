@@ -531,13 +531,16 @@
                     @foreach($ultimosChamados as $c)
                     <div class="p-3.5 rounded-xl bg-foco-navy-900/90 border border-white/5 text-xs font-mono space-y-1.5">
                         <div class="flex items-center justify-between">
-                            <span class="font-bold text-foco-yellow-400">{{ $c['protocolo'] }}</span>
-                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $c['status'] === 'Aberto' ? 'bg-amber-500/20 text-amber-300' : ($c['status'] === 'Em Atendimento' ? 'bg-cyan-500/20 text-cyan-300' : 'bg-emerald-500/20 text-emerald-300') }}">
-                                {{ $c['status'] }}
+                            <span class="font-bold text-foco-yellow-400">{{ $c->protocolo }}</span>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $c->tipo_badge_class }}">
+                                {{ $c->tipo }}
                             </span>
                         </div>
-                        <p class="text-slate-200 font-sans font-medium line-clamp-1">{{ $c['titulo'] }}</p>
-                        <p class="text-slate-400 text-[11px]">{{ $c['municipio'] }}</p>
+                        <p class="text-slate-200 font-sans font-medium line-clamp-1">{{ $c->defeito }}</p>
+                        <div class="flex items-center justify-between text-[11px] text-slate-400">
+                            <span class="truncate max-w-[170px]">{{ $c->local }}</span>
+                            <span class="px-1.5 py-0.5 rounded text-[10px] {{ $c->status_badge_class }}">{{ $c->status }}</span>
+                        </div>
                     </div>
                     @endforeach
                 </div>

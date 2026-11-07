@@ -1,5 +1,16 @@
 <x-app-layout>
-    <div class="space-y-6 max-w-5xl mx-auto">
+    <div class="space-y-6 max-w-5xl mx-auto" x-data="{
+        statusAtual: '{{ $chamado->status }}',
+        definirAgora() {
+            const agora = new Date();
+            const ano = agora.getFullYear();
+            const mes = String(agora.getMonth() + 1).padStart(2, '0');
+            const dia = String(agora.getDate()).padStart(2, '0');
+            const horas = String(agora.getHours()).padStart(2, '0');
+            const minutos = String(agora.getMinutes()).padStart(2, '0');
+            document.getElementById('data_hora_execucao').value = `${ano}-${mes}-${dia}T${horas}:${minutos}`;
+        }
+    }">
         
         <!-- Breadcrumb e Voltar (100% Responsivo) -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-white/10">
@@ -8,12 +19,14 @@
                     ← Voltar para Chamados
                 </a>
                 <span class="text-slate-600">/</span>
-                <span class="text-slate-300 font-bold">{{ $chamado['protocolo'] }}</span>
+                <span class="text-slate-300 font-bold">{{ $chamado->protocolo }}</span>
             </div>
 
             <div class="flex items-center gap-2">
-                <span class="text-xs text-slate-400 font-mono">Cadastrado em: {{ $chamado['created_at'] }}</span>
-                <a href="{{ route('admin.chamados.imprimir-os', $chamado['id']) }}" target="_blank" class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-white/5 hover:bg-white/10 text-slate-200 border border-white/10 transition inline-flex items-center gap-1">
+                <span class="text-xs text-slate-400 font-mono">
+                    Aberto em: {{ $chamado->data_hora_abertura ? $chamado->data_hora_abertura->format('d/m/Y H:i') : $chamado->created_at->format('d/m/Y H:i') }}
+                </span>
+                <a href="{{ route('admin.chamados.imprimir-os', $chamado->id) }}" target="_blank" class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-white/5 hover:bg-white/10 text-slate-200 border border-white/10 transition inline-flex items-center gap-1">
                     <svg class="w-3.5 h-3.5 text-foco-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
                     <span>Imprimir OS</span>
                 </a>
@@ -25,51 +38,109 @@
             <!-- Coluna Esquerda: Detalhes do Chamado e Histórico -->
             <div class="lg:col-span-8 space-y-6">
                 
-                <!-- Card Principal -->
+                <!-- Card Principal com Dados de Abertura -->
                 <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-white/10 shadow-2xl space-y-6">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-6 border-b border-white/10">
                         <div>
-                            <span class="text-xs font-mono font-bold text-foco-yellow-400 block">{{ $chamado['categoria'] }}</span>
-                            <h1 class="text-2xl font-black text-white mt-1">{{ $chamado['titulo'] }}</h1>
+                            <div class="flex items-center gap-2">
+                                <span class="px-2.5 py-0.5 rounded-full text-xs font-bold font-mono {{ $chamado->tipo_badge_class }}">
+                                    Tipo: {{ $chamado->tipo }}
+                                </span>
+                                <span class="text-xs font-mono text-slate-400">Protocolo {{ $chamado->protocolo }}</span>
+                            </div>
+                            <h1 class="text-2xl font-black text-white mt-1">{{ $chamado->defeito }}</h1>
                         </div>
-                        <span class="px-3 py-1.5 rounded-full text-xs font-bold font-mono uppercase tracking-wider self-start sm:self-auto {{ $chamado['status'] === 'Aberto' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : ($chamado['status'] === 'Em Atendimento' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' : ($chamado['status'] === 'Pendente Peça' ? 'bg-purple-500/20 text-purple-300' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30')) }}">
-                            {{ $chamado['status'] }}
+                        <span class="px-3 py-1.5 rounded-full text-xs font-bold font-mono uppercase tracking-wider self-start sm:self-auto {{ $chamado->status_badge_class }}">
+                            {{ $chamado->status }}
                         </span>
                     </div>
 
-                    <!-- Dados do Cruzamento -->
+                    <!-- Dados do Local e Solicitante -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-mono">
                         <div class="p-4 rounded-2xl bg-foco-navy-900 border border-white/5 space-y-1.5">
-                            <span class="text-slate-500 block uppercase font-bold text-[10px]">Localização / Cruzamento:</span>
-                            <p class="text-slate-200 text-sm font-sans font-bold">{{ $chamado['localizacao'] }}</p>
-                            <p class="text-foco-yellow-400">{{ $chamado['municipio'] }}</p>
-                            @if($chamado['ponto_referencia'])
-                            <p class="text-slate-400 font-sans text-xs">Ref: {{ $chamado['ponto_referencia'] }}</p>
-                            @endif
+                            <span class="text-slate-500 block uppercase font-bold text-[10px]">Localização:</span>
+                            <p class="text-slate-200 text-sm font-sans font-bold">{{ $chamado->local }}</p>
+                            <p class="text-foco-yellow-400">Horário de Abertura Automático:</p>
+                            <p class="text-white font-bold">{{ $chamado->data_hora_abertura ? $chamado->data_hora_abertura->format('d/m/Y H:i:s') : $chamado->created_at->format('d/m/Y H:i:s') }}</p>
                         </div>
 
                         <div class="p-4 rounded-2xl bg-foco-navy-900 border border-white/5 space-y-1.5">
-                            <span class="text-slate-500 block uppercase font-bold text-[10px]">Solicitante & Órgão:</span>
-                            <p class="text-slate-200 text-sm font-sans font-bold">{{ $chamado['solicitante_nome'] }}</p>
-                            <p class="text-cyan-400">{{ $chamado['solicitante_orgao'] }}</p>
-                            <p class="text-slate-400">{{ $chamado['solicitante_telefone'] }} • {{ $chamado['solicitante_email'] }}</p>
+                            <span class="text-slate-500 block uppercase font-bold text-[10px]">Solicitante & Contato:</span>
+                            <p class="text-slate-200 text-sm font-sans font-bold">{{ $chamado->nome_solicitante }}</p>
+                            <p class="text-cyan-400">WhatsApp: {{ $chamado->telefone_contato }}</p>
+                            @if($chamado->tecnico_responsavel)
+                            <p class="text-slate-400 pt-1 border-t border-white/5">Técnico: <strong class="text-white">{{ $chamado->tecnico_responsavel }}</strong></p>
+                            @endif
                         </div>
                     </div>
 
-                    <!-- Descrição da Ocorrência -->
+                    <!-- Defeito -->
                     <div class="space-y-2">
-                        <span class="text-xs font-mono uppercase font-bold text-slate-400">Descrição Detalhada do Chamado:</span>
+                        <span class="text-xs font-mono uppercase font-bold text-slate-400">Defeito Informado pelo Cliente:</span>
                         <div class="p-4 rounded-2xl bg-foco-navy-900/80 border border-white/5 text-sm text-slate-200 leading-relaxed">
-                            {{ $chamado['descricao'] }}
+                            {{ $chamado->defeito }}
                         </div>
                     </div>
 
-                    <!-- Equipamento Afetado -->
-                    <div class="p-4 rounded-2xl bg-foco-navy-900/60 border border-white/5 flex items-center justify-between text-xs font-mono">
-                        <span class="text-slate-400">Ativo / Hardware Relatado:</span>
-                        <strong class="text-white">{{ $chamado['equipamento_afetado'] }}</strong>
+                    <!-- Observação de Abertura -->
+                    @if($chamado->observacao)
+                    <div class="space-y-2">
+                        <span class="text-xs font-mono uppercase font-bold text-slate-400">Observação Adicional de Abertura:</span>
+                        <div class="p-4 rounded-2xl bg-foco-navy-900/50 border border-white/5 text-xs text-slate-300 leading-relaxed font-mono">
+                            {{ $chamado->observacao }}
+                        </div>
                     </div>
+                    @endif
                 </div>
+
+                <!-- ======================================================== -->
+                <!-- DESTAQUE: REGISTRO DE FINALIZAÇÃO PELA FOCO              -->
+                <!-- ======================================================== -->
+                @if($chamado->status === 'Finalizado')
+                <div class="glass-panel p-6 sm:p-8 rounded-3xl border-2 border-emerald-500/50 bg-gradient-to-br from-emerald-950/40 via-foco-navy-900 to-foco-navy-950 shadow-2xl space-y-5">
+                    <div class="flex items-center justify-between pb-3 border-b border-emerald-500/20">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-3 h-3 rounded-full bg-emerald-400"></span>
+                            <h2 class="text-lg font-black text-emerald-400">Registro de Finalização FOCO</h2>
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-xs font-bold font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 uppercase">
+                            Serviço Finalizado
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-mono">
+                        <div class="p-4 rounded-2xl bg-black/40 border border-white/5 space-y-1">
+                            <span class="text-emerald-400 uppercase font-bold text-[10px] block">Horário Execução:</span>
+                            <p class="text-white text-base font-bold">
+                                {{ $chamado->data_hora_execucao ? $chamado->data_hora_execucao->format('d/m/Y H:i') : 'Não registrado' }}
+                            </p>
+                        </div>
+
+                        <div class="p-4 rounded-2xl bg-black/40 border border-white/5 space-y-1">
+                            <span class="text-emerald-400 uppercase font-bold text-[10px] block">Técnico Designado:</span>
+                            <p class="text-white text-base font-bold">
+                                {{ $chamado->tecnico_responsavel ?: 'Equipe Técnica FOCO' }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <span class="text-emerald-400 font-mono font-bold block uppercase text-xs">Conserto Executado:</span>
+                        <div class="p-4 rounded-2xl bg-black/50 border border-white/10 text-sm text-slate-100 font-sans leading-relaxed">
+                            {{ $chamado->conserto_executado ?: 'Conserto executado e semáforo normalizado.' }}
+                        </div>
+                    </div>
+
+                    @if($chamado->observacao_finalizacao)
+                    <div class="space-y-1.5">
+                        <span class="text-slate-400 font-mono font-bold block uppercase text-xs">Observação da Finalização:</span>
+                        <div class="p-4 rounded-2xl bg-black/30 border border-white/5 text-xs text-slate-300 font-mono leading-relaxed">
+                            {{ $chamado->observacao_finalizacao }}
+                        </div>
+                    </div>
+                    @endif
+                </div>
+                @endif
 
                 <!-- Linha do Tempo / Histórico de Auditoria Digital -->
                 <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-white/10 shadow-2xl">
@@ -79,77 +150,107 @@
                     </h3>
 
                     <div class="space-y-3 font-mono text-xs">
-                        @foreach($chamado['historico'] as $h)
-                        <div class="p-3.5 rounded-xl bg-foco-navy-900 border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                            <div class="flex items-start gap-2.5">
-                                <span class="w-1.5 h-1.5 rounded-full bg-foco-yellow-400 mt-1.5 shrink-0"></span>
-                                <div>
-                                    <span class="text-slate-200 block font-medium">{{ $h['evento'] }}</span>
-                                    <span class="text-[11px] text-slate-500">Autor: {{ $h['usuario'] }}</span>
+                        @if(!empty($chamado->historico))
+                            @foreach($chamado->historico as $h)
+                            <div class="p-3.5 rounded-xl bg-foco-navy-900 border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                <div class="flex items-start gap-2.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-foco-yellow-400 mt-1.5 shrink-0"></span>
+                                    <div>
+                                        <span class="text-slate-200 block font-medium">{{ $h['evento'] }}</span>
+                                        <span class="text-[11px] text-slate-500">Autor: {{ $h['usuario'] }}</span>
+                                    </div>
                                 </div>
+                                <span class="text-foco-yellow-400 font-bold text-[11px] shrink-0">{{ $h['data'] }}</span>
                             </div>
-                            <span class="text-foco-yellow-400 font-bold text-[11px] shrink-0">{{ $h['data'] }}</span>
-                        </div>
-                        @endforeach
+                            @endforeach
+                        @else
+                            <p class="text-slate-500 text-xs">Nenhum evento registrado.</p>
+                        @endif
                     </div>
                 </div>
 
             </div>
 
-            <!-- Coluna Direita: Painel de Atualização do Status (Ação do Admin) -->
+            <!-- Coluna Direita: Formulário de Atualização e Finalização FOCO -->
             <div class="lg:col-span-4 space-y-6">
                 
-                <!-- Formulário de Alteração de Status -->
+                <!-- Formulário de Despacho & Finalização FOCO -->
                 <div class="glass-panel-glow p-6 rounded-3xl border border-foco-yellow-500/30 shadow-2xl space-y-4">
                     <div class="flex items-center gap-2">
                         <span class="w-2.5 h-2.5 rounded-full bg-foco-yellow-400"></span>
-                        <h3 class="text-base font-bold text-white">Despacho & Atualização</h3>
+                        <h3 class="text-base font-bold text-white">Despacho & Finalização FOCO</h3>
                     </div>
-                    <p class="text-xs text-slate-400">Altere o status operacional e notifique o solicitante na nuvem.</p>
+                    <p class="text-xs text-slate-400">Quando a FOCO finalizar, informe o conserto executado, horário de execução e observação.</p>
 
-                    <form action="{{ route('admin.chamados.update', $chamado['id']) }}" method="POST" class="space-y-4">
+                    <form action="{{ route('admin.chamados.update', $chamado->id) }}" method="POST" class="space-y-4">
                         @csrf
 
+                        <!-- Status -->
                         <div>
                             <label class="block text-xs font-mono text-slate-300 mb-1">Status Operacional *</label>
-                            <select name="status" class="w-full bg-foco-navy-900 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white focus:border-foco-yellow-500 focus:ring-1 focus:ring-foco-yellow-500">
-                                <option value="Aberto" {{ $chamado['status'] === 'Aberto' ? 'selected' : '' }}>🟡 Aberto (Triagem Inicial)</option>
-                                <option value="Em Atendimento" {{ $chamado['status'] === 'Em Atendimento' ? 'selected' : '' }}>🔵 Em Atendimento (Equipe Despachada)</option>
-                                <option value="Pendente Peça" {{ $chamado['status'] === 'Pendente Peça' ? 'selected' : '' }}>🟣 Pendente Peça / Reposição</option>
-                                <option value="Concluído" {{ $chamado['status'] === 'Concluído' ? 'selected' : '' }}>🟢 Concluído (Normalizado)</option>
+                            <select name="status" x-model="statusAtual" class="w-full bg-foco-navy-900 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white focus:border-foco-yellow-500 focus:ring-1 focus:ring-foco-yellow-500">
+                                <option value="Aberto">🟡 Aberto</option>
+                                <option value="Em Atendimento">🔵 Em Atendimento</option>
+                                <option value="Finalizado">🟢 Finalizado (Conclusão do Serviço)</option>
                             </select>
                         </div>
 
+                        <!-- Técnico Responsável -->
                         <div>
-                            <label class="block text-xs font-mono text-slate-300 mb-1">Técnico / Equipe em Campo</label>
-                            <input type="text" name="tecnico_responsavel" value="{{ $chamado['tecnico_responsavel'] }}" placeholder="Ex: Eng. Ricardo Silveira (Equipe Alpha)" class="w-full bg-foco-navy-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:border-foco-yellow-500 focus:ring-1 focus:ring-foco-yellow-500">
+                            <label class="block text-xs font-mono text-slate-300 mb-1">Técnico / Equipe FOCO</label>
+                            <input type="text" name="tecnico_responsavel" value="{{ old('tecnico_responsavel', $chamado->tecnico_responsavel ?? auth()->user()->name) }}" placeholder="Ex: Eng. Ricardo Silveira (FOCO)" class="w-full bg-foco-navy-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:border-foco-yellow-500 focus:ring-1 focus:ring-foco-yellow-500">
                         </div>
 
-                        <div>
-                            <label class="block text-xs font-mono text-slate-300 mb-1">Nota Operacional / Evento</label>
-                            <textarea name="observacao" rows="3" placeholder="Ex: Substituída fonte do nobreak e efetuado teste de carga." class="w-full bg-foco-navy-900 border border-white/10 rounded-xl p-3 text-xs text-white placeholder-slate-500 focus:border-foco-yellow-500 focus:ring-1 focus:ring-foco-yellow-500"></textarea>
+                        <!-- CAMPOS ESPECÍFICOS DE FINALIZAÇÃO PELA FOCO -->
+                        <div class="space-y-4 pt-3 border-t border-white/10" :class="statusAtual === 'Finalizado' ? 'p-3 rounded-2xl bg-emerald-950/20 border border-emerald-500/30' : ''">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-mono font-bold uppercase tracking-wider" :class="statusAtual === 'Finalizado' ? 'text-emerald-400' : 'text-slate-400'">
+                                    Dados de Finalização FOCO:
+                                </span>
+                                <button type="button" @click="definirAgora()" class="text-[10px] font-mono text-foco-yellow-400 hover:underline">
+                                    Usar Agora
+                                </button>
+                            </div>
+
+                            <!-- Horário Execução -->
+                            <div>
+                                <label for="data_hora_execucao" class="block text-xs font-mono text-slate-300 mb-1">Horário Execução</label>
+                                <input type="datetime-local" name="data_hora_execucao" id="data_hora_execucao" value="{{ $chamado->data_hora_execucao ? $chamado->data_hora_execucao->format('Y-m-d\TH:i') : '' }}" class="w-full bg-foco-navy-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:border-foco-yellow-500 focus:ring-1 focus:ring-foco-yellow-500">
+                            </div>
+
+                            <!-- Conserto Executado -->
+                            <div>
+                                <label for="conserto_executado" class="block text-xs font-mono text-slate-300 mb-1">Conserto Executado</label>
+                                <textarea name="conserto_executado" id="conserto_executado" rows="3" placeholder="Ex: Substituição do módulo LED vermelho no foco 02, recalibração do plano semafórico e teste de nobreak." class="w-full bg-foco-navy-900 border border-white/10 rounded-xl p-3 text-xs text-white placeholder-slate-500 focus:border-foco-yellow-500 focus:ring-1 focus:ring-foco-yellow-500">{{ old('conserto_executado', $chamado->conserto_executado) }}</textarea>
+                            </div>
+
+                            <!-- Observação da Finalização -->
+                            <div>
+                                <label for="observacao_finalizacao" class="block text-xs font-mono text-slate-300 mb-1">Observação da Finalização</label>
+                                <textarea name="observacao_finalizacao" id="observacao_finalizacao" rows="2" placeholder="Observações operacionais para o solicitante e registros..." class="w-full bg-foco-navy-900 border border-white/10 rounded-xl p-3 text-xs text-white placeholder-slate-500 focus:border-foco-yellow-500 focus:ring-1 focus:ring-foco-yellow-500">{{ old('observacao_finalizacao', $chamado->observacao_finalizacao) }}</textarea>
+                            </div>
                         </div>
 
                         <button type="submit" class="w-full py-3 rounded-xl font-bold text-xs uppercase tracking-wider bg-foco-yellow-500 hover:bg-foco-yellow-400 text-foco-navy-950 transition shadow-glow-yellow">
-                            Salvar Atualização
+                            Salvar / Atualizar Chamado
                         </button>
                     </form>
                 </div>
 
-                <!-- Cartão com SLA e Prioridade -->
+                <!-- Resumo Rápido dos Dados do Chamado -->
                 <div class="glass-panel p-5 rounded-2xl border border-white/10 text-xs font-mono space-y-3">
-                    <span class="text-slate-400 block uppercase font-bold text-[10px]">Parâmetros do Contrato:</span>
+                    <span class="text-slate-400 block uppercase font-bold text-[10px]">Resumo Rápido:</span>
                     <div class="flex items-center justify-between border-b border-white/5 pb-2">
-                        <span class="text-slate-400">Prioridade:</span>
-                        <strong class="{{ $chamado['prioridade'] === 'Crítica' ? 'text-rose-400' : 'text-amber-400' }}">{{ $chamado['prioridade'] }}</strong>
+                        <span class="text-slate-400">Tipo:</span>
+                        <strong class="text-white">{{ $chamado->tipo }}</strong>
                     </div>
                     <div class="flex items-center justify-between border-b border-white/5 pb-2">
-                        <span class="text-slate-400">SLA Previsto:</span>
-                        <strong class="text-foco-green-400">{{ $chamado['sla_estimado'] }}</strong>
+                        <span class="text-slate-400">Abertura:</span>
+                        <strong class="text-foco-green-400">{{ $chamado->data_hora_abertura ? $chamado->data_hora_abertura->format('d/m/Y H:i') : $chamado->created_at->format('d/m/Y H:i') }}</strong>
                     </div>
                     <div class="flex items-center justify-between">
-                        <span class="text-slate-400">Telemetria 4G:</span>
-                        <strong class="text-cyan-400">Sinal Forte</strong>
+                        <span class="text-slate-400">Telefone:</span>
+                        <strong class="text-cyan-400">{{ $chamado->telefone_contato }}</strong>
                     </div>
                 </div>
 
@@ -159,4 +260,3 @@
 
     </div>
 </x-app-layout>
-

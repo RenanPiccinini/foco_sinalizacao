@@ -3,72 +3,63 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Services\ChamadoService;
+use App\Models\Chamado;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ChamadoController extends Controller
 {
     /**
-     * Lista todos os chamados abertos no site com filtros.
+     * Lista todos os chamados com filtros e busca.
      */
     public function index(Request $request)
     {
-        $allTickets = ChamadoService::all();
-
         $status = $request->query('status');
-        $prioridade = $request->query('prioridade');
+        $tipo = $request->query('tipo');
         $busca = $request->query('busca');
-        $municipio = $request->query('municipio');
-        $viewMode = $request->query('view', 'tabela'); // 'tabela' ou 'kanban'
 
-        $filtered = array_filter($allTickets, function ($ticket) use ($status, $prioridade, $busca, $municipio) {
-            if ($status && $status !== 'todos' && strcasecmp($ticket['status'], $status) !== 0) {
-                return false;
-            }
-            if ($prioridade && $prioridade !== 'todas' && strcasecmp($ticket['prioridade'], $prioridade) !== 0) {
-                return false;
-            }
-            if ($municipio && $municipio !== 'todos' && stripos($ticket['municipio'], $municipio) === false) {
-                return false;
-            }
-            if ($busca) {
-                $term = strtolower($busca);
-                $searchable = strtolower($ticket['protocolo'] . ' ' . $ticket['titulo'] . ' ' . $ticket['localizacao'] . ' ' . $ticket['solicitante_nome'] . ' ' . $ticket['municipio']);
-                if (strpos($searchable, $term) === false) {
-                    return false;
-                }
-            }
-            return true;
-        });
+        $query = Chamado::query()->latest('data_hora_abertura');
 
-        // Estatísticas
+        if ($status && $status !== 'todos') {
+            $query->where('status', $status);
+        }
+
+        if ($tipo && $tipo !== 'todos') {
+            $query->where('tipo', $tipo);
+        }
+
+        if ($busca) {
+            $term = '%' . trim($busca) . '%';
+            $query->where(function ($q) use ($term) {
+                $q->where('protocolo', 'like', $term)
+                  ->orWhere('nome_solicitante', 'like', $term)
+                  ->orWhere('telefone_contato', 'like', $term)
+                  ->orWhere('local', 'like', $term)
+                  ->orWhere('defeito', 'like', $term);
+            });
+        }
+
+        $chamados = $query->get();
+        $allTickets = Chamado::all();
+
+        // Métricas
         $stats = [
-            'total' => count($allTickets),
-            'abertos' => count(array_filter($allTickets, fn($t) => $t['status'] === 'Aberto')),
-            'em_atendimento' => count(array_filter($allTickets, fn($t) => $t['status'] === 'Em Atendimento')),
-            'pendente_peca' => count(array_filter($allTickets, fn($t) => $t['status'] === 'Pendente Peça')),
-            'concluidos' => count(array_filter($allTickets, fn($t) => $t['status'] === 'Concluído')),
-            'criticos' => count(array_filter($allTickets, fn($t) => $t['prioridade'] === 'Crítica')),
-        ];
-
-        // Agrupamento para visão Kanban
-        $kanban = [
-            'Aberto' => array_values(array_filter($allTickets, fn($t) => $t['status'] === 'Aberto')),
-            'Em Atendimento' => array_values(array_filter($allTickets, fn($t) => $t['status'] === 'Em Atendimento')),
-            'Pendente Peça' => array_values(array_filter($allTickets, fn($t) => $t['status'] === 'Pendente Peça')),
-            'Concluído' => array_values(array_filter($allTickets, fn($t) => $t['status'] === 'Concluído')),
+            'total' => $allTickets->count(),
+            'abertos' => $allTickets->where('status', 'Aberto')->count(),
+            'em_atendimento' => $allTickets->where('status', 'Em Atendimento')->count(),
+            'finalizados' => $allTickets->where('status', 'Finalizado')->count(),
+            'ap' => $allTickets->where('tipo', 'AP')->count(),
+            'fa' => $allTickets->where('tipo', 'FA')->count(),
+            'acidentes' => $allTickets->where('tipo', 'Acidente')->count(),
+            'vermelho_queimado' => $allTickets->where('tipo', 'Vermelho Queimado')->count(),
         ];
 
         return view('admin.chamados.index', [
-            'chamados' => array_values($filtered),
+            'chamados' => $chamados,
             'stats' => $stats,
-            'kanban' => $kanban,
             'status' => $status ?? 'todos',
-            'prioridade' => $prioridade ?? 'todas',
+            'tipo' => $tipo ?? 'todos',
             'busca' => $busca ?? '',
-            'municipio' => $municipio ?? 'todos',
-            'viewMode' => $viewMode,
         ]);
     }
 
@@ -77,7 +68,12 @@ class ChamadoController extends Controller
      */
     public function show(string $id)
     {
-        $chamado = ChamadoService::find($id);
+        $chamado = Chamado::find($id);
+
+        if (!$chamado) {
+            // Tenta localizar por protocolo caso passe protocolo em vez de ID
+            $chamado = Chamado::where('protocolo', $id)->first();
+        }
 
         if (!$chamado) {
             return redirect()->route('admin.chamados.index')->with('error', 'Chamado não encontrado.');
@@ -87,54 +83,90 @@ class ChamadoController extends Controller
     }
 
     /**
-     * Criação de chamado interno diretamente pela equipe da central.
+     * Criação de chamado interno diretamente pela equipe da central FOCO.
      */
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'solicitante_nome' => 'required|string|max:120',
-            'solicitante_orgao' => 'required|string|max:120',
-            'solicitante_telefone' => 'nullable|string|max:30',
-            'solicitante_email' => 'nullable|email|max:120',
-            'municipio' => 'required|string|max:100',
-            'localizacao' => 'required|string|max:200',
-            'ponto_referencia' => 'nullable|string|max:200',
-            'categoria' => 'required|string|max:100',
-            'prioridade' => 'required|string|in:Baixa,Média,Alta,Crítica',
-            'titulo' => 'required|string|max:150',
-            'descricao' => 'required|string|max:1500',
-            'equipamento_afetado' => 'nullable|string|max:150',
+            'tipo' => 'required|string|in:AP,FA,Acidente,Vermelho Queimado',
+            'nome_solicitante' => 'required|string|max:120',
+            'telefone_contato' => 'required|string|max:30',
+            'local' => 'required|string|max:255',
+            'defeito' => 'required|string|max:2000',
+            'observacao' => 'nullable|string|max:2000',
         ]);
 
-        $chamado = ChamadoService::create($validated);
+        $protocolo = Chamado::gerarProtocolo();
 
-        return redirect()->route('admin.chamados.show', $chamado['id'])
-            ->with('success', "Chamado interno {$chamado['protocolo']} criado com sucesso!");
+        $chamado = Chamado::create([
+            'protocolo' => $protocolo,
+            'tipo' => $validated['tipo'],
+            'nome_solicitante' => $validated['nome_solicitante'],
+            'telefone_contato' => $validated['telefone_contato'],
+            'local' => $validated['local'],
+            'defeito' => $validated['defeito'],
+            'observacao' => $validated['observacao'] ?? null,
+            'data_hora_abertura' => now(),
+            'status' => 'Aberto',
+            'historico' => [
+                [
+                    'data' => now()->format('d/m/Y H:i'),
+                    'evento' => "Chamado interno registrado pela Central de Operações FOCO.",
+                    'usuario' => auth()->user()?->name ?? 'Central FOCO',
+                ]
+            ],
+        ]);
+
+        return redirect()->route('admin.chamados.show', $chamado->id)
+            ->with('success', "Chamado interno {$chamado->protocolo} registrado com sucesso!");
     }
 
     /**
-     * Atualiza o status e notas de um chamado.
+     * Atualiza o chamado ou finaliza pela FOCO.
+     * Quando a FOCO finalizar informa:
+     * - Conserto executado
+     * - Horario execução
+     * - Observação
      */
     public function update(Request $request, string $id)
     {
+        $chamado = Chamado::findOrFail($id);
+
         $validated = $request->validate([
-            'status' => 'required|string|in:Aberto,Em Atendimento,Pendente Peça,Concluído',
-            'tecnico_responsavel' => 'nullable|string|max:100',
-            'observacao' => 'nullable|string|max:500',
+            'status' => 'required|string|in:Aberto,Em Atendimento,Finalizado',
+            'conserto_executado' => 'nullable|string|max:2500',
+            'data_hora_execucao' => 'nullable|date',
+            'observacao_finalizacao' => 'nullable|string|max:2500',
+            'tecnico_responsavel' => 'nullable|string|max:120',
         ]);
 
-        $updated = ChamadoService::updateStatus(
-            $id,
-            $validated['status'],
-            $validated['tecnico_responsavel'] ?? null,
-            $validated['observacao'] ?? null
-        );
+        $statusAnterior = $chamado->status;
+        $novoStatus = $validated['status'];
 
-        if (!$updated) {
-            return back()->with('error', 'Não foi possível atualizar o chamado.');
+        $chamado->status = $novoStatus;
+        $chamado->tecnico_responsavel = $validated['tecnico_responsavel'] ?? $chamado->tecnico_responsavel;
+
+        if ($novoStatus === 'Finalizado') {
+            $chamado->conserto_executado = $validated['conserto_executado'] ?? $chamado->conserto_executado;
+            $chamado->data_hora_execucao = $validated['data_hora_execucao'] ? \Carbon\Carbon::parse($validated['data_hora_execucao']) : now();
+            $chamado->observacao_finalizacao = $validated['observacao_finalizacao'] ?? $chamado->observacao_finalizacao;
+
+            $chamado->adicionarHistorico(
+                "Chamado FINALIZADO pela FOCO. Conserto Executado: " . ($chamado->conserto_executado ?: 'Serviço concluído com êxito.') . " às " . $chamado->data_hora_execucao->format('d/m/Y H:i'),
+                auth()->user()?->name ?? 'FOCO Engenharia'
+            );
+        } else {
+            if ($statusAnterior !== $novoStatus) {
+                $chamado->adicionarHistorico(
+                    "Status alterado de {$statusAnterior} para {$novoStatus}.",
+                    auth()->user()?->name ?? 'FOCO Engenharia'
+                );
+            }
         }
 
-        return back()->with('success', "Status do chamado {$updated['protocolo']} atualizado para {$validated['status']}.");
+        $chamado->save();
+
+        return back()->with('success', "Chamado {$chamado->protocolo} atualizado com sucesso!");
     }
 
     /**
@@ -142,11 +174,7 @@ class ChamadoController extends Controller
      */
     public function imprimirOs(string $id)
     {
-        $chamado = ChamadoService::find($id);
-
-        if (!$chamado) {
-            return redirect()->route('admin.chamados.index')->with('error', 'Chamado não encontrado.');
-        }
+        $chamado = Chamado::findOrFail($id);
 
         return view('admin.chamados.os', compact('chamado'));
     }
@@ -156,7 +184,7 @@ class ChamadoController extends Controller
      */
     public function exportarCsv(): StreamedResponse
     {
-        $tickets = ChamadoService::all();
+        $tickets = Chamado::latest('data_hora_abertura')->get();
         $fileName = 'chamados-foco-sinalizacao-' . date('Y-m-d-His') . '.csv';
 
         $headers = [
@@ -173,37 +201,35 @@ class ChamadoController extends Controller
 
             fputcsv($handle, [
                 'Protocolo',
+                'Tipo',
                 'Status',
-                'Prioridade',
-                'Categoria',
-                'Município',
-                'Cruzamento / Localização',
-                'Título',
-                'Solicitante',
-                'Órgão',
-                'Telefone',
-                'E-mail',
-                'Equipamento',
+                'Nome Solicitante',
+                'Telefone Contato',
+                'Local',
+                'Defeito Relatado',
+                'Observação do Solicitante',
+                'Data/Hora Abertura',
+                'Conserto Executado (FOCO)',
+                'Data/Hora Execução',
+                'Observação Finalização',
                 'Técnico Responsável',
-                'Data Registro'
             ], ';');
 
             foreach ($tickets as $t) {
                 fputcsv($handle, [
-                    $t['protocolo'],
-                    $t['status'],
-                    $t['prioridade'],
-                    $t['categoria'],
-                    $t['municipio'],
-                    $t['localizacao'],
-                    $t['titulo'],
-                    $t['solicitante_nome'],
-                    $t['solicitante_orgao'],
-                    $t['solicitante_telefone'],
-                    $t['solicitante_email'],
-                    $t['equipamento_afetado'],
-                    $t['tecnico_responsavel'],
-                    $t['created_at'],
+                    $t->protocolo,
+                    $t->tipo,
+                    $t->status,
+                    $t->nome_solicitante,
+                    $t->telefone_contato,
+                    $t->local,
+                    $t->defeito,
+                    $t->observacao,
+                    $t->data_hora_abertura?->format('d/m/Y H:i:s'),
+                    $t->conserto_executado,
+                    $t->data_hora_execucao?->format('d/m/Y H:i:s'),
+                    $t->observacao_finalizacao,
+                    $t->tecnico_responsavel,
                 ], ';');
             }
 

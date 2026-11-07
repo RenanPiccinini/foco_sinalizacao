@@ -21,7 +21,7 @@
 <body class="bg-foco-navy-950 text-slate-100 font-sans antialiased selection:bg-foco-yellow-500 selection:text-foco-navy-950 overflow-x-hidden" x-data="{ sidebarOpen: false }">
 
     @php
-        $chamadosAbertosCount = count(array_filter(\App\Services\ChamadoService::all(), fn($t) => $t['status'] === 'Aberto'));
+        $chamadosAbertosCount = \App\Models\Chamado::where('status', 'Aberto')->count();
     @endphp
 
     <div class="min-h-screen flex">

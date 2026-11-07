@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Services\ChamadoService;
+use App\Models\Chamado;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -13,21 +13,24 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        $allTickets = ChamadoService::all();
+        $allTickets = Chamado::latest('data_hora_abertura')->get();
 
         $stats = [
-            'total_chamados' => count($allTickets),
-            'abertos' => count(array_filter($allTickets, fn($t) => $t['status'] === 'Aberto')),
-            'em_atendimento' => count(array_filter($allTickets, fn($t) => $t['status'] === 'Em Atendimento')),
-            'concluidos' => count(array_filter($allTickets, fn($t) => $t['status'] === 'Concluído')),
-            'criticos' => count(array_filter($allTickets, fn($t) => $t['prioridade'] === 'Crítica')),
+            'total_chamados' => $allTickets->count(),
+            'abertos' => $allTickets->where('status', 'Aberto')->count(),
+            'em_atendimento' => $allTickets->where('status', 'Em Atendimento')->count(),
+            'finalizados' => $allTickets->where('status', 'Finalizado')->count(),
+            'ap' => $allTickets->where('tipo', 'AP')->count(),
+            'fa' => $allTickets->where('tipo', 'FA')->count(),
+            'acidentes' => $allTickets->where('tipo', 'Acidente')->count(),
+            'vermelho_queimado' => $allTickets->where('tipo', 'Vermelho Queimado')->count(),
             'controladores_online' => 348,
             'eficiencia_onda_verde' => '94.2%',
             'uptime_nobreaks' => '99.98%',
             'municipios_ativos' => 25,
         ];
 
-        $recentes = array_slice($allTickets, 0, 5);
+        $recentes = $allTickets->take(5);
 
         $controladoresDestaque = [
             ['tag' => 'CTL-BC-01', 'local' => 'Av. Brasil x Alvin Bauer (BC - SC)', 'modo' => 'Adaptativo (IA)', 'status' => 'Online', 'bateria' => '98% LiFePO4', 'onda_verde' => 'Sincronizado'],

@@ -5,19 +5,24 @@
 @section('content')
 <div class="py-12 bg-foco-navy-950 relative overflow-hidden" x-data="{
     tab: '{{ $chamadoBuscado || $protocoloBusca ? 'consultar' : 'abrir' }}',
+    tipoSelecionado: 'AP',
+    horaAtual: '',
+    init() {
+        const atualizarHora = () => {
+            const agora = new Date();
+            this.horaAtual = agora.toLocaleDateString('pt-BR') + ' às ' + agora.toLocaleTimeString('pt-BR');
+        };
+        atualizarHora();
+        setInterval(atualizarHora, 1000);
+    },
     preencherTeste() {
-        document.getElementById('solicitante_nome').value = 'Inspetor Gabriel Ramos';
-        document.getElementById('solicitante_orgao').value = 'DTT - Guarda Municipal de Trânsito';
-        document.getElementById('solicitante_telefone').value = '(47) 99822-4411';
-        document.getElementById('solicitante_email').value = 'dtt.plantao@bctransito.sc.gov.br';
-        document.getElementById('municipio').value = 'Balneário Camboriú – SC';
-        document.getElementById('localizacao').value = 'Av. Atlântica x Rua 1500 (Praça Almirante Tamandaré)';
-        document.getElementById('ponto_referencia').value = 'Ao lado do posto de salvamento';
-        document.getElementById('categoria').value = 'Sinalização Semafórica';
-        document.getElementById('prioridade').value = 'Crítica';
-        document.getElementById('titulo').value = 'Semáforo veicular em amarelo piscante após oscilação de energia';
-        document.getElementById('descricao').value = 'O cruzamento com alto fluxo na orla entrou em modo amarelo piscante de emergência. Nobreak LiFePO4 sustentando a controladora, requer averiguação de placa de sincronismo.';
-        document.getElementById('equipamento_afetado').value = 'Controlador Digicon 4G + Grupo Focal LED';
+        this.tipoSelecionado = 'AP';
+        document.getElementById('tipo').value = 'AP';
+        document.getElementById('nome_solicitante').value = 'Inspetor Gabriel Ramos (DTT)';
+        document.getElementById('telefone_contato').value = '(51) 99294-1111';
+        document.getElementById('local').value = 'Av. Brasil cruzamento com Av. Alvin Bauer';
+        document.getElementById('defeito').value = 'Semáforo veicular operando em amarelo piscante (AP) após oscilação da concessionária de energia.';
+        document.getElementById('observacao').value = 'Tráfego intenso no sentido orla. Nobreak mantendo o controlador ativo, equipe de trânsito orientando motoristas.';
     }
 }">
 
@@ -36,9 +41,9 @@
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     </div>
                     <div>
-                        <h3 class="text-xl font-bold text-white">Chamado Registrado na Central Foco!</h3>
+                        <h3 class="text-xl font-bold text-white">Chamado Registrado na Central FOCO!</h3>
                         <p class="text-slate-300 text-sm mt-0.5">
-                            Protocolo Oficial: <strong class="text-foco-yellow-400 font-mono text-base">{{ session('novo_protocolo') ?? $protocoloBusca }}</strong>
+                            Protocolo Oficial Gerado: <strong class="text-foco-yellow-400 font-mono text-base">{{ session('novo_protocolo') ?? $protocoloBusca }}</strong>
                         </p>
                     </div>
                 </div>
@@ -61,7 +66,7 @@
                 Abertura e Acompanhamento de Chamados
             </h1>
             <p class="text-slate-400 mt-3 text-base">
-                Canal oficial para prefeituras, agentes de trânsito, concessionárias e cidadãos registrarem ocorrências semafóricas e solicitarem intervenções técnicas.
+                Canal direto e integrado para abertura de chamados técnicos semafóricos com registro automático de data e horário.
             </p>
         </div>
 
@@ -79,15 +84,15 @@
             </div>
         </div>
 
-        <!-- ABA 1: FORMULÁRIO DE ABERTURA DE CHAMADO -->
+        <!-- ABA 1: FORMULÁRIO DE ABERTURA DE CHAMADO (CONFORME REQUISITOS DO CLIENTE) -->
         <div x-show="tab === 'abrir'" x-transition class="max-w-4xl mx-auto">
             <div class="glass-panel p-6 sm:p-10 rounded-3xl border border-white/10 shadow-2xl relative">
                 
-                <!-- Botão de preenchimento rápido para demonstração -->
+                <!-- Topo do formulário com botão de preenchimento rápido -->
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 mb-6 border-b border-white/10 gap-3">
                     <div>
-                        <h2 class="text-xl font-bold text-white">Formulário de Notificação de Ocorrência</h2>
-                        <p class="text-xs text-slate-400">Preencha os dados do cruzamento para acionamento imediato da equipe.</p>
+                        <h2 class="text-xl font-bold text-white">Formulário de Abertura de Chamado</h2>
+                        <p class="text-xs text-slate-400">Preencha as informações da ocorrência. O sistema registrará automaticamente o horário de abertura.</p>
                     </div>
                     <button type="button" @click="preencherTeste()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-xs font-mono text-foco-yellow-400 border border-foco-yellow-500/30 transition self-start sm:self-auto">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
@@ -95,157 +100,140 @@
                     </button>
                 </div>
 
+                <!-- Notificação de Horário Automático -->
+                <div class="mb-6 p-4 rounded-2xl bg-foco-navy-900 border border-foco-yellow-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono">
+                    <div class="flex items-center gap-2.5 text-slate-300">
+                        <span class="w-2.5 h-2.5 rounded-full bg-foco-green-400 animate-ping shrink-0"></span>
+                        <span>Horário de Abertura Automático:</span>
+                        <strong class="text-foco-yellow-400 text-sm" x-text="horaAtual || '{{ now()->format('d/m/Y H:i:s') }}'"></strong>
+                    </div>
+                    <span class="text-slate-400 text-[11px]">Sincronizado com Nuvem Operacional FOCO</span>
+                </div>
+
                 <form action="{{ route('site.chamados.store') }}" method="POST" class="space-y-6">
                     @csrf
 
-                    <!-- Seção 1: Dados do Solicitante -->
-                    <div class="space-y-4">
-                        <h3 class="text-xs font-mono font-bold text-foco-yellow-400 uppercase tracking-wider flex items-center gap-2">
-                            <span class="w-1.5 h-1.5 rounded-full bg-foco-yellow-400"></span>
-                            1. Identificação do Solicitante / Órgão
-                        </h3>
+                    <!-- 1. TIPO DE CHAMADO (SELETOR VISUAL + SELECT) -->
+                    <div class="space-y-2">
+                        <label for="tipo" class="block text-xs font-mono font-bold text-foco-yellow-400 uppercase tracking-wider">
+                            1. Tipo de Chamado *
+                        </label>
+                        <p class="text-xs text-slate-400">Selecione o tipo de ocorrência detectada no cruzamento:</p>
 
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label for="solicitante_nome" class="block text-xs font-medium text-slate-300 mb-1">Nome Completo *</label>
-                                <input type="text" name="solicitante_nome" id="solicitante_nome" required placeholder="Ex: Inspetor Marcelo Vargas" class="w-full bg-foco-navy-900 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-foco-yellow-500 focus:ring-1 focus:ring-foco-yellow-500 transition">
-                            </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
+                            <!-- Opção AP -->
+                            <label class="cursor-pointer relative p-3 rounded-2xl border text-center transition flex flex-col items-center justify-center gap-1"
+                                :class="tipoSelecionado === 'AP' ? 'bg-amber-500/20 border-foco-yellow-500 text-white shadow-glow-yellow' : 'bg-foco-navy-900 border-white/10 text-slate-400 hover:border-white/30'">
+                                <input type="radio" name="tipo" value="AP" class="sr-only" x-model="tipoSelecionado" required>
+                                <span class="font-mono font-black text-lg text-amber-400">AP</span>
+                                <span class="text-[11px] font-medium leading-tight">Amarelo Piscante</span>
+                            </label>
 
-                            <div>
-                                <label for="solicitante_orgao" class="block text-xs font-medium text-slate-300 mb-1">Órgão / Empresa / Secretaria *</label>
-                                <input type="text" name="solicitante_orgao" id="solicitante_orgao" required placeholder="Ex: BC Trânsito / DTT / Pref. Balneário Camboriú" class="w-full bg-foco-navy-900 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-foco-yellow-500 focus:ring-1 focus:ring-foco-yellow-500 transition">
-                            </div>
+                            <!-- Opção FA -->
+                            <label class="cursor-pointer relative p-3 rounded-2xl border text-center transition flex flex-col items-center justify-center gap-1"
+                                :class="tipoSelecionado === 'FA' ? 'bg-cyan-500/20 border-cyan-400 text-white shadow-glow-blue' : 'bg-foco-navy-900 border-white/10 text-slate-400 hover:border-white/30'">
+                                <input type="radio" name="tipo" value="FA" class="sr-only" x-model="tipoSelecionado" required>
+                                <span class="font-mono font-black text-lg text-cyan-400">FA</span>
+                                <span class="text-[11px] font-medium leading-tight">Foco Apagado</span>
+                            </label>
 
-                            <div>
-                                <label for="solicitante_telefone" class="block text-xs font-medium text-slate-300 mb-1">Telefone / WhatsApp com DDD *</label>
-                                <input type="text" name="solicitante_telefone" id="solicitante_telefone" required placeholder="(47) 99000-0000" class="w-full bg-foco-navy-900 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-foco-yellow-500 focus:ring-1 focus:ring-foco-yellow-500 transition">
-                            </div>
+                            <!-- Opção Acidente -->
+                            <label class="cursor-pointer relative p-3 rounded-2xl border text-center transition flex flex-col items-center justify-center gap-1"
+                                :class="tipoSelecionado === 'Acidente' ? 'bg-rose-500/20 border-rose-400 text-white shadow-lg' : 'bg-foco-navy-900 border-white/10 text-slate-400 hover:border-white/30'">
+                                <input type="radio" name="tipo" value="Acidente" class="sr-only" x-model="tipoSelecionado" required>
+                                <span class="font-mono font-black text-lg text-rose-400">Acidente</span>
+                                <span class="text-[11px] font-medium leading-tight">Colisão / Dano Físico</span>
+                            </label>
 
-                            <div>
-                                <label for="solicitante_email" class="block text-xs font-medium text-slate-300 mb-1">E-mail para Acompanhamento *</label>
-                                <input type="email" name="solicitante_email" id="solicitante_email" required placeholder="operacoes@orgao.gov.br" class="w-full bg-foco-navy-900 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-foco-yellow-500 focus:ring-1 focus:ring-foco-yellow-500 transition">
-                            </div>
+                            <!-- Opção Vermelho Queimado -->
+                            <label class="cursor-pointer relative p-3 rounded-2xl border text-center transition flex flex-col items-center justify-center gap-1"
+                                :class="tipoSelecionado === 'Vermelho Queimado' ? 'bg-red-500/20 border-red-500 text-white shadow-lg' : 'bg-foco-navy-900 border-white/10 text-slate-400 hover:border-white/30'">
+                                <input type="radio" name="tipo" value="Vermelho Queimado" class="sr-only" x-model="tipoSelecionado" required>
+                                <span class="font-mono font-black text-lg text-red-400">Vermelho</span>
+                                <span class="text-[11px] font-medium leading-tight">Vermelho Queimado</span>
+                            </label>
                         </div>
+
+                        <!-- Fallback nativo para acessibilidade -->
+                        <div class="mt-2 hidden">
+                            <select id="tipo" name="tipo_hidden" x-model="tipoSelecionado" class="w-full bg-foco-navy-900 border border-white/10 rounded-xl px-4 py-2 text-sm text-white">
+                                <option value="AP">AP (Amarelo Piscante)</option>
+                                <option value="FA">FA (Foco Apagado)</option>
+                                <option value="Acidente">Acidente (Colisão / Dano Físico)</option>
+                                <option value="Vermelho Queimado">Vermelho Queimado</option>
+                            </select>
+                        </div>
+                        @error('tipo')
+                            <p class="text-rose-400 text-xs font-mono mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
-                    <!-- Seção 2: Localização da Ocorrência -->
-                    <div class="space-y-4 pt-4 border-t border-white/10">
-                        <h3 class="text-xs font-mono font-bold text-foco-green-400 uppercase tracking-wider flex items-center gap-2">
-                            <span class="w-1.5 h-1.5 rounded-full bg-foco-green-400"></span>
-                            2. Localização do Cruzamento / Rodovia
-                        </h3>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label for="municipio" class="block text-xs font-medium text-slate-300 mb-1">Município ou Rodovia *</label>
-                                <select name="municipio" id="municipio" required class="w-full bg-foco-navy-900 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:border-foco-yellow-500 focus:ring-1 focus:ring-foco-yellow-500 transition">
-                                    <optgroup label="Santa Catarina (SC)">
-                                        <option value="Balneário Camboriú – SC">Balneário Camboriú – SC</option>
-                                        <option value="Balneário Piçarras – SC">Balneário Piçarras – SC</option>
-                                    </optgroup>
-                                    <optgroup label="Rio Grande do Sul (RS)">
-                                        <option value="Campo Bom – RS">Campo Bom – RS</option>
-                                        <option value="Canoas – RS">Canoas – RS</option>
-                                        <option value="Entre-Ijuís – RS">Entre-Ijuís – RS</option>
-                                        <option value="Erechim – RS">Erechim – RS</option>
-                                        <option value="Guaíba – RS">Guaíba – RS</option>
-                                        <option value="Guaporé – RS">Guaporé – RS</option>
-                                        <option value="Ivoti – RS">Ivoti – RS</option>
-                                        <option value="Lajeado – RS">Lajeado – RS</option>
-                                        <option value="Nova Hartz – RS">Nova Hartz – RS</option>
-                                        <option value="Novo Hamburgo – RS">Novo Hamburgo – RS</option>
-                                        <option value="Palmeira das Missões – RS">Palmeira das Missões – RS</option>
-                                        <option value="Passo Fundo – RS">Passo Fundo – RS</option>
-                                        <option value="Portão – RS">Portão – RS</option>
-                                        <option value="Rosário do Sul – RS">Rosário do Sul – RS</option>
-                                        <option value="Santo Antônio da Patrulha – RS">Santo Antônio da Patrulha – RS</option>
-                                        <option value="Torres – RS">Torres – RS</option>
-                                        <option value="Tramandaí – RS">Tramandaí – RS</option>
-                                        <option value="Três Coroas – RS">Três Coroas – RS</option>
-                                        <option value="Viamão – RS">Viamão – RS</option>
-                                    </optgroup>
-                                    <optgroup label="Rodovias Federais">
-                                        <option value="Rodovia BR 101">Rodovia BR 101</option>
-                                        <option value="Rodovia BR 116">Rodovia BR 116</option>
-                                        <option value="Rodovia BR 153">Rodovia BR 153</option>
-                                        <option value="Rodovia BR 290">Rodovia BR 290</option>
-                                    </optgroup>
-                                    <optgroup label="Outras Regiões">
-                                        <option value="Outro Município / Trecho de Concessão">Outro Município / Trecho de Concessão</option>
-                                    </optgroup>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label for="prioridade" class="block text-xs font-medium text-slate-300 mb-1">Grau de Urgência / Prioridade *</label>
-                                <select name="prioridade" id="prioridade" required class="w-full bg-foco-navy-900 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:border-foco-yellow-500 focus:ring-1 focus:ring-foco-yellow-500 transition">
-                                    <option value="Crítica">🚨 Crítica (Semáforo Apagado / Risco Iminente de Acidente)</option>
-                                    <option value="Alta" selected>⚠️ Alta (Amarelo Piscante / Falha Nobreak / Avaria Física)</option>
-                                    <option value="Média">⏱️ Média (Descompasso de Onda Verde / Pedestre Inoperante)</option>
-                                    <option value="Baixa">📋 Baixa (Vistoria Preventiva / Solicitação de Alteração de Ciclo)</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label for="localizacao" class="block text-xs font-medium text-slate-300 mb-1">Endereço / Cruzamento das Vias *</label>
-                                <input type="text" name="localizacao" id="localizacao" required placeholder="Ex: Av. Brasil com Av. Alvin Bauer" class="w-full bg-foco-navy-900 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-foco-yellow-500 focus:ring-1 focus:ring-foco-yellow-500 transition">
-                            </div>
-
-                            <div>
-                                <label for="ponto_referencia" class="block text-xs font-medium text-slate-300 mb-1">Ponto de Referência / Sentido</label>
-                                <input type="text" name="ponto_referencia" id="ponto_referencia" placeholder="Ex: Em frente ao Shopping, sentido Centro-Bairro" class="w-full bg-foco-navy-900 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-foco-yellow-500 focus:ring-1 focus:ring-foco-yellow-500 transition">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Seção 3: Detalhes Técnicos da Ocorrência -->
-                    <div class="space-y-4 pt-4 border-t border-white/10">
-                        <h3 class="text-xs font-mono font-bold text-cyan-400 uppercase tracking-wider flex items-center gap-2">
-                            <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
-                            3. Detalhamento da Ocorrência
-                        </h3>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label for="categoria" class="block text-xs font-medium text-slate-300 mb-1">Categoria do Chamado *</label>
-                                <select name="categoria" id="categoria" required class="w-full bg-foco-navy-900 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:border-foco-yellow-500 focus:ring-1 focus:ring-foco-yellow-500 transition">
-                                    <option value="Sinalização Semafórica">Falha Semafórica (Apagado / Intermitente)</option>
-                                    <option value="Sincronismo & Engenharia de Tráfego">Sincronismo & Onda Verde</option>
-                                    <option value="Inteligência Semafórica & Visão Computacional">Câmeras ITS & Visão Computacional</option>
-                                    <option value="Resiliência Energética & Nobreak">Nobreak Senoidal & Bateria LiFePO4</option>
-                                    <option value="Infraestrutura Civil & Manutenção Física">Coluna Aço Galvanizado / Colisão Física</option>
-                                    <option value="Consultoria & Obras Temporárias em Rodovias">Sinalização Temporária em Rodovias</option>
-                                    <option value="Manutenção Preventiva & Microgeração">Manutenção Preventiva / Painéis Solares</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label for="equipamento_afetado" class="block text-xs font-medium text-slate-300 mb-1">Equipamento Afetado (Se conhecido)</label>
-                                <input type="text" name="equipamento_afetado" id="equipamento_afetado" placeholder="Ex: Controlador Digicon 4G, Lâmpada LED Vermelha, Sensor Virtual" class="w-full bg-foco-navy-900 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-foco-yellow-500 focus:ring-1 focus:ring-foco-yellow-500 transition">
-                            </div>
+                    <!-- 2. NOME SOLICITANTE E NÚMERO PARA CONTATO -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-white/10">
+                        <div>
+                            <label for="nome_solicitante" class="block text-xs font-mono font-bold text-slate-300 mb-1">
+                                Nome Solicitante *
+                            </label>
+                            <input type="text" name="nome_solicitante" id="nome_solicitante" required value="{{ old('nome_solicitante') }}" placeholder="Ex: Inspetor Marcelo Vargas / Guarda Municipal" class="w-full bg-foco-navy-900 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-foco-yellow-500 focus:ring-1 focus:ring-foco-yellow-500 transition">
+                            @error('nome_solicitante')
+                                <p class="text-rose-400 text-xs font-mono mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div>
-                            <label for="titulo" class="block text-xs font-medium text-slate-300 mb-1">Assunto / Título Resumido da Ocorrência *</label>
-                            <input type="text" name="titulo" id="titulo" required placeholder="Ex: Semáforo Veicular apagado na via expressa sentido norte" class="w-full bg-foco-navy-900 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-foco-yellow-500 focus:ring-1 focus:ring-foco-yellow-500 transition">
+                            <label for="telefone_contato" class="block text-xs font-mono font-bold text-slate-300 mb-1">
+                                Número para Contato (WhatsApp) *
+                            </label>
+                            <input type="text" name="telefone_contato" id="telefone_contato" required value="{{ old('telefone_contato') }}" placeholder="(51) 99999-9999" class="w-full bg-foco-navy-900 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-foco-yellow-500 focus:ring-1 focus:ring-foco-yellow-500 transition">
+                            @error('telefone_contato')
+                                <p class="text-rose-400 text-xs font-mono mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
+                    </div>
 
-                        <div>
-                            <label for="descricao" class="block text-xs font-medium text-slate-300 mb-1">Descrição Completa da Falha / Ocorrência *</label>
-                            <textarea name="descricao" id="descricao" rows="4" required placeholder="Descreva os sintomas observados, horários de falha, se há retenção de tráfego ou intervenção manual da polícia/guarda." class="w-full bg-foco-navy-900 border border-white/10 rounded-xl p-4 text-sm text-white placeholder-slate-500 focus:border-foco-yellow-500 focus:ring-1 focus:ring-foco-yellow-500 transition"></textarea>
-                        </div>
+                    <!-- 3. LOCAL -->
+                    <div class="pt-4 border-t border-white/10">
+                        <label for="local" class="block text-xs font-mono font-bold text-slate-300 mb-1">
+                            Local (Cruzamento, Rua, Avenida ou Rodovia) *
+                        </label>
+                        <input type="text" name="local" id="local" required value="{{ old('local') }}" placeholder="Ex: Av. Brasil cruzamento com Rua 1500 / Centro / Ponto de referência" class="w-full bg-foco-navy-900 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-foco-yellow-500 focus:ring-1 focus:ring-foco-yellow-500 transition">
+                        @error('local')
+                            <p class="text-rose-400 text-xs font-mono mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- 4. DEFEITO -->
+                    <div class="pt-4 border-t border-white/10">
+                        <label for="defeito" class="block text-xs font-mono font-bold text-slate-300 mb-1">
+                            Defeito Observado *
+                        </label>
+                        <textarea name="defeito" id="defeito" rows="3" required placeholder="Descreva com detalhes o defeito apresentado (ex: foco veicular em amarelo piscante, grupo vermelho queimado no sentido sul, controlador sem sincronismo, etc.)" class="w-full bg-foco-navy-900 border border-white/10 rounded-xl p-4 text-sm text-white placeholder-slate-500 focus:border-foco-yellow-500 focus:ring-1 focus:ring-foco-yellow-500 transition">{{ old('defeito') }}</textarea>
+                        @error('defeito')
+                            <p class="text-rose-400 text-xs font-mono mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- 5. OBSERVAÇÃO -->
+                    <div class="pt-4 border-t border-white/10">
+                        <label for="observacao" class="block text-xs font-mono font-bold text-slate-300 mb-1">
+                            Observação (Opcional)
+                        </label>
+                        <textarea name="observacao" id="observacao" rows="2" placeholder="Informações adicionais relevantes: se há viatura no local, interferência no trânsito, risco iminente ou referência de acesso." class="w-full bg-foco-navy-900 border border-white/10 rounded-xl p-4 text-sm text-white placeholder-slate-500 focus:border-foco-yellow-500 focus:ring-1 focus:ring-foco-yellow-500 transition">{{ old('observacao') }}</textarea>
+                        @error('observacao')
+                            <p class="text-rose-400 text-xs font-mono mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <!-- Botão de Envio do Chamado -->
-                    <div class="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-white/10">
-                        <div class="flex items-center gap-2 text-xs text-slate-400">
+                    <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-white/10">
+                        <div class="flex items-center gap-2 text-xs text-slate-400 font-mono">
                             <span class="w-2 h-2 rounded-full bg-foco-green-400"></span>
-                            <span>Ao enviar, um código de protocolo inviolável será gerado.</span>
+                            <span>Horário de abertura capturado automaticamente no envio.</span>
                         </div>
 
                         <button type="submit" class="w-full sm:w-auto px-8 py-4 rounded-xl font-black text-sm uppercase tracking-wider bg-gradient-to-r from-foco-yellow-500 to-amber-500 text-foco-navy-950 shadow-glow-yellow hover:from-foco-yellow-400 hover:to-amber-400 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2">
                             <svg class="w-5 h-5 text-foco-navy-950" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
-                            <span>Registrar Chamado na Central Foco</span>
+                            <span>Registrar Chamado na FOCO</span>
                         </button>
                     </div>
                 </form>
@@ -254,7 +242,7 @@
 
         <!-- ABA 2: CONSULTA POR PROTOCOLO E TRACKING VISUAL -->
         <div id="consulta" x-show="tab === 'consultar'" x-transition class="max-w-4xl mx-auto space-y-8">
-            <!-- Barra de Busca -->
+            <!-- Barra de Busca por Protocolo -->
             <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-white/10 shadow-2xl">
                 <form action="{{ route('site.chamados') }}" method="GET" class="flex flex-col sm:flex-row gap-3">
                     <div class="relative flex-grow">
@@ -273,72 +261,129 @@
                 <!-- Cabeçalho do Chamado -->
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-white/10 gap-4">
                     <div>
-                        <div class="flex items-center gap-3">
-                            <span class="text-2xl font-black font-mono text-foco-yellow-400">{{ $chamadoBuscado['protocolo'] }}</span>
-                            <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider {{ $chamadoBuscado['status'] === 'Aberto' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : ($chamadoBuscado['status'] === 'Em Atendimento' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30') }}">
-                                {{ $chamadoBuscado['status'] }}
+                        <div class="flex items-center gap-3 flex-wrap">
+                            <span class="text-2xl sm:text-3xl font-black font-mono text-foco-yellow-400">{{ $chamadoBuscado->protocolo }}</span>
+                            <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider {{ $chamadoBuscado->tipo_badge_class }}">
+                                Tipo: {{ $chamadoBuscado->tipo }}
+                            </span>
+                            <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider {{ $chamadoBuscado->status_badge_class }}">
+                                {{ $chamadoBuscado->status }}
                             </span>
                         </div>
-                        <h2 class="text-xl font-bold text-white mt-2">{{ $chamadoBuscado['titulo'] }}</h2>
-                        <p class="text-xs text-slate-400 font-mono mt-1">Registrado em {{ $chamadoBuscado['created_at'] }} • Categoria: {{ $chamadoBuscado['categoria'] }}</p>
+                        <p class="text-xs text-slate-400 font-mono mt-2">
+                            Aberto em: <strong class="text-white">{{ $chamadoBuscado->data_hora_abertura ? $chamadoBuscado->data_hora_abertura->format('d/m/Y H:i') : $chamadoBuscado->created_at->format('d/m/Y H:i') }}</strong>
+                        </p>
                     </div>
 
-                    <div class="p-3 rounded-2xl bg-foco-navy-900 border border-white/10 text-xs text-right font-mono">
-                        <span class="text-slate-400 block">SLA Previsto:</span>
-                        <strong class="text-foco-green-400 block text-sm">{{ $chamadoBuscado['sla_estimado'] }}</strong>
+                    <div class="p-3 rounded-2xl bg-foco-navy-900 border border-white/10 text-xs sm:text-right font-mono">
+                        <span class="text-slate-400 block">Solicitante:</span>
+                        <strong class="text-slate-200 block text-sm">{{ $chamadoBuscado->nome_solicitante }}</strong>
+                        <span class="text-slate-400 text-[11px]">{{ $chamadoBuscado->telefone_contato }}</span>
                     </div>
                 </div>
 
-                <!-- Timeline Gráfica Passo a Passo -->
+                <!-- Timeline de Status Operacional -->
                 <div>
                     <h4 class="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider mb-4">Progresso Operacional</h4>
-                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 text-center">
-                        <div class="p-3 rounded-xl bg-foco-green-500/10 border border-foco-green-500/30 text-foco-green-400 text-xs font-bold">
-                            ✓ 1. Registrado
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center text-xs font-mono">
+                        <div class="p-3 rounded-xl bg-foco-green-500/10 border border-foco-green-500/30 text-foco-green-400 font-bold">
+                            ✓ 1. Aberto / Registrado
                         </div>
-                        <div class="p-3 rounded-xl {{ in_array($chamadoBuscado['status'], ['Em Atendimento', 'Concluído']) ? 'bg-foco-green-500/10 border border-foco-green-500/30 text-foco-green-400 font-bold' : 'bg-white/5 border border-white/10 text-slate-500' }} text-xs">
-                            2. Triagem Nuvem Digicon
+                        <div class="p-3 rounded-xl {{ in_array($chamadoBuscado->status, ['Em Atendimento', 'Finalizado']) ? 'bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-bold' : 'bg-white/5 border border-white/10 text-slate-500' }}">
+                            2. Em Atendimento
                         </div>
-                        <div class="p-3 rounded-xl {{ in_array($chamadoBuscado['status'], ['Em Atendimento', 'Concluído']) ? 'bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-bold' : 'bg-white/5 border border-white/10 text-slate-500' }} text-xs">
-                            3. Equipe Despachada
-                        </div>
-                        <div class="p-3 rounded-xl {{ $chamadoBuscado['status'] === 'Concluído' ? 'bg-foco-green-500/10 border border-foco-green-500/30 text-foco-green-400 font-bold' : 'bg-white/5 border border-white/10 text-slate-500' }} text-xs">
-                            4. Concluído & Testado
+                        <div class="p-3 rounded-xl {{ $chamadoBuscado->status === 'Finalizado' ? 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold' : 'bg-white/5 border border-white/10 text-slate-500' }}">
+                            3. Finalizado pela FOCO
                         </div>
                     </div>
                 </div>
 
-                <!-- Detalhes do Local e Descrição -->
+                <!-- Detalhes do Local e Defeito -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-mono">
                     <div class="p-4 rounded-2xl bg-foco-navy-900 border border-white/10 space-y-2">
-                        <span class="text-slate-400 block uppercase font-bold">Dados do Cruzamento:</span>
-                        <p class="text-slate-200"><strong class="text-white">Local:</strong> {{ $chamadoBuscado['localizacao'] }}</p>
-                        <p class="text-slate-200"><strong class="text-white">Município:</strong> {{ $chamadoBuscado['municipio'] }}</p>
-                        <p class="text-slate-200"><strong class="text-white">Ponto Ref.:</strong> {{ $chamadoBuscado['ponto_referencia'] ?: 'Não especificado' }}</p>
-                        <p class="text-slate-200"><strong class="text-white">Equipamento:</strong> {{ $chamadoBuscado['equipamento_afetado'] }}</p>
+                        <span class="text-slate-400 block uppercase font-bold text-[11px]">Local da Ocorrência:</span>
+                        <p class="text-slate-200 text-sm font-sans font-semibold">{{ $chamadoBuscado->local }}</p>
                     </div>
 
                     <div class="p-4 rounded-2xl bg-foco-navy-900 border border-white/10 space-y-2">
-                        <span class="text-slate-400 block uppercase font-bold">Atribuição Técnica:</span>
-                        <p class="text-slate-200"><strong class="text-white">Técnico/Equipe:</strong> {{ $chamadoBuscado['tecnico_responsavel'] }}</p>
-                        <p class="text-slate-200"><strong class="text-white">Solicitante:</strong> {{ $chamadoBuscado['solicitante_nome'] }}</p>
-                        <p class="text-slate-200"><strong class="text-white">Órgão:</strong> {{ $chamadoBuscado['solicitante_orgao'] }}</p>
-                        <p class="text-slate-200"><strong class="text-white">Prioridade:</strong> <span class="text-rose-400">{{ $chamadoBuscado['prioridade'] }}</span></p>
+                        <span class="text-slate-400 block uppercase font-bold text-[11px]">Contato & Atribuição:</span>
+                        <p class="text-slate-200"><strong class="text-white">Solicitante:</strong> {{ $chamadoBuscado->nome_solicitante }}</p>
+                        <p class="text-slate-200"><strong class="text-white">Telefone:</strong> {{ $chamadoBuscado->telefone_contato }}</p>
+                        @if($chamadoBuscado->tecnico_responsavel)
+                        <p class="text-slate-200"><strong class="text-white">Técnico Responsável:</strong> {{ $chamadoBuscado->tecnico_responsavel }}</p>
+                        @endif
                     </div>
                 </div>
 
-                <!-- Descrição -->
+                <!-- Defeito Relatado -->
                 <div class="p-4 rounded-2xl bg-foco-navy-900/60 border border-white/10 text-sm">
-                    <span class="text-xs font-mono text-slate-400 block uppercase font-bold mb-1">Descrição da Ocorrência:</span>
-                    <p class="text-slate-200 leading-relaxed">{{ $chamadoBuscado['descricao'] }}</p>
+                    <span class="text-xs font-mono text-slate-400 block uppercase font-bold mb-1">Defeito Informado:</span>
+                    <p class="text-slate-200 leading-relaxed">{{ $chamadoBuscado->defeito }}</p>
                 </div>
 
-                <!-- Histórico de Eventos -->
-                @if(!empty($chamadoBuscado['historico']))
+                <!-- Observação do Solicitante -->
+                @if($chamadoBuscado->observacao)
+                <div class="p-4 rounded-2xl bg-foco-navy-900/40 border border-white/5 text-sm">
+                    <span class="text-xs font-mono text-slate-400 block uppercase font-bold mb-1">Observações do Solicitante:</span>
+                    <p class="text-slate-300 leading-relaxed">{{ $chamadoBuscado->observacao }}</p>
+                </div>
+                @endif
+
+                <!-- ======================================================== -->
+                <!-- DESTAQUE: QUANDO A FOCO FINALIZAR INFORMAÇÃO COMPLETA     -->
+                <!-- ======================================================== -->
+                @if($chamadoBuscado->status === 'Finalizado')
+                <div class="p-6 rounded-3xl bg-gradient-to-br from-emerald-950/60 via-foco-navy-900 to-foco-navy-950 border-2 border-emerald-500/50 shadow-2xl space-y-4">
+                    <div class="flex items-center justify-between pb-3 border-b border-emerald-500/20">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-3 h-3 rounded-full bg-emerald-400"></span>
+                            <h3 class="text-lg font-black text-emerald-400">Finalização do Chamado pela Equipe FOCO</h3>
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-xs font-bold font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 uppercase">
+                            Serviço Concluído
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-mono">
+                        <div class="p-3.5 rounded-xl bg-black/30 border border-white/5">
+                            <span class="text-emerald-400 font-bold block uppercase text-[11px] mb-1">Horário de Execução:</span>
+                            <p class="text-white text-sm font-semibold">
+                                {{ $chamadoBuscado->data_hora_execucao ? $chamadoBuscado->data_hora_execucao->format('d/m/Y H:i') : 'Registrado pela central' }}
+                            </p>
+                        </div>
+
+                        <div class="p-3.5 rounded-xl bg-black/30 border border-white/5">
+                            <span class="text-emerald-400 font-bold block uppercase text-[11px] mb-1">Técnico Responsável:</span>
+                            <p class="text-white text-sm font-semibold">
+                                {{ $chamadoBuscado->tecnico_responsavel ?: 'Equipe Técnica FOCO' }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1">
+                        <span class="text-emerald-400 font-mono font-bold block uppercase text-xs">Conserto Executado:</span>
+                        <div class="p-4 rounded-2xl bg-black/40 border border-white/10 text-sm text-slate-100 leading-relaxed font-sans">
+                            {{ $chamadoBuscado->conserto_executado ?: 'Conserto e calibração concluídos conforme normas técnicas viárias.' }}
+                        </div>
+                    </div>
+
+                    @if($chamadoBuscado->observacao_finalizacao)
+                    <div class="space-y-1">
+                        <span class="text-slate-400 font-mono font-bold block uppercase text-xs">Observação Técnica da Finalização:</span>
+                        <div class="p-4 rounded-2xl bg-black/20 border border-white/5 text-xs text-slate-300 leading-relaxed font-mono">
+                            {{ $chamadoBuscado->observacao_finalizacao }}
+                        </div>
+                    </div>
+                    @endif
+                </div>
+                @endif
+
+                <!-- Histórico de Eventos / Trilha de Auditoria -->
+                @if(!empty($chamadoBuscado->historico))
                 <div class="pt-4 border-t border-white/10">
                     <h4 class="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider mb-3">Linha do Tempo de Atualizações</h4>
                     <div class="space-y-2 font-mono text-xs">
-                        @foreach($chamadoBuscado['historico'] as $hist)
+                        @foreach($chamadoBuscado->historico as $hist)
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-3 p-2.5 rounded-lg bg-white/5 border border-white/5">
                             <div class="flex items-start gap-2">
                                 <span class="text-foco-yellow-400 shrink-0 font-bold">{{ $hist['data'] }}</span>
@@ -354,44 +399,51 @@
             @elseif($protocoloBusca)
             <div class="p-8 rounded-3xl bg-rose-500/10 border border-rose-500/30 text-center">
                 <p class="text-rose-400 font-bold text-lg">Protocolo "{{ $protocoloBusca }}" não foi localizado.</p>
-                <p class="text-xs text-slate-400 mt-1">Verifique a digitação ou consulte a lista de chamados abaixo.</p>
+                <p class="text-xs text-slate-400 mt-1">Verifique o código ou consulte a lista abaixo.</p>
             </div>
             @endif
 
-            <!-- Lista de Todos os Chamados Registrados na Tela (Dados Fakes) -->
+            <!-- Lista de Chamados Registrados -->
             <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-white/10">
                 <div class="flex items-center justify-between mb-6">
                     <div>
                         <h3 class="text-lg font-bold text-white">Todos os Chamados Registrados no Portal</h3>
-                        <p class="text-xs text-slate-400">Dados simulados e ocorrências recentes na rede da Foco Sinalização.</p>
+                        <p class="text-xs text-slate-400">Ocorrências registradas na central FOCO.</p>
                     </div>
                     <span class="text-xs font-mono px-3 py-1 rounded-full bg-white/5 text-slate-300 border border-white/10">
-                        {{ count($todosChamados) }} Chamados Cadastrados
+                        {{ $todosChamados->count() }} Chamados Cadastrados
                     </span>
                 </div>
 
                 <div class="space-y-3">
-                    @foreach($todosChamados as $item)
+                    @forelse($todosChamados as $item)
                     <div class="p-4 rounded-2xl bg-foco-navy-900 border border-white/5 hover:border-foco-yellow-500/40 transition flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div class="space-y-1">
-                            <div class="flex items-center gap-2">
-                                <span class="font-mono font-bold text-foco-yellow-400 text-sm">{{ $item['protocolo'] }}</span>
-                                <span class="px-2 py-0.5 rounded text-[10px] font-bold {{ $item['status'] === 'Aberto' ? 'bg-amber-500/20 text-amber-300' : ($item['status'] === 'Em Atendimento' ? 'bg-cyan-500/20 text-cyan-300' : 'bg-emerald-500/20 text-emerald-300') }}">
-                                    {{ $item['status'] }}
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="font-mono font-bold text-foco-yellow-400 text-sm">{{ $item->protocolo }}</span>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold {{ $item->tipo_badge_class }}">
+                                    {{ $item->tipo }}
                                 </span>
-                                <span class="text-xs text-slate-500 font-mono">• {{ $item['created_at'] }}</span>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold {{ $item->status_badge_class }}">
+                                    {{ $item->status }}
+                                </span>
+                                <span class="text-xs text-slate-500 font-mono">• {{ $item->data_hora_abertura ? $item->data_hora_abertura->format('d/m/Y H:i') : $item->created_at->format('d/m/Y H:i') }}</span>
                             </div>
-                            <h4 class="text-sm font-semibold text-white">{{ $item['titulo'] }}</h4>
-                            <p class="text-xs text-slate-400">{{ $item['municipio'] }} — {{ $item['localizacao'] }}</p>
+                            <h4 class="text-sm font-semibold text-white">{{ $item->defeito }}</h4>
+                            <p class="text-xs text-slate-400">{{ $item->local }} • Solicitante: {{ $item->nome_solicitante }}</p>
                         </div>
 
                         <div class="flex items-center gap-2 self-start sm:self-auto shrink-0">
-                            <a href="{{ route('site.chamados', ['protocolo' => $item['protocolo']]) }}#consulta" class="px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold bg-white/5 hover:bg-foco-yellow-500 hover:text-foco-navy-950 text-slate-300 transition">
+                            <a href="{{ route('site.chamados', ['protocolo' => $item->protocolo]) }}#consulta" class="px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold bg-white/5 hover:bg-foco-yellow-500 hover:text-foco-navy-950 text-slate-300 transition">
                                 Ver Detalhes →
                             </a>
                         </div>
                     </div>
-                    @endforeach
+                    @empty
+                    <div class="py-8 text-center text-slate-400">
+                        Nenhum chamado registrado no momento.
+                    </div>
+                    @endforelse
                 </div>
             </div>
         </div>
@@ -399,4 +451,3 @@
     </div>
 </div>
 @endsection
-

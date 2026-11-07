@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Ordem de Serviço {{ $chamado['protocolo'] }} | Foco Sinalização</title>
+    <title>Ordem de Serviço {{ $chamado->protocolo }} | Foco Sinalização</title>
     <link rel="icon" type="image/jpeg" href="{{ asset('images/logo-banner.jpg') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -45,8 +45,7 @@
             font-size: 11px;
             text-transform: uppercase;
         }
-        .badge-critica { background: #fee2e2; color: #991b1b; border: 1px solid #f87171; }
-        .badge-alta { background: #fef3c7; color: #92400e; border: 1px solid #fbbf24; }
+        .badge-tipo { background: #fef3c7; color: #92400e; border: 1px solid #fbbf24; }
         .badge-status { background: #e0f2fe; color: #0369a1; border: 1px solid #38bdf8; }
         .section-title {
             background: #0f2752;
@@ -133,7 +132,7 @@
     <div class="no-print">
         <div>
             <strong>Ordem de Serviço Pronta para Impressão</strong>
-            <span style="color: #64748b; margin-left: 10px;">Protocolo: {{ $chamado['protocolo'] }}</span>
+            <span style="color: #64748b; margin-left: 10px;">Protocolo: {{ $chamado->protocolo }}</span>
         </div>
         <div style="display: flex; gap: 10px;">
             <button onclick="window.print()" class="btn">🖨️ Imprimir Ordem de Serviço</button>
@@ -150,98 +149,110 @@
             </div>
         </div>
         <div style="text-align: right;">
-            <div class="mono" style="font-size: 16px; font-weight: 800; color: #0f2752;">O.S. {{ $chamado['protocolo'] }}</div>
-            <div style="font-size: 10px; color: #64748b; margin-top: 2px;">Data/Hora: {{ $chamado['created_at'] }}</div>
+            <div class="mono" style="font-size: 16px; font-weight: 800; color: #0f2752;">O.S. {{ $chamado->protocolo }}</div>
+            <div style="font-size: 10px; color: #64748b; margin-top: 2px;">
+                Abertura: {{ $chamado->data_hora_abertura ? $chamado->data_hora_abertura->format('d/m/Y H:i') : $chamado->created_at->format('d/m/Y H:i') }}
+            </div>
             <div style="margin-top: 4px;">
-                <span class="badge {{ $chamado['prioridade'] === 'Crítica' ? 'badge-critica' : 'badge-alta' }}">{{ $chamado['prioridade'] }}</span>
-                <span class="badge badge-status">{{ $chamado['status'] }}</span>
+                <span class="badge badge-tipo">TIPO: {{ $chamado->tipo }}</span>
+                <span class="badge badge-status">{{ $chamado->status }}</span>
             </div>
         </div>
     </div>
 
-    <!-- 1. Dados do Chamado e Solicitante -->
-    <div class="section-title">1. Dados do Solicitante & Órgão Público</div>
+    <!-- 1. Dados do Solicitante -->
+    <div class="section-title">1. Dados do Solicitante & Contato</div>
     <table>
         <tr>
-            <th width="20%">Solicitante:</th>
-            <td width="30%"><strong>{{ $chamado['solicitante_nome'] }}</strong></td>
-            <th width="20%">Órgão / Entidade:</th>
-            <td width="30%">{{ $chamado['solicitante_orgao'] }}</td>
+            <th width="20%">Nome Solicitante:</th>
+            <td width="30%"><strong>{{ $chamado->nome_solicitante }}</strong></td>
+            <th width="20%">Número para Contato:</th>
+            <td width="30%">{{ $chamado->telefone_contato }}</td>
         </tr>
         <tr>
-            <th>Telefone / WhatsApp:</th>
-            <td>{{ $chamado['solicitante_telefone'] ?: 'Não informado' }}</td>
-            <th>E-mail Corporativo:</th>
-            <td>{{ $chamado['solicitante_email'] ?: 'Não informado' }}</td>
+            <th>Horário Abertura (Automático):</th>
+            <td>{{ $chamado->data_hora_abertura ? $chamado->data_hora_abertura->format('d/m/Y H:i:s') : $chamado->created_at->format('d/m/Y H:i:s') }}</td>
+            <th>Técnico Responsável:</th>
+            <td>{{ $chamado->tecnico_responsavel ?: 'Equipe Técnica FOCO' }}</td>
         </tr>
     </table>
 
-    <!-- 2. Localização e Cruzamento -->
-    <div class="section-title">2. Localização Viária & Ativos Afetados</div>
+    <!-- 2. Localização e Defeito -->
+    <div class="section-title">2. Localização & Ocorrência Reportada</div>
     <table>
         <tr>
-            <th width="20%">Município / Trecho:</th>
-            <td width="30%"><strong>{{ $chamado['municipio'] }}</strong></td>
-            <th width="20%">Categoria:</th>
-            <td width="30%">{{ $chamado['categoria'] }}</td>
+            <th width="20%">Tipo de Chamado:</th>
+            <td width="30%"><strong>{{ $chamado->tipo }}</strong></td>
+            <th width="20%">Status Atual:</th>
+            <td width="30%">{{ $chamado->status }}</td>
         </tr>
         <tr>
-            <th>Cruzamento / Endereço:</th>
-            <td><strong>{{ $chamado['localizacao'] }}</strong></td>
-            <th>Ponto de Referência:</th>
-            <td>{{ $chamado['ponto_referencia'] ?: 'N/A' }}</td>
-        </tr>
-        <tr>
-            <th>Equipamento Afetado:</th>
-            <td colspan="3">{{ $chamado['equipamento_afetado'] ?: 'Controlador Semafórico / Grupo Focal LED' }}</td>
+            <th>Local:</th>
+            <td colspan="3"><strong>{{ $chamado->local }}</strong></td>
         </tr>
     </table>
 
-    <!-- 3. Descrição da Ocorrência -->
-    <div class="section-title">3. Descrição do Problema Relatado</div>
-    <div style="border: 1px solid #cbd5e1; padding: 10px; background: #fafafa; border-radius: 4px; font-size: 11px;">
-        <strong style="color: #0f2752;">{{ $chamado['titulo'] }}</strong>
-        <p style="margin: 6px 0 0 0; color: #334155;">{{ $chamado['descricao'] }}</p>
+    <!-- 3. Defeito e Observação -->
+    <div class="section-title">3. Detalhamento do Defeito e Observação do Solicitante</div>
+    <div style="border: 1px solid #cbd5e1; padding: 10px; background: #fafafa; border-radius: 4px; font-size: 11px; margin-bottom: 8px;">
+        <strong style="color: #0f2752;">Defeito:</strong>
+        <p style="margin: 4px 0 0 0; color: #334155;">{{ $chamado->defeito }}</p>
     </div>
+    @if($chamado->observacao)
+    <div style="border: 1px solid #cbd5e1; padding: 8px 10px; background: #fafafa; border-radius: 4px; font-size: 11px;">
+        <strong style="color: #0f2752;">Observação:</strong>
+        <p style="margin: 4px 0 0 0; color: #475569;">{{ $chamado->observacao }}</p>
+    </div>
+    @endif
 
-    <!-- 4. Checklist de Intervenção Técnica em Campo -->
-    <div class="section-title">4. Checklist de Execução & Conformidade Técnica (Normas CONTRAN/DNIT)</div>
+    <!-- 4. Finalização FOCO (Quando Finalizado ou em Campo) -->
+    <div class="section-title">4. Laudo de Execução FOCO (Conserto & Horário)</div>
+    <table>
+        <tr>
+            <th width="25%">Horário Execução:</th>
+            <td width="75%">
+                {{ $chamado->data_hora_execucao ? $chamado->data_hora_execucao->format('d/m/Y H:i') : '___/___/______ às ___:___' }}
+            </td>
+        </tr>
+        <tr>
+            <th>Conserto Executado:</th>
+            <td>
+                {{ $chamado->conserto_executado ?: '____________________________________________________________________________________' }}
+            </td>
+        </tr>
+        <tr>
+            <th>Observação Finalização:</th>
+            <td>
+                {{ $chamado->observacao_finalizacao ?: '____________________________________________________________________________________' }}
+            </td>
+        </tr>
+    </table>
+
+    <!-- 5. Checklist de Verificação Semafórica -->
+    <div class="section-title">5. Checklist de Verificação Semafórica em Campo</div>
     <div style="border: 1px solid #cbd5e1; padding: 8px 12px; background: #fff;">
-        <div class="checklist-item"><span class="checkbox-box"></span> Medição de Tensão e Estabilidade da Rede Elétrica Concessionária (Vac)</div>
-        <div class="checklist-item"><span class="checkbox-box"></span> Teste do Nobreak Senoidal Puro Foco & Bypass Automático</div>
-        <div class="checklist-item"><span class="checkbox-box"></span> Verificação de Carga e Ciclo do Banco de Baterias de Lítio LiFePO4</div>
-        <div class="checklist-item"><span class="checkbox-box"></span> Inspeção dos Eletrodutos PEAD Subterrâneos e Caixas de Passagem</div>
-        <div class="checklist-item"><span class="checkbox-box"></span> Integridade da Coluna e Braço Projetado em Aço Galvanizado</div>
-        <div class="checklist-item"><span class="checkbox-box"></span> Calibração Óptica e Limpeza dos Grupos Focais Veiculares/Pedestres LED</div>
-        <div class="checklist-item"><span class="checkbox-box"></span> Ajuste de Sensibilidade dos Laços Virtuais / Câmeras HD de Visão Computacional</div>
-        <div class="checklist-item"><span class="checkbox-box"></span> Sincronismo da Onda Verde e Teste de Comunicação 4G com Central WEB DIGICON</div>
-    </div>
-
-    <!-- 5. Relatório do Técnico em Campo -->
-    <div class="section-title">5. Laudo do Técnico em Campo & Peças Substituídas</div>
-    <div style="border: 1px solid #cbd5e1; min-height: 60px; padding: 8px; font-size: 10px; color: #475569;">
-        Técnico Responsável Designado: <strong>{{ $chamado['tecnico_responsavel'] }}</strong><br>
-        SLA de Atendimento Estimado: <strong>{{ $chamado['sla_estimado'] }}</strong>
-        <div style="margin-top: 15px; border-bottom: 1px dotted #cbd5e1;"></div>
-        <div style="margin-top: 15px; border-bottom: 1px dotted #cbd5e1;"></div>
+        <div class="checklist-item"><span class="checkbox-box"></span> Tensão e alimentação elétrica do controlador</div>
+        <div class="checklist-item"><span class="checkbox-box"></span> Teste do Nobreak Senoidal Puro e Banco de Baterias</div>
+        <div class="checklist-item"><span class="checkbox-box"></span> Verificação física de colunas, cabos e grupos focais LED</div>
+        <div class="checklist-item"><span class="checkbox-box"></span> Sincronismo da onda verde e comunicação remota</div>
+        <div class="checklist-item"><span class="checkbox-box"></span> Teste do ciclo veicular e botoeiras de pedestres</div>
     </div>
 
     <!-- 6. Assinaturas -->
     <div class="signatures">
         <div class="sign-block">
-            <strong>{{ $chamado['tecnico_responsavel'] }}</strong><br>
-            Técnico / Engenheiro Responsável Foco
+            <strong>{{ $chamado->tecnico_responsavel ?: 'Técnico Responsável' }}</strong><br>
+            Equipe Técnica FOCO Sinalização
         </div>
         <div class="sign-block">
-            <strong>Fiscal do Município / Agente DTT</strong><br>
-            Recebido e Testado em Conformidade
+            <strong>{{ $chamado->nome_solicitante }}</strong><br>
+            Solicitante / Fiscal Responsável
         </div>
     </div>
 
     <div style="text-align: center; margin-top: 25px; font-size: 9px; color: #94a3b8; font-family: monospace;">
-        Trilha de Auditoria Digital Criptografada • Central WEB DIGICON • Foco Sinalização e Sistemas Inteligentes LTDA
+        FOCO SINALIZAÇÃO E SISTEMAS INTELIGENTES LTDA • CNPJ Central • Nuvem de Controle Operacional
     </div>
 
 </body>
 </html>
-

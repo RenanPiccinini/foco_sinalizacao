@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\ChamadoService;
+use App\Models\Chamado;
 use Illuminate\Http\Request;
 
 class SiteController
@@ -58,7 +58,7 @@ class SiteController
             ['nome' => 'TR Sul Engenharia', 'tipo' => 'Projetos de Mobilidade'],
         ];
 
-        $ultimosChamados = array_slice(ChamadoService::all(), 0, 3);
+        $ultimosChamados = Chamado::latest('data_hora_abertura')->take(3)->get();
 
         return view('site.home', compact('municipiosSC', 'municipiosRS', 'rodovias', 'parceiros', 'ultimosChamados'));
     }
@@ -72,39 +72,60 @@ class SiteController
         $chamadoBuscado = null;
 
         if ($protocoloBusca) {
-            $chamadoBuscado = ChamadoService::find(trim($protocoloBusca));
+            $chamadoBuscado = Chamado::where('protocolo', trim($protocoloBusca))->first();
         }
 
-        $todosChamados = ChamadoService::all();
+        $todosChamados = Chamado::latest('data_hora_abertura')->get();
 
         return view('site.chamados', compact('chamadoBuscado', 'protocoloBusca', 'todosChamados'));
     }
 
     /**
      * Processa a abertura de um novo chamado no site.
+     * Conforme regra:
+     * Tipo de chamado selecionando: AP, FA, Acidente ou vermelho queimado
+     * Nome solicitante
+     * Número para contato
+     * Local
+     * Defeito
+     * Observação
+     * E já pega horário de abertura automaticamente
      */
     public function storeChamado(Request $request)
     {
         $validated = $request->validate([
-            'solicitante_nome' => 'required|string|max:120',
-            'solicitante_orgao' => 'required|string|max:120',
-            'solicitante_telefone' => 'required|string|max:30',
-            'solicitante_email' => 'required|email|max:120',
-            'municipio' => 'required|string|max:100',
-            'localizacao' => 'required|string|max:200',
-            'ponto_referencia' => 'nullable|string|max:200',
-            'categoria' => 'required|string|max:100',
-            'prioridade' => 'required|string|in:Baixa,Média,Alta,Crítica',
-            'titulo' => 'required|string|max:150',
-            'descricao' => 'required|string|max:1500',
-            'equipamento_afetado' => 'nullable|string|max:150',
+            'tipo' => 'required|string|in:AP,FA,Acidente,Vermelho Queimado',
+            'nome_solicitante' => 'required|string|max:120',
+            'telefone_contato' => 'required|string|max:30',
+            'local' => 'required|string|max:255',
+            'defeito' => 'required|string|max:2000',
+            'observacao' => 'nullable|string|max:2000',
         ]);
 
-        $chamado = ChamadoService::create($validated);
+        $protocolo = Chamado::gerarProtocolo();
 
-        return redirect()->route('site.chamados', ['protocolo' => $chamado['protocolo']])
-            ->with('success', "Chamado aberto com sucesso! Guarde o seu protocolo: {$chamado['protocolo']}")
-            ->with('novo_protocolo', $chamado['protocolo']);
+        $chamado = Chamado::create([
+            'protocolo' => $protocolo,
+            'tipo' => $validated['tipo'],
+            'nome_solicitante' => $validated['nome_solicitante'],
+            'telefone_contato' => $validated['telefone_contato'],
+            'local' => $validated['local'],
+            'defeito' => $validated['defeito'],
+            'observacao' => $validated['observacao'] ?? null,
+            'data_hora_abertura' => now(), // E já pega horário de abertura automaticamente
+            'status' => 'Aberto',
+            'historico' => [
+                [
+                    'data' => now()->format('d/m/Y H:i'),
+                    'evento' => "Chamado registrado no site pelo cliente (Tipo: {$validated['tipo']}).",
+                    'usuario' => $validated['nome_solicitante'],
+                ]
+            ],
+        ]);
+
+        return redirect()->route('site.chamados', ['protocolo' => $chamado->protocolo])
+            ->with('success', "Chamado aberto com sucesso! Guarde o seu protocolo: {$chamado->protocolo}")
+            ->with('novo_protocolo', $chamado->protocolo);
     }
 
     /**

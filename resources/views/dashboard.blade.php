@@ -104,33 +104,33 @@
                     <thead>
                         <tr class="text-slate-400 font-mono uppercase tracking-wider border-b border-white/10">
                             <th class="py-3 px-4 font-bold">Protocolo</th>
-                            <th class="py-3 px-4 font-bold">Título / Assunto</th>
-                            <th class="py-3 px-4 font-bold">Município / Local</th>
-                            <th class="py-3 px-4 font-bold">Prioridade</th>
+                            <th class="py-3 px-4 font-bold">Tipo</th>
+                            <th class="py-3 px-4 font-bold">Local</th>
+                            <th class="py-3 px-4 font-bold">Defeito</th>
                             <th class="py-3 px-4 font-bold">Status</th>
-                            <th class="py-3 px-4 font-bold">Data</th>
+                            <th class="py-3 px-4 font-bold">Abertura</th>
                             <th class="py-3 px-4 font-bold text-right">Ação</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-white/5">
                         @foreach($recentes as $c)
                         <tr class="hover:bg-white/5 transition">
-                            <td class="py-3.5 px-4 font-mono font-bold text-foco-yellow-400">{{ $c['protocolo'] }}</td>
-                            <td class="py-3.5 px-4 font-medium text-white max-w-xs truncate">{{ $c['titulo'] }}</td>
-                            <td class="py-3.5 px-4 text-slate-300">{{ $c['municipio'] }}</td>
+                            <td class="py-3.5 px-4 font-mono font-bold text-foco-yellow-400">{{ $c->protocolo }}</td>
                             <td class="py-3.5 px-4">
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $c['prioridade'] === 'Crítica' ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' : ($c['prioridade'] === 'Alta' ? 'bg-amber-500/20 text-amber-300' : 'bg-slate-500/20 text-slate-300') }}">
-                                    {{ $c['prioridade'] }}
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $c->tipo_badge_class }}">
+                                    {{ $c->tipo }}
                                 </span>
                             </td>
+                            <td class="py-3.5 px-4 text-slate-300 max-w-xs truncate">{{ $c->local }}</td>
+                            <td class="py-3.5 px-4 font-medium text-white max-w-xs truncate">{{ $c->defeito }}</td>
                             <td class="py-3.5 px-4">
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $c['status'] === 'Aberto' ? 'bg-amber-500/20 text-amber-300' : ($c['status'] === 'Em Atendimento' ? 'bg-cyan-500/20 text-cyan-300' : 'bg-emerald-500/20 text-emerald-300') }}">
-                                    {{ $c['status'] }}
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $c->status_badge_class }}">
+                                    {{ $c->status }}
                                 </span>
                             </td>
-                            <td class="py-3.5 px-4 font-mono text-slate-400">{{ $c['created_at'] }}</td>
+                            <td class="py-3.5 px-4 font-mono text-slate-400">{{ $c->data_hora_abertura ? $c->data_hora_abertura->format('d/m/Y H:i') : $c->created_at->format('d/m/Y H:i') }}</td>
                             <td class="py-3.5 px-4 text-right">
-                                <a href="{{ route('admin.chamados.show', $c['id']) }}" class="px-2.5 py-1 rounded bg-white/5 hover:bg-foco-yellow-500 hover:text-foco-navy-950 text-slate-300 transition font-mono">
+                                <a href="{{ route('admin.chamados.show', $c->id) }}" class="px-2.5 py-1 rounded bg-white/5 hover:bg-foco-yellow-500 hover:text-foco-navy-950 text-slate-300 transition font-mono">
                                     Ver Detalhes
                                 </a>
                             </td>
@@ -145,25 +145,25 @@
                 @foreach($recentes as $c)
                 <div class="py-3.5 space-y-2">
                     <div class="flex items-center justify-between gap-2">
-                        <span class="font-mono font-bold text-xs text-foco-yellow-400">{{ $c['protocolo'] }}</span>
+                        <span class="font-mono font-bold text-xs text-foco-yellow-400">{{ $c->protocolo }}</span>
                         <div class="flex items-center gap-1.5">
-                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $c['prioridade'] === 'Crítica' ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' : ($c['prioridade'] === 'Alta' ? 'bg-amber-500/20 text-amber-300' : 'bg-slate-500/20 text-slate-300') }}">
-                                {{ $c['prioridade'] }}
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $c->tipo_badge_class }}">
+                                {{ $c->tipo }}
                             </span>
-                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $c['status'] === 'Aberto' ? 'bg-amber-500/20 text-amber-300' : ($c['status'] === 'Em Atendimento' ? 'bg-cyan-500/20 text-cyan-300' : 'bg-emerald-500/20 text-emerald-300') }}">
-                                {{ $c['status'] }}
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $c->status_badge_class }}">
+                                {{ $c->status }}
                             </span>
                         </div>
                     </div>
 
                     <div>
-                        <p class="font-medium text-white text-xs leading-snug">{{ $c['titulo'] }}</p>
-                        <p class="text-[11px] text-slate-400 mt-0.5">{{ $c['municipio'] }}</p>
+                        <p class="font-medium text-white text-xs leading-snug">{{ $c->defeito }}</p>
+                        <p class="text-[11px] text-slate-400 mt-0.5">{{ $c->local }}</p>
                     </div>
 
                     <div class="flex items-center justify-between pt-1 text-[11px] font-mono text-slate-400">
-                        <span>{{ $c['created_at'] }}</span>
-                        <a href="{{ route('admin.chamados.show', $c['id']) }}" class="px-2.5 py-1 rounded bg-white/5 hover:bg-foco-yellow-500 hover:text-foco-navy-950 text-foco-yellow-400 font-bold transition">
+                        <span>{{ $c->data_hora_abertura ? $c->data_hora_abertura->format('d/m/Y H:i') : $c->created_at->format('d/m/Y H:i') }}</span>
+                        <a href="{{ route('admin.chamados.show', $c->id) }}" class="px-2.5 py-1 rounded bg-white/5 hover:bg-foco-yellow-500 hover:text-foco-navy-950 text-foco-yellow-400 font-bold transition">
                             Ver Detalhes →
                         </a>
                     </div>
