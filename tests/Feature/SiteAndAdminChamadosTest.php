@@ -154,4 +154,38 @@ class SiteAndAdminChamadosTest extends TestCase
         $response->assertSee('Finalização do Chamado pela Equipe FOCO');
         $response->assertSee('Troca da placa controladora de foco e reconfiguração do ciclo verde.');
     }
+
+    /**
+     * Testa o botão dedicado 'Concluir Chamado' que finaliza e dispara WhatsApp
+     */
+    public function test_admin_can_conclude_chamado_via_dedicated_endpoint(): void
+    {
+        $user = User::factory()->create();
+
+        $chamado = Chamado::create([
+            'protocolo' => 'FOC-2026-7777',
+            'tipo' => 'Vermelho Queimado',
+            'nome_solicitante' => 'Comandante Silva',
+            'telefone_contato' => '(51) 99294-1111',
+            'local' => 'Av. Getúlio Vargas x Domingos Martins',
+            'defeito' => 'Lâmpada vermelha LED queimada',
+            'data_hora_abertura' => now(),
+            'status' => 'Aberto',
+        ]);
+
+        $response = $this->actingAs($user)->post("/admin/chamados/{$chamado->id}/concluir", [
+            'conserto_executado' => 'Substituído módulo LED vermelho e realizado teste de tensão.',
+            'data_hora_execucao' => now()->format('Y-m-d\TH:i'),
+            'tecnico_responsavel' => 'Técnico Especialista FOCO',
+            'observacao_finalizacao' => 'Semáforo operando em perfeitas condições.',
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('success');
+
+        $chamado->refresh();
+        $this->assertEquals('Finalizado', $chamado->status);
+        $this->assertEquals('Substituído módulo LED vermelho e realizado teste de tensão.', $chamado->conserto_executado);
+        $this->assertEquals('Técnico Especialista FOCO', $chamado->tecnico_responsavel);
+    }
 }

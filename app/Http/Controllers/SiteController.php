@@ -123,6 +123,9 @@ class SiteController
             ],
         ]);
 
+        // Dispara notificação no WhatsApp do dono da FOCO via Evolution API
+        app(\App\Services\EvolutionWhatsAppService::class)->notificarNovoChamado($chamado);
+
         return redirect()->route('site.chamados', ['protocolo' => $chamado->protocolo])
             ->with('success', "Chamado aberto com sucesso! Guarde o seu protocolo: {$chamado->protocolo}")
             ->with('novo_protocolo', $chamado->protocolo);

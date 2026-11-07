@@ -1,5 +1,6 @@
 <x-app-layout>
     <div class="space-y-6 max-w-5xl mx-auto" x-data="{
+        modalConcluir: false,
         statusAtual: '{{ $chamado->status }}',
         definirAgora() {
             const agora = new Date();
@@ -8,12 +9,18 @@
             const dia = String(agora.getDate()).padStart(2, '0');
             const horas = String(agora.getHours()).padStart(2, '0');
             const minutos = String(agora.getMinutes()).padStart(2, '0');
-            document.getElementById('data_hora_execucao').value = `${ano}-${mes}-${dia}T${horas}:${minutos}`;
+            const valor = `${ano}-${mes}-${dia}T${horas}:${minutos}`;
+            if (document.getElementById('data_hora_execucao')) {
+                document.getElementById('data_hora_execucao').value = valor;
+            }
+            if (document.getElementById('modal_data_hora_execucao')) {
+                document.getElementById('modal_data_hora_execucao').value = valor;
+            }
         }
     }">
         
-        <!-- Breadcrumb e Voltar (100% Responsivo) -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-white/10">
+        <!-- Breadcrumb e Ações do Topo (100% Responsivo) -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-white/10">
             <div class="flex items-center gap-2 text-xs font-mono">
                 <a href="{{ route('admin.chamados.index') }}" class="text-foco-yellow-400 hover:underline flex items-center gap-1 font-bold">
                     ← Voltar para Chamados
@@ -22,11 +29,16 @@
                 <span class="text-slate-300 font-bold">{{ $chamado->protocolo }}</span>
             </div>
 
-            <div class="flex items-center gap-2">
-                <span class="text-xs text-slate-400 font-mono">
-                    Aberto em: {{ $chamado->data_hora_abertura ? $chamado->data_hora_abertura->format('d/m/Y H:i') : $chamado->created_at->format('d/m/Y H:i') }}
-                </span>
-                <a href="{{ route('admin.chamados.imprimir-os', $chamado->id) }}" target="_blank" class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-white/5 hover:bg-white/10 text-slate-200 border border-white/10 transition inline-flex items-center gap-1">
+            <div class="flex flex-wrap items-center gap-2">
+                <!-- Botão Destaque: Concluir Chamado (Se ainda não finalizado) -->
+                @if($chamado->status !== 'Finalizado')
+                <button type="button" @click="modalConcluir = true; $nextTick(() => definirAgora())" class="px-3.5 py-1.5 rounded-xl font-black text-xs uppercase tracking-wider bg-gradient-to-r from-emerald-500 to-foco-green-500 hover:from-emerald-400 hover:to-foco-green-400 text-foco-navy-950 transition shadow-glow-green flex items-center gap-1.5">
+                    <svg class="w-4 h-4 text-foco-navy-950" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                    <span>Concluir Chamado</span>
+                </button>
+                @endif
+
+                <a href="{{ route('admin.chamados.imprimir-os', $chamado->id) }}" target="_blank" class="px-2.5 py-1.5 rounded-lg text-xs font-mono font-bold bg-white/5 hover:bg-white/10 text-slate-200 border border-white/10 transition inline-flex items-center gap-1">
                     <svg class="w-3.5 h-3.5 text-foco-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
                     <span>Imprimir OS</span>
                 </a>
@@ -171,16 +183,16 @@
 
             </div>
 
-            <!-- Coluna Direita: Formulário de Atualização e Finalização FOCO -->
+            <!-- Coluna Direita: Formulário de Atualização e Despacho -->
             <div class="lg:col-span-4 space-y-6">
                 
-                <!-- Formulário de Despacho & Finalização FOCO -->
+                <!-- Formulário de Despacho & Status -->
                 <div class="glass-panel-glow p-6 rounded-3xl border border-foco-yellow-500/30 shadow-2xl space-y-4">
                     <div class="flex items-center gap-2">
                         <span class="w-2.5 h-2.5 rounded-full bg-foco-yellow-400"></span>
-                        <h3 class="text-base font-bold text-white">Despacho & Finalização FOCO</h3>
+                        <h3 class="text-base font-bold text-white">Despacho & Status</h3>
                     </div>
-                    <p class="text-xs text-slate-400">Quando a FOCO finalizar, informe o conserto executado, horário de execução e observação.</p>
+                    <p class="text-xs text-slate-400">Gerencie a evolução do chamado. Ao marcar como Finalizado, o solicitante é notificado no WhatsApp.</p>
 
                     <form action="{{ route('admin.chamados.update', $chamado->id) }}" method="POST" class="space-y-4">
                         @csrf
@@ -229,6 +241,12 @@
                                 <label for="observacao_finalizacao" class="block text-xs font-mono text-slate-300 mb-1">Observação da Finalização</label>
                                 <textarea name="observacao_finalizacao" id="observacao_finalizacao" rows="2" placeholder="Observações operacionais para o solicitante e registros..." class="w-full bg-foco-navy-900 border border-white/10 rounded-xl p-3 text-xs text-white placeholder-slate-500 focus:border-foco-yellow-500 focus:ring-1 focus:ring-foco-yellow-500">{{ old('observacao_finalizacao', $chamado->observacao_finalizacao) }}</textarea>
                             </div>
+
+                            <!-- Aviso WhatsApp -->
+                            <div class="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-[11px] text-emerald-300 flex items-center gap-2">
+                                <svg class="w-4 h-4 shrink-0 text-emerald-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.187-2.59-5.771-5.764-5.771z"/></svg>
+                                <span>Ao salvar como <strong>Finalizado</strong>, uma mensagem é disparada no WhatsApp do solicitante.</span>
+                            </div>
                         </div>
 
                         <button type="submit" class="w-full py-3 rounded-xl font-bold text-xs uppercase tracking-wider bg-foco-yellow-500 hover:bg-foco-yellow-400 text-foco-navy-950 transition shadow-glow-yellow">
@@ -249,13 +267,88 @@
                         <strong class="text-foco-green-400">{{ $chamado->data_hora_abertura ? $chamado->data_hora_abertura->format('d/m/Y H:i') : $chamado->created_at->format('d/m/Y H:i') }}</strong>
                     </div>
                     <div class="flex items-center justify-between">
-                        <span class="text-slate-400">Telefone:</span>
+                        <span class="text-slate-400">Telefone Solicitante:</span>
                         <strong class="text-cyan-400">{{ $chamado->telefone_contato }}</strong>
                     </div>
                 </div>
 
             </div>
 
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- MODAL ESPECÍFICO: CONCLUIR CHAMADO & ENVIAR WHATSAPP      -->
+        <!-- ======================================================== -->
+        <div x-show="modalConcluir" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;" x-transition>
+            <div class="flex items-center justify-center min-h-screen p-4 text-center">
+                <div class="fixed inset-0 bg-black/80 backdrop-blur-sm" @click="modalConcluir = false"></div>
+
+                <div class="relative bg-foco-navy-900 border-2 border-emerald-500/50 rounded-3xl p-6 sm:p-8 max-w-2xl w-full text-left shadow-2xl space-y-5">
+                    <div class="flex items-center justify-between pb-4 border-b border-white/10">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-3 h-3 rounded-full bg-emerald-400 animate-ping"></span>
+                            <h3 class="text-lg font-black text-white">Concluir Chamado & Disparar WhatsApp</h3>
+                        </div>
+                        <button type="button" @click="modalConcluir = false" class="text-slate-400 hover:text-white text-lg">✕</button>
+                    </div>
+
+                    <!-- Card Informativo do Envio Automático -->
+                    <div class="p-4 rounded-2xl bg-emerald-950/40 border border-emerald-500/30 text-xs space-y-1.5 font-mono">
+                        <div class="flex items-center gap-2 text-emerald-400 font-bold">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.187-2.59-5.771-5.764-5.771z"/></svg>
+                            <span>Notificação Automática no WhatsApp</span>
+                        </div>
+                        <p class="text-slate-300">
+                            Destinatário: <strong class="text-white">{{ $chamado->nome_solicitante }}</strong> 
+                            • Número: <strong class="text-emerald-300">{{ $chamado->telefone_contato }}</strong>
+                        </p>
+                        <p class="text-[11px] text-slate-400">
+                            A mensagem será disparada instantaneamente através da Evolution API conectada ao número da FOCO.
+                        </p>
+                    </div>
+
+                    <form action="{{ route('admin.chamados.concluir', $chamado->id) }}" method="POST" class="space-y-4">
+                        @csrf
+
+                        <!-- Conserto Executado -->
+                        <div>
+                            <label class="block text-xs font-mono text-slate-300 mb-1">Conserto Executado *</label>
+                            <textarea name="conserto_executado" rows="3" required placeholder="Ex: Substituição da placa de potência, alinhamento do foco veicular e teste do nobreak." class="w-full bg-foco-navy-950 border border-white/10 rounded-xl p-3 text-xs text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">{{ old('conserto_executado', $chamado->conserto_executado) }}</textarea>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- Horário de Execução -->
+                            <div>
+                                <div class="flex items-center justify-between mb-1">
+                                    <label class="block text-xs font-mono text-slate-300">Horário Execução</label>
+                                    <button type="button" @click="definirAgora()" class="text-[10px] font-mono text-foco-yellow-400 hover:underline">Agora</button>
+                                </div>
+                                <input type="datetime-local" name="data_hora_execucao" id="modal_data_hora_execucao" value="{{ $chamado->data_hora_execucao ? $chamado->data_hora_execucao->format('Y-m-d\TH:i') : '' }}" class="w-full bg-foco-navy-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                            </div>
+
+                            <!-- Técnico Responsável -->
+                            <div>
+                                <label class="block text-xs font-mono text-slate-300 mb-1">Técnico Responsável</label>
+                                <input type="text" name="tecnico_responsavel" value="{{ old('tecnico_responsavel', $chamado->tecnico_responsavel ?? auth()->user()->name) }}" placeholder="Ex: Eng. Ricardo Silveira (FOCO)" class="w-full bg-foco-navy-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                            </div>
+                        </div>
+
+                        <!-- Observação -->
+                        <div>
+                            <label class="block text-xs font-mono text-slate-300 mb-1">Observação da Conclusão (Opcional)</label>
+                            <textarea name="observacao_finalizacao" rows="2" placeholder="Informações adicionais para o cliente..." class="w-full bg-foco-navy-950 border border-white/10 rounded-xl p-3 text-xs text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">{{ old('observacao_finalizacao', $chamado->observacao_finalizacao) }}</textarea>
+                        </div>
+
+                        <div class="flex items-center justify-end gap-3 pt-3 border-t border-white/10">
+                            <button type="button" @click="modalConcluir = false" class="px-4 py-2 rounded-xl text-xs text-slate-400 hover:text-white">Cancelar</button>
+                            <button type="submit" class="px-6 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-gradient-to-r from-emerald-500 to-foco-green-500 hover:from-emerald-400 hover:to-foco-green-400 text-foco-navy-950 transition shadow-glow-green flex items-center gap-2">
+                                <svg class="w-4 h-4 text-foco-navy-950" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                <span>Concluir e Enviar WhatsApp</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
 
     </div>

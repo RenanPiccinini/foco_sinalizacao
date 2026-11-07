@@ -34,6 +34,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/admin/chamados/exportar/csv', [ChamadoController::class, 'exportarCsv'])->name('admin.chamados.export.csv');
     Route::get('/admin/chamados/{id}', [ChamadoController::class, 'show'])->name('admin.chamados.show');
     Route::post('/admin/chamados/{id}/status', [ChamadoController::class, 'update'])->name('admin.chamados.update');
+    Route::post('/admin/chamados/{id}/concluir', [ChamadoController::class, 'concluir'])->name('admin.chamados.concluir');
     Route::get('/admin/chamados/{id}/imprimir-os', [ChamadoController::class, 'imprimirOs'])->name('admin.chamados.imprimir-os');
 
     // Módulos adicionais do gerenciador

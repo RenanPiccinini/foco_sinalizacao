@@ -155,6 +155,9 @@ class ChamadoController extends Controller
                 "Chamado FINALIZADO pela FOCO. Conserto Executado: " . ($chamado->conserto_executado ?: 'Serviço concluído com êxito.') . " às " . $chamado->data_hora_execucao->format('d/m/Y H:i'),
                 auth()->user()?->name ?? 'FOCO Engenharia'
             );
+
+            // Dispara notificação no WhatsApp do solicitante via Evolution API
+            app(\App\Services\EvolutionWhatsAppService::class)->notificarChamadoConcluido($chamado);
         } else {
             if ($statusAnterior !== $novoStatus) {
                 $chamado->adicionarHistorico(
@@ -167,6 +170,41 @@ class ChamadoController extends Controller
         $chamado->save();
 
         return back()->with('success', "Chamado {$chamado->protocolo} atualizado com sucesso!");
+    }
+
+    /**
+     * Ação dedicada para o botão 'Concluir Chamado':
+     * Define como Finalizado, registra conserto, horário de execução e
+     * dispara automaticamente o WhatsApp para quem solicitou.
+     */
+    public function concluir(Request $request, string $id)
+    {
+        $chamado = Chamado::findOrFail($id);
+
+        $validated = $request->validate([
+            'conserto_executado' => 'required|string|max:2500',
+            'data_hora_execucao' => 'nullable|date',
+            'observacao_finalizacao' => 'nullable|string|max:2500',
+            'tecnico_responsavel' => 'nullable|string|max:120',
+        ]);
+
+        $chamado->status = 'Finalizado';
+        $chamado->conserto_executado = $validated['conserto_executado'];
+        $chamado->data_hora_execucao = $validated['data_hora_execucao'] ? \Carbon\Carbon::parse($validated['data_hora_execucao']) : now();
+        $chamado->observacao_finalizacao = $validated['observacao_finalizacao'] ?? null;
+        $chamado->tecnico_responsavel = $validated['tecnico_responsavel'] ?? auth()->user()?->name ?? 'Técnico FOCO';
+
+        $chamado->adicionarHistorico(
+            "Chamado CONCLUÍDO pela equipe FOCO. Notificação enviada via WhatsApp para o solicitante ({$chamado->telefone_contato}).",
+            auth()->user()?->name ?? 'FOCO Engenharia'
+        );
+
+        $chamado->save();
+
+        // Dispara mensagem automática para o WhatsApp do solicitante via Evolution API
+        app(\App\Services\EvolutionWhatsAppService::class)->notificarChamadoConcluido($chamado);
+
+        return back()->with('success', "Chamado {$chamado->protocolo} concluído com sucesso e notificação automática enviada para o WhatsApp de {$chamado->nome_solicitante} ({$chamado->telefone_contato})!");
     }
 
     /**
