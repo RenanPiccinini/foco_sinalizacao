@@ -72,19 +72,25 @@ class ConexaoController extends Controller
             'numero' => 'nullable|string|max:30',
         ]);
 
-        $numero = $request->input('numero') ?: config('services.evolution.admin_number', '5551992941111');
+        // Se nenhum número foi digitado no teste, envia para o próprio número conectado
+        $numero = $request->input('numero') ?: $this->whatsAppService->getConnectedNumber();
+
+        if (empty($numero)) {
+            return back()->with('error', "Nenhum número foi informado e o WhatsApp ainda não está conectado.");
+        }
+
         $hora = now()->format('d/m/Y H:i:s');
 
         $mensagem = "🟢 *TESTE DE CONEXÃO WHATSAPP - FOCO SINALIZAÇÃO*\n\n"
             . "Parabéns! O seu WhatsApp está conectado com sucesso ao sistema da FOCO Sinalização via Evolution API.\n\n"
             . "⏰ *Data/Hora do Teste:* {$hora}\n"
             . "🚀 *Instância:* " . config('services.evolution.instance', 'foco_sinalizacao') . "\n\n"
-            . "As notificações de novos chamados e avisos automáticos de conclusão já estão operacionais!";
+            . "As notificações de novos chamados e avisos automáticos de conclusão já estão operacionais e serão enviadas por este número conectado!";
 
         $resultado = $this->whatsAppService->sendMessage($numero, $mensagem);
 
         if (!empty($resultado['success'])) {
-            return back()->with('success', "Mensagem de teste enviada com sucesso para o número {$numero}!");
+            return back()->with('success', "Mensagem de teste enviada com sucesso para {$numero}!");
         }
 
         if (!empty($resultado['simulated'])) {

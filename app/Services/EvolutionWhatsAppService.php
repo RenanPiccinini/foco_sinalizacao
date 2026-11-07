@@ -48,6 +48,27 @@ class EvolutionWhatsAppService
     }
 
     /**
+     * Retorna o número de WhatsApp atualmente conectado na instância
+     */
+    public function getConnectedNumber(): ?string
+    {
+        $instance = $this->getInstanceName();
+        $cacheKey = "evolution_connected_number_{$instance}";
+
+        if ($cached = cache()->get($cacheKey)) {
+            return $cached;
+        }
+
+        $state = $this->getConnectionState();
+        if (!empty($state['ownerNumber'])) {
+            cache()->put($cacheKey, $state['ownerNumber'], now()->addMinutes(15));
+            return $state['ownerNumber'];
+        }
+
+        return null;
+    }
+
+    /**
      * Verifica o estado de conexão da instância na Evolution API
      */
     public function getConnectionState(): array
@@ -85,7 +106,7 @@ class EvolutionWhatsAppService
                     'instance' => $instance,
                 ];
 
-                // Se estiver conectado, tenta obter dados adicionais do perfil conectado
+                // Se estiver conectado, obtém dados do perfil e número conectado
                 if ($isConnected) {
                     $instResponse = Http::timeout(5)
                         ->withHeaders(['apikey' => $apiKey])
@@ -96,9 +117,16 @@ class EvolutionWhatsAppService
                     if ($instResponse->successful()) {
                         $instances = $instResponse->json();
                         $target = is_array($instances) && isset($instances[0]) ? $instances[0] : $instances;
-                        $info['profileName'] = $target['profileName'] ?? $target['owner'] ?? null;
+                        $info['profileName'] = $target['profileName'] ?? $target['name'] ?? null;
                         $info['profilePictureUrl'] = $target['profilePictureUrl'] ?? null;
-                        $info['ownerNumber'] = $target['owner'] ?? null;
+
+                        $rawOwner = $target['owner'] ?? $target['number'] ?? $target['instance']['owner'] ?? null;
+                        if ($rawOwner) {
+                            $cleanOwner = explode('@', (string) $rawOwner)[0];
+                            $cleanOwner = preg_replace('/\D/', '', $cleanOwner);
+                            $info['ownerNumber'] = $cleanOwner;
+                            cache()->put("evolution_connected_number_{$instance}", $cleanOwner, now()->addMinutes(15));
+                        }
                     }
                 }
 
@@ -250,6 +278,8 @@ class EvolutionWhatsAppService
         $instance = $this->getInstanceName();
         $baseUrl = $this->getBaseUrl();
 
+        cache()->forget("evolution_connected_number_{$instance}");
+
         if (empty($apiKey)) {
             return ['success' => false, 'message' => 'API Key não configurada.'];
         }
@@ -272,6 +302,7 @@ class EvolutionWhatsAppService
 
     /**
      * Envia uma mensagem de texto usando a Evolution API instalada na VPS Hostinger
+     * O envio é feito SEMPRE a partir do número conectado na instância.
      */
     public function sendMessage(string $number, string $text): array
     {
@@ -333,11 +364,21 @@ class EvolutionWhatsAppService
     }
 
     /**
-     * Dispara alerta de novo chamado no WhatsApp do dono da FOCO (Administrador)
+     * Dispara alerta de novo chamado no WhatsApp conectado do dono da FOCO
      */
     public function notificarNovoChamado(Chamado $chamado): array
     {
-        $adminNumber = config('services.evolution.admin_number', '5551992941111');
+        // Envia para o próprio número que foi conectado via QR Code!
+        $adminNumber = $this->getConnectedNumber();
+
+        if (empty($adminNumber)) {
+            Log::info("Evolution API: Nenhum número conectado no momento para receber alerta de novo chamado.");
+            return [
+                'success' => false,
+                'message' => 'Nenhum WhatsApp conectado no momento.',
+            ];
+        }
+
         $horaAbertura = $chamado->data_hora_abertura 
             ? $chamado->data_hora_abertura->format('d/m/Y H:i') 
             : now()->format('d/m/Y H:i');
@@ -365,6 +406,7 @@ class EvolutionWhatsAppService
 
     /**
      * Dispara notificação no WhatsApp do solicitante informando que o chamado foi CONCLUÍDO
+     * (Enviado a partir do WhatsApp conectado do cliente)
      */
     public function notificarChamadoConcluido(Chamado $chamado): array
     {

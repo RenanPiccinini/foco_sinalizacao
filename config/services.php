@@ -46,7 +46,6 @@ return [
         'url' => env('EVOLUTION_API_URL', 'https://evolution.piccininidigitalsolutions.com.br'),
         'api_key' => env('EVOLUTION_API_KEY', ''),
         'instance' => env('EVOLUTION_INSTANCE', 'foco_sinalizacao'),
-        'admin_number' => env('WHATSAPP_ADMIN_NUMBER', '5551992941111'),
     ],
 
 ];
