@@ -216,5 +216,15 @@ class SiteAndAdminChamadosTest extends TestCase
         $response = $this->actingAs($user)->post('/admin/conexao/desconectar');
         $response->assertRedirect();
         $response->assertSessionHas('success');
+
+        // 5. Teste de extração de número e disparo de teste
+        $this->assertEquals('5551992941111', \App\Services\EvolutionWhatsAppService::extractPhoneNumber('5551992941111:198@s.whatsapp.net'));
+        $this->assertNull(\App\Services\EvolutionWhatsAppService::extractPhoneNumber('198'));
+        $this->assertEquals('5551992941111', \App\Services\EvolutionWhatsAppService::formatPhoneNumber('(51) 99294-1111'));
+
+        $response = $this->actingAs($user)->post('/admin/conexao/teste', [
+            'numero' => '',
+        ]);
+        $response->assertRedirect();
     }
 }

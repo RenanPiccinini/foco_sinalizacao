@@ -15,12 +15,39 @@ class EvolutionWhatsAppService
     public static function formatPhoneNumber(string $phone): string
     {
         $cleaned = preg_replace('/\D/', '', $phone);
+        $cleaned = ltrim($cleaned, '0');
 
         if (strlen($cleaned) === 10 || strlen($cleaned) === 11) {
             return '55' . $cleaned;
         }
 
         return $cleaned;
+    }
+
+    /**
+     * Extrai apenas dígitos válidos de um telefone brasileiro ou JID do WhatsApp
+     * Suporta:
+     * - 5551992941111:198@s.whatsapp.net (JID Baileys multi-device)
+     * - 5551992941111@s.whatsapp.net
+     * - (51) 99294-1111
+     * - 5551992941111
+     * Rejeita identificadores curtos que não são telefones válidos (ex: 198)
+     */
+    public static function extractPhoneNumber(?string $raw): ?string
+    {
+        if (empty($raw)) {
+            return null;
+        }
+
+        $withoutDomain = explode('@', (string) $raw)[0];
+        $withoutDevice = explode(':', $withoutDomain)[0];
+        $digits = preg_replace('/\D/', '', $withoutDevice);
+
+        if (strlen($digits) >= 10 && strlen($digits) <= 15) {
+            return $digits;
+        }
+
+        return null;
     }
 
     /**
@@ -48,24 +75,34 @@ class EvolutionWhatsAppService
     }
 
     /**
-     * Retorna o número de WhatsApp atualmente conectado na instância
+     * Retorna o número de WhatsApp atualmente conectado na instância com fallback seguro
      */
-    public function getConnectedNumber(): ?string
+    public function getConnectedNumber(): string
     {
         $instance = $this->getInstanceName();
         $cacheKey = "evolution_connected_number_{$instance}";
 
         if ($cached = cache()->get($cacheKey)) {
-            return $cached;
+            $extracted = self::extractPhoneNumber((string) $cached);
+            if ($extracted) {
+                return self::formatPhoneNumber($extracted);
+            }
+            cache()->forget($cacheKey);
         }
 
         $state = $this->getConnectionState();
         if (!empty($state['ownerNumber'])) {
-            cache()->put($cacheKey, $state['ownerNumber'], now()->addMinutes(15));
-            return $state['ownerNumber'];
+            $extracted = self::extractPhoneNumber((string) $state['ownerNumber']);
+            if ($extracted) {
+                $formatted = self::formatPhoneNumber($extracted);
+                cache()->put($cacheKey, $formatted, now()->addMinutes(15));
+                return $formatted;
+            }
         }
 
-        return null;
+        // Fallback seguro para o número oficial da FOCO caso ainda não tenha sido detectado dinamicamente
+        $fallback = config('services.evolution.admin_number') ?: env('WHATSAPP_ADMIN_NUMBER', '5551992941111');
+        return self::formatPhoneNumber($fallback);
     }
 
     /**
@@ -106,8 +143,16 @@ class EvolutionWhatsAppService
                     'instance' => $instance,
                 ];
 
-                // Se estiver conectado, obtém dados do perfil e número conectado
-                if ($isConnected) {
+                // Verifica se o endpoint connectionState já informou o owner
+                $rawStateOwner = $data['instance']['ownerJid'] ?? $data['instance']['owner'] ?? $data['ownerJid'] ?? $data['owner'] ?? null;
+                if ($extractedOwner = self::extractPhoneNumber($rawStateOwner)) {
+                    $formattedOwner = self::formatPhoneNumber($extractedOwner);
+                    $info['ownerNumber'] = $formattedOwner;
+                    cache()->put("evolution_connected_number_{$instance}", $formattedOwner, now()->addMinutes(15));
+                }
+
+                // Se estiver conectado e ainda não temos o número, busca no fetchInstances
+                if ($isConnected && empty($info['ownerNumber'])) {
                     $instResponse = Http::timeout(5)
                         ->withHeaders(['apikey' => $apiKey])
                         ->get("{$baseUrl}/instance/fetchInstances", [
@@ -116,16 +161,51 @@ class EvolutionWhatsAppService
 
                     if ($instResponse->successful()) {
                         $instances = $instResponse->json();
-                        $target = is_array($instances) && isset($instances[0]) ? $instances[0] : $instances;
-                        $info['profileName'] = $target['profileName'] ?? $target['name'] ?? null;
-                        $info['profilePictureUrl'] = $target['profilePictureUrl'] ?? null;
+                        $target = null;
 
-                        $rawOwner = $target['owner'] ?? $target['number'] ?? $target['instance']['owner'] ?? null;
-                        if ($rawOwner) {
-                            $cleanOwner = explode('@', (string) $rawOwner)[0];
-                            $cleanOwner = preg_replace('/\D/', '', $cleanOwner);
-                            $info['ownerNumber'] = $cleanOwner;
-                            cache()->put("evolution_connected_number_{$instance}", $cleanOwner, now()->addMinutes(15));
+                        if (is_array($instances)) {
+                            // Procura a instância com o nome exato desta aplicação
+                            foreach ($instances as $item) {
+                                if (!is_array($item)) continue;
+                                $instData = $item['instance'] ?? $item;
+                                $name = $instData['instanceName'] ?? $instData['name'] ?? $item['name'] ?? $item['instanceName'] ?? null;
+                                if ($name === $instance) {
+                                    $target = $instData;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if ($target) {
+                            $info['profileName'] = $target['profileName'] ?? $target['name'] ?? null;
+                            $info['profilePictureUrl'] = $target['profilePictureUrl'] ?? $target['profilePicUrl'] ?? null;
+
+                            $candidates = [
+                                $target['ownerJid'] ?? null,
+                                $target['owner'] ?? null,
+                                $target['wuid'] ?? null,
+                                $target['instance']['ownerJid'] ?? null,
+                                $target['instance']['owner'] ?? null,
+                                $target['instance']['wuid'] ?? null,
+                            ];
+
+                            foreach ($candidates as $cand) {
+                                if ($extracted = self::extractPhoneNumber($cand)) {
+                                    $formatted = self::formatPhoneNumber($extracted);
+                                    $info['ownerNumber'] = $formatted;
+                                    cache()->put("evolution_connected_number_{$instance}", $formatted, now()->addMinutes(15));
+                                    break;
+                                }
+                            }
+
+                            if (empty($info['ownerNumber'])) {
+                                $numCand = $target['number'] ?? $target['instance']['number'] ?? null;
+                                if ($extracted = self::extractPhoneNumber($numCand)) {
+                                    $formatted = self::formatPhoneNumber($extracted);
+                                    $info['ownerNumber'] = $formatted;
+                                    cache()->put("evolution_connected_number_{$instance}", $formatted, now()->addMinutes(15));
+                                }
+                            }
                         }
                     }
                 }
@@ -312,6 +392,15 @@ class EvolutionWhatsAppService
 
         $formattedNumber = self::formatPhoneNumber($number);
 
+        // Se o número não tiver formato válido de telefone (mínimo 10 dígitos)
+        if (strlen($formattedNumber) < 10) {
+            Log::warning("Evolution API: Número inválido para envio: '{$number}' (formatado: '{$formattedNumber}')");
+            return [
+                'success' => false,
+                'error' => "Número de WhatsApp inválido ('{$number}'). Informe um telefone válido com DDD (ex: 51992941111).",
+            ];
+        }
+
         // Se a chave de API ainda não foi preenchida no .env, registra em log e não trava a aplicação
         if (empty($apiKey)) {
             Log::info("Evolution API: Chave não configurada no .env. Simulação de envio para {$formattedNumber}: " . substr($text, 0, 80) . '...');
@@ -325,7 +414,7 @@ class EvolutionWhatsAppService
         $endpoint = "{$baseUrl}/message/sendText/{$instance}";
 
         try {
-            $response = Http::timeout(10)
+            $response = Http::timeout(12)
                 ->withHeaders([
                     'apikey' => $apiKey,
                     'Content-Type' => 'application/json',
@@ -333,6 +422,9 @@ class EvolutionWhatsAppService
                 ->post($endpoint, [
                     'number' => $formattedNumber,
                     'text' => $text,
+                    'textMessage' => [
+                        'text' => $text,
+                    ],
                     'options' => [
                         'delay' => 1200,
                         'presence' => 'composing',

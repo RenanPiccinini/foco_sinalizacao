@@ -153,7 +153,7 @@
 
                     <div class="p-4 rounded-2xl bg-black/40 border border-white/5 space-y-1">
                         <span class="text-slate-400 block uppercase font-bold text-[10px]">Número Conectado:</span>
-                        <strong class="text-foco-yellow-400 text-sm block">{{ !empty($stateInfo['ownerNumber']) ? $stateInfo['ownerNumber'] : 'Aparelho Conectado via QR Code' }}</strong>
+                        <strong class="text-foco-yellow-400 text-sm block">{{ !empty($stateInfo['ownerNumber']) ? $stateInfo['ownerNumber'] : '5551992941111 (Aparelho Conectado)' }}</strong>
                         <span class="text-[11px] text-slate-500">Origem de todos os disparos</span>
                     </div>
                 </div>
@@ -172,7 +172,7 @@
                 <form action="{{ route('admin.conexao.teste') }}" method="POST" class="flex flex-col sm:flex-row items-center gap-3 pt-2">
                     @csrf
                     <div class="relative flex-grow w-full">
-                        <input type="text" name="numero" value="{{ $stateInfo['ownerNumber'] ?? '' }}" placeholder="Deixe em branco para testar no próprio número conectado ou digite outro ex: (51) 99999-9999" class="w-full bg-foco-navy-900 border border-white/10 rounded-xl px-4 py-2.5 text-xs font-mono text-white placeholder-slate-500 focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400">
+                        <input type="text" name="numero" value="{{ $stateInfo['ownerNumber'] ?? '' }}" placeholder="Deixe em branco para testar no número conectado ou digite outro ex: (51) 99294-1111" class="w-full bg-foco-navy-900 border border-white/10 rounded-xl px-4 py-2.5 text-xs font-mono text-white placeholder-slate-500 focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400">
                     </div>
 
                     <button type="submit" class="w-full sm:w-auto px-6 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-cyan-500 hover:bg-cyan-400 text-foco-navy-950 transition shadow-glow-blue flex items-center justify-center gap-2 shrink-0">

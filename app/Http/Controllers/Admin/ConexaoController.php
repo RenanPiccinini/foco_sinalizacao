@@ -72,11 +72,15 @@ class ConexaoController extends Controller
             'numero' => 'nullable|string|max:30',
         ]);
 
-        // Se nenhum número foi digitado no teste, envia para o próprio número conectado
-        $numero = $request->input('numero') ?: $this->whatsAppService->getConnectedNumber();
+        $numeroInput = trim((string) $request->input('numero'));
+        $digitsOnly = preg_replace('/\D/', '', $numeroInput);
 
-        if (empty($numero)) {
-            return back()->with('error', "Nenhum número foi informado e o WhatsApp ainda não está conectado.");
+        // Se digitou um número com DDD válido (pelo menos 10 dígitos), usa o digitado
+        if (!empty($digitsOnly) && strlen($digitsOnly) >= 10) {
+            $numero = $digitsOnly;
+        } else {
+            // Caso contrário, usa o próprio número conectado na instância (com fallback oficial)
+            $numero = $this->whatsAppService->getConnectedNumber();
         }
 
         $hora = now()->format('d/m/Y H:i:s');
@@ -90,7 +94,8 @@ class ConexaoController extends Controller
         $resultado = $this->whatsAppService->sendMessage($numero, $mensagem);
 
         if (!empty($resultado['success'])) {
-            return back()->with('success', "Mensagem de teste enviada com sucesso para {$numero}!");
+            $destinatarioFormatado = EvolutionWhatsAppService::formatPhoneNumber($numero);
+            return back()->with('success', "Mensagem de teste enviada com sucesso para {$destinatarioFormatado}!");
         }
 
         if (!empty($resultado['simulated'])) {
