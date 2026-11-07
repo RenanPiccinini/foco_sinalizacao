@@ -121,78 +121,82 @@
             </form>
         </div>
 
-        <!-- Lista Principal de Chamados (100% Responsiva: Tabela no Desktop e Cards no Celular) -->
+        <!-- Lista Principal de Chamados (100% Ajustada na Tela: Tabela no Desktop e Cards no Celular) -->
         <div class="glass-panel rounded-3xl border border-white/10 overflow-hidden shadow-2xl">
             
-            <!-- VISUALIZAÇÃO DESKTOP / TABLET (Tabela Completa) -->
-            <div class="hidden md:block overflow-x-auto">
-                <table class="w-full text-left border-collapse text-xs">
+            <!-- VISUALIZAÇÃO DESKTOP / TABLET (100% Ajustada sem Barra de Rolagem Horizontal) -->
+            <div class="hidden md:block w-full overflow-hidden">
+                <table class="w-full text-left border-collapse table-fixed text-xs">
                     <thead>
-                        <tr class="bg-foco-navy-900/90 border-b border-white/10 text-slate-400 font-mono uppercase tracking-wider">
-                            <th class="py-4 px-5 font-bold">Protocolo</th>
-                            <th class="py-4 px-5 font-bold">Tipo</th>
-                            <th class="py-4 px-5 font-bold">Solicitante & Contato</th>
-                            <th class="py-4 px-5 font-bold">Local</th>
-                            <th class="py-4 px-5 font-bold">Defeito</th>
-                            <th class="py-4 px-5 font-bold">Abertura (Auto)</th>
-                            <th class="py-4 px-5 font-bold">Status</th>
-                            <th class="py-4 px-5 font-bold text-right">Ações</th>
+                        <tr class="bg-foco-navy-900/90 border-b border-white/10 text-slate-400 font-mono uppercase tracking-wider text-[11px]">
+                            <th class="py-3.5 px-3 font-bold" style="width: 12%;">Protocolo</th>
+                            <th class="py-3.5 px-2 font-bold" style="width: 8%;">Tipo</th>
+                            <th class="py-3.5 px-3 font-bold" style="width: 16%;">Solicitante & Contato</th>
+                            <th class="py-3.5 px-3 font-bold" style="width: 19%;">Local</th>
+                            <th class="py-3.5 px-3 font-bold" style="width: 19%;">Defeito</th>
+                            <th class="py-3.5 px-2 font-bold" style="width: 9%;">Abertura</th>
+                            <th class="py-3.5 px-2 font-bold" style="width: 9%;">Status</th>
+                            <th class="py-3.5 px-2 font-bold text-right" style="width: 8%;">Ações</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-white/5">
                         @forelse($chamados as $item)
                         <tr class="hover:bg-white/5 transition">
                             <!-- Protocolo -->
-                            <td class="py-4 px-5 font-mono font-bold text-foco-yellow-400">
-                                <a href="{{ route('admin.chamados.show', $item->id) }}" class="hover:underline">
+                            <td class="py-3 px-3 font-mono font-bold text-foco-yellow-400">
+                                <a href="{{ route('admin.chamados.show', $item->id) }}" class="hover:underline block truncate" title="{{ $item->protocolo }}">
                                     {{ $item->protocolo }}
                                 </a>
                             </td>
 
                             <!-- Tipo de Chamado -->
-                            <td class="py-4 px-5">
-                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold font-mono {{ $item->tipo_badge_class }}">
+                            <td class="py-3 px-2">
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold font-mono inline-block max-w-full truncate whitespace-nowrap {{ $item->tipo_badge_class }}" title="{{ $item->tipo }}">
                                     {{ $item->tipo }}
                                 </span>
                             </td>
 
                             <!-- Solicitante & Contato -->
-                            <td class="py-4 px-5">
-                                <span class="text-white font-medium block">{{ $item->nome_solicitante }}</span>
-                                <span class="text-[11px] text-cyan-400 font-mono block">{{ $item->telefone_contato }}</span>
+                            <td class="py-3 px-3">
+                                <span class="text-white font-medium block truncate" title="{{ $item->nome_solicitante }}">{{ $item->nome_solicitante }}</span>
+                                <span class="text-[11px] text-cyan-400 font-mono block truncate">{{ $item->telefone_contato }}</span>
                             </td>
 
                             <!-- Local -->
-                            <td class="py-4 px-5 max-w-xs">
+                            <td class="py-3 px-3">
                                 <span class="text-slate-200 block truncate" title="{{ $item->local }}">{{ $item->local }}</span>
                             </td>
 
                             <!-- Defeito -->
-                            <td class="py-4 px-5 max-w-xs">
+                            <td class="py-3 px-3">
                                 <span class="text-slate-300 block truncate" title="{{ $item->defeito }}">{{ $item->defeito }}</span>
                             </td>
 
-                            <!-- Horário de Abertura Automático -->
-                            <td class="py-4 px-5 font-mono text-slate-400 text-[11px] whitespace-nowrap">
-                                {{ $item->data_hora_abertura ? $item->data_hora_abertura->format('d/m/Y H:i') : $item->created_at->format('d/m/Y H:i') }}
+                            <!-- Horário de Abertura Automático (Data e Hora empilhadas para economizar largura) -->
+                            <td class="py-3 px-2 font-mono text-slate-400 text-[11px]">
+                                <span class="block text-slate-200 leading-tight">{{ $item->data_hora_abertura ? $item->data_hora_abertura->format('d/m/Y') : $item->created_at->format('d/m/Y') }}</span>
+                                <span class="text-[10px] text-slate-400 leading-tight">{{ $item->data_hora_abertura ? $item->data_hora_abertura->format('H:i') : $item->created_at->format('H:i') }}</span>
                             </td>
 
                             <!-- Status -->
-                            <td class="py-4 px-5">
-                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold {{ $item->status_badge_class }}">
+                            <td class="py-3 px-2">
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold inline-block max-w-full truncate whitespace-nowrap {{ $item->status_badge_class }}" title="{{ $item->status }}">
                                     {{ $item->status }}
                                 </span>
                             </td>
 
-                            <!-- Ações -->
-                            <td class="py-4 px-5 text-right space-x-1 whitespace-nowrap">
-                                <a href="{{ route('admin.chamados.imprimir-os', $item->id) }}" target="_blank" title="Imprimir Ordem de Serviço" class="p-1.5 rounded-lg text-slate-400 hover:text-white bg-white/5 inline-flex items-center">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
-                                </a>
+                            <!-- Ações Rápidas -->
+                            <td class="py-3 px-2 text-right">
+                                <div class="flex items-center justify-end gap-1">
+                                    <a href="{{ route('admin.chamados.imprimir-os', $item->id) }}" target="_blank" title="Imprimir Ordem de Serviço" class="p-1 rounded-lg text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 transition inline-flex items-center justify-center shrink-0">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                                    </a>
 
-                                <a href="{{ route('admin.chamados.show', $item->id) }}" class="px-3 py-1.5 rounded-lg text-xs font-mono font-bold bg-white/5 hover:bg-foco-yellow-500 hover:text-foco-navy-950 text-slate-300 transition">
-                                    Ver Detalhes →
-                                </a>
+                                    <a href="{{ route('admin.chamados.show', $item->id) }}" title="Ver Detalhes" class="px-2 py-1 rounded-lg text-[11px] font-mono font-bold bg-white/5 hover:bg-foco-yellow-500 hover:text-foco-navy-950 text-slate-300 transition shrink-0 inline-flex items-center gap-0.5">
+                                        <span>Ver</span>
+                                        <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                         @empty
