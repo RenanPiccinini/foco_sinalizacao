@@ -1,58 +1,137 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# FOCO SINALIZAÇÃO E SISTEMAS INTELIGENTES LTDA
+### Soluções Integradas em Mobilidade Urbana
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Plataforma completa composta por **Site Institucional de Alto Impacto** (com efeitos 3D em Three.js, Parallax e portal público de chamados) e **Gerenciador Operacional** (painel administrativo com sidebar à esquerda, autenticação Laravel Breeze, controle de chamados viários, telemetria e emissão de Ordens de Serviço).
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🚦 Visão Geral do Sistema
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 1. Site Institucional & Engenharia de Tráfego
+* **Tecnologia Visual:** Desenvolvido em Tailwind CSS com **Three.js** para renderização 3D de malha viária, partículas de fluxo de tráfego, semáforo tridimensional com efeito de **Onda Verde** e micro-interações com **3D Tilt** nos cards.
+* **Identidade Visual:** Paleta estrita alinhada ao logotipo oficial: Azul Marinho Noturno (`#020611`, `#061329`), Amarelo Semafórico (`#f59e0b`), Verde Semáforo (`#10b981`), Vermelho (`#ef4444`) e Ciano Inteligente (`#06b6d4`).
+* **Narrativa Corporativa de Alto Impacto:**
+  * **Nossa História:** Da infraestrutura crítica semafórica à engenharia avançada de tráfego.
+  * **Quem Somos:** Atuação completa em software, hardware e sincronismo de vias urbanas e rodovias.
+* **Os 5 Pilares Fundamentais:**
+  1. *Engenharia e Infraestrutura Civil Viária* (Eletrodutos de PEAD, caixas de passagem e colunas/braços em aço galvanizado a fogo).
+  2. *Inteligência de Tráfego Adaptativo (ITS)* (Câmeras HD com visão computacional, laços virtuais e contagem volumétrica contínua).
+  3. *Central Semafórica WEB DIGICON em Nuvem Segura* (RBAC, Audit Trail criptografado, telemetria 4G/GPS e mitigação WAF/DDoS).
+  4. *Ecossistema Mobile para Equipes de Campo* (App móvel para agentes de trânsito realizarem intervenções imediatas e receberem ordens georreferenciadas).
+  5. *Autonomia Energética Híbrida* (Nobreak senoidal puro, bancos de baterias LiFePO4, captação solar fotovoltaica MPPT e microgeradores eólicos urbanos).
+* **Matriz de Impacto e Resultados:** Tabela interativa comparativa (*Cenário Convencional* vs *Solução Inteligente FOCO*).
+* **Presença Viária (+25 Municípios e Rodovias):**
+  * Santa Catarina (Balneário Camboriú, Balneário Piçarras).
+  * Rio Grande do Sul (19 municípios: Novo Hamburgo, Canoas, Passo Fundo, Torres, Tramandaí, etc.).
+  * Rodovias Federais (BR 101, BR 116, BR 153, BR 290) com foco em obras temporárias de pontes e contenção de barreiras.
+* **Parceiros Estratégicos:** Digicon S/A, Sinaway, Signasul, Contransin, Pavicon, Sinaltran, LCM Construtora, Chiorri e TR Sul.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+### 2. Portal & Menu de Chamados no Site
+* **Abertura de Chamados:** Interface intuitiva para órgãos públicos (DTT, Guarda de Trânsito, Secretarias de Obras), concessionárias e cidadãos registrarem ocorrências.
+* **Preenchimento Rápido de Teste:** Botão com 1 clique para carregar dados fictícios realistas e testar instantaneamente.
+* **Geração Automática de Protocolo:** Gera códigos oficiais no formato `FOC-2026-XXXX` com feedback animado de confetes.
+* **Consulta de Protocolo & Rastreamento:** Timeline operacional de 4 etapas (*Registrado → Triagem Nuvem → Equipe Despachada → Concluído & Testado*).
+* **Persistência de Dados Fakes:** Implementado com arquitetura desacoplada via `ChamadoService`, permitindo operar imediatamente sem migrations obrigatórias antes dos dados reais.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+---
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 3. Gerenciador Operacional (Admin com Menu na Esquerda)
+* **Sidebar Lateral na Esquerda:**
+  * Exibição do logo oficial da Foco Sinalização.
+  * Indicador de conexão e status em tempo real da nuvem DIGICON.
+  * **Menu Obrigatório "Chamados"** com badge em tempo real de ocorrências em aberto.
+  * Navegação rápida para: *Visão Geral (Dashboard)*, *Chamados*, *Controladores & ITS*, *Central DIGICON Nuvem*, *Municípios & Rodovias*, *Meu Perfil* e *Ver Site Público*.
+* **Gestão de Chamados:**
+  * Filtros dinâmicos por Status (*Aberto, Em Atendimento, Pendente Peça, Concluído*), Prioridade e Município.
+  * Busca instantânea por protocolo, logradouro ou solicitante.
+  * Detalhes do chamado com **Trilha de Auditoria Digital (Audit Trail)**.
+  * Despacho técnico e alteração de status operacional.
+  * **Emissão de Ordem de Serviço (O.S.):** Documento formatado pronto para impressão (`window.print()`) com checklist técnico em campo e campos de assinatura para o fiscal da prefeitura e engenheiro da Foco.
+  * **Exportação CSV:** Exportação de todos os chamados compatível com Excel e Google Sheets.
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+---
 
-## Agentic Development
+## 🛠️ Tecnologias Utilizadas
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+* **Backend:** PHP 8.5+ & Laravel 12
+* **Autenticação:** Laravel Breeze (Stack Blade + Tailwind)
+* **Banco de Dados:** MySQL
+* **Frontend:** Tailwind CSS, Alpine.js, Three.js (3D WebGL), Canvas-Confetti
+* **Bundler:** Vite
 
+---
+
+## 🚀 Instalação e Execução
+
+### 1. Clonar o repositório
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone https://github.com/RenanPiccinini/foco_sinalizacao.git
+cd foco_sinalizacao
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### 2. Instalar dependências PHP e Node
+```bash
+composer install
+npm install
+```
 
-## Contributing
+### 3. Configurar o arquivo de ambiente
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Verifique se o banco MySQL está configurado no `.env`:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=foco_sinalizacao
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-## Code of Conduct
+### 4. Executar Migrações e Seeds
+```bash
+php artisan migrate --seed
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 5. Compilar os Assets
+```bash
+npm run build
+```
 
-## Security Vulnerabilities
+### 6. Iniciar o Servidor
+```bash
+php artisan serve
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Acesse:
+* **Site Público:** [http://localhost:8000](http://localhost:8000)
+* **Portal de Chamados:** [http://localhost:8000/chamados](http://localhost:8000/chamados)
+* **Gerenciador Operacional:** [http://localhost:8000/dashboard](http://localhost:8000/dashboard)
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 🔐 Credenciais Padrão do Administrador
+
+* **E-mail:** `admin@focosinalizacao.com.br`
+* **Senha:** `admin1234`
+
+*(A tela de login conta com botão de preenchimento automático para agilizar testes e demonstrações).*
+
+---
+
+## 🧪 Testes Automatizados
+
+O projeto inclui suíte completa de testes com PHPUnit:
+```bash
+php artisan test
+```
+* Status: **28 testes aprovados / 86 asserções.**
+
+---
+
+© Foco Sinalização e Sistemas Inteligentes LTDA. Todos os direitos reservados.

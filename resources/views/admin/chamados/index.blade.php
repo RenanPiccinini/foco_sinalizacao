@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="space-y-6">
+    <div class="space-y-6" x-data="{ modalInterno: false }">
 
         <!-- Topo da Página -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/10">
@@ -12,10 +12,23 @@
                 <p class="text-xs text-slate-400 mt-1">Todos os chamados registrados no portal pelos clientes, agentes de trânsito e prefeituras.</p>
             </div>
 
-            <div class="flex items-center gap-3">
-                <a href="{{ route('site.chamados') }}" target="_blank" class="px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-foco-yellow-500 hover:bg-foco-yellow-400 text-foco-navy-950 transition shadow-glow-yellow flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                    <span>Abrir Novo no Site</span>
+            <div class="flex flex-wrap items-center gap-2.5">
+                <!-- Exportar CSV -->
+                <a href="{{ route('admin.chamados.export.csv') }}" class="px-3.5 py-2 rounded-xl font-bold text-xs font-mono bg-white/5 hover:bg-white/10 text-slate-200 border border-white/10 transition flex items-center gap-1.5">
+                    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    <span>Exportar CSV</span>
+                </a>
+
+                <!-- Abrir Chamado Interno -->
+                <button type="button" @click="modalInterno = true" class="px-3.5 py-2 rounded-xl font-bold text-xs font-mono bg-white/5 hover:bg-white/10 text-cyan-300 border border-cyan-500/30 transition flex items-center gap-1.5">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                    <span>+ Chamado Interno</span>
+                </button>
+
+                <!-- Abrir no Site -->
+                <a href="{{ route('site.chamados') }}" target="_blank" class="px-4 py-2 rounded-xl font-bold text-xs uppercase tracking-wider bg-foco-yellow-500 hover:bg-foco-yellow-400 text-foco-navy-950 transition shadow-glow-yellow flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                    <span>Ver no Site</span>
                 </a>
             </div>
         </div>
@@ -158,7 +171,11 @@
                             </td>
 
                             <!-- Ações Rápidas -->
-                            <td class="py-4 px-5 text-right space-x-1">
+                            <td class="py-4 px-5 text-right space-x-1 whitespace-nowrap">
+                                <a href="{{ route('admin.chamados.imprimir-os', $item['id']) }}" target="_blank" title="Imprimir Ordem de Serviço" class="p-1.5 rounded-lg text-slate-400 hover:text-white bg-white/5 inline-flex items-center">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                                </a>
+
                                 <a href="{{ route('admin.chamados.show', $item['id']) }}" class="px-3 py-1.5 rounded-lg text-xs font-mono font-bold bg-white/5 hover:bg-foco-yellow-500 hover:text-foco-navy-950 text-slate-300 transition">
                                     Ver Detalhes →
                                 </a>
@@ -177,6 +194,97 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+        </div>
+
+        <!-- MODAL: REGISTRAR CHAMADO INTERNO PELA CENTRAL -->
+        <div x-show="modalInterno" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;" x-transition>
+            <div class="flex items-center justify-center min-h-screen p-4 text-center">
+                <div class="fixed inset-0 bg-black/80 backdrop-blur-sm" @click="modalInterno = false"></div>
+
+                <div class="relative bg-foco-navy-900 border border-white/10 rounded-3xl p-6 sm:p-8 max-w-2xl w-full text-left shadow-2xl space-y-5">
+                    <div class="flex items-center justify-between pb-4 border-b border-white/10">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>
+                            <h3 class="text-lg font-bold text-white">Registrar Chamado Interno (Central 24h)</h3>
+                        </div>
+                        <button type="button" @click="modalInterno = false" class="text-slate-400 hover:text-white">✕</button>
+                    </div>
+
+                    <form action="{{ route('admin.chamados.store') }}" method="POST" class="space-y-4">
+                        @csrf
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-mono text-slate-300 mb-1">Solicitante / Operador *</label>
+                                <input type="text" name="solicitante_nome" required value="{{ auth()->user()->name }}" class="w-full bg-foco-navy-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-mono text-slate-300 mb-1">Órgão / Origem *</label>
+                                <input type="text" name="solicitante_orgao" required value="Central de Controle Operacional Foco" class="w-full bg-foco-navy-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-mono text-slate-300 mb-1">Município ou Rodovia *</label>
+                                <select name="municipio" required class="w-full bg-foco-navy-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white">
+                                    <option value="Balneário Camboriú – SC">Balneário Camboriú – SC</option>
+                                    <option value="Novo Hamburgo – RS">Novo Hamburgo – RS</option>
+                                    <option value="Canoas – RS">Canoas – RS</option>
+                                    <option value="Passo Fundo – RS">Passo Fundo – RS</option>
+                                    <option value="Torres – RS">Torres – RS</option>
+                                    <option value="Rodovia BR 101">Rodovia BR 101</option>
+                                    <option value="Rodovia BR 116">Rodovia BR 116</option>
+                                    <option value="Rodovia BR 290">Rodovia BR 290</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-mono text-slate-300 mb-1">Prioridade *</label>
+                                <select name="prioridade" required class="w-full bg-foco-navy-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white">
+                                    <option value="Crítica">🚨 Crítica</option>
+                                    <option value="Alta" selected>⚠️ Alta</option>
+                                    <option value="Média">⏱️ Média</option>
+                                    <option value="Baixa">📋 Baixa</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-mono text-slate-300 mb-1">Cruzamento / Logradouro *</label>
+                                <input type="text" name="localizacao" required placeholder="Ex: Av. Brasil x Alvin Bauer" class="w-full bg-foco-navy-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-mono text-slate-300 mb-1">Categoria *</label>
+                                <select name="categoria" required class="w-full bg-foco-navy-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white">
+                                    <option value="Sinalização Semafórica">Falha Semafórica</option>
+                                    <option value="Sincronismo & Engenharia de Tráfego">Sincronismo / Onda Verde</option>
+                                    <option value="Resiliência Energética & Nobreak">Nobreak / Bateria LiFePO4</option>
+                                    <option value="Inteligência Semafórica & Visão Computacional">Câmeras ITS / Visão Computacional</option>
+                                    <option value="Infraestrutura Civil & Manutenção Física">Coluna Aço Galvanizado / Avaria Física</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-mono text-slate-300 mb-1">Assunto / Título *</label>
+                            <input type="text" name="titulo" required placeholder="Ex: Oscilação detectada no módulo 4G da controladora" class="w-full bg-foco-navy-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-mono text-slate-300 mb-1">Descrição Detalhada *</label>
+                            <textarea name="descricao" rows="3" required placeholder="Relato técnico dos dados recebidos por rádio, telefone ou telemetria..." class="w-full bg-foco-navy-950 border border-white/10 rounded-xl p-3 text-xs text-white"></textarea>
+                        </div>
+
+                        <div class="flex items-center justify-end gap-3 pt-3 border-t border-white/10">
+                            <button type="button" @click="modalInterno = false" class="px-4 py-2 rounded-xl text-xs text-slate-400 hover:text-white">Cancelar</button>
+                            <button type="submit" class="px-6 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-foco-yellow-500 hover:bg-foco-yellow-400 text-foco-navy-950 transition shadow-glow-yellow">
+                                Salvar Chamado
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
 

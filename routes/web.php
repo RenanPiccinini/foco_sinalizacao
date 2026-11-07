@@ -30,8 +30,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Menu Chamados
     Route::get('/admin/chamados', [ChamadoController::class, 'index'])->name('admin.chamados.index');
+    Route::post('/admin/chamados', [ChamadoController::class, 'store'])->name('admin.chamados.store');
+    Route::get('/admin/chamados/exportar/csv', [ChamadoController::class, 'exportarCsv'])->name('admin.chamados.export.csv');
     Route::get('/admin/chamados/{id}', [ChamadoController::class, 'show'])->name('admin.chamados.show');
     Route::post('/admin/chamados/{id}/status', [ChamadoController::class, 'update'])->name('admin.chamados.update');
+    Route::get('/admin/chamados/{id}/imprimir-os', [ChamadoController::class, 'imprimirOs'])->name('admin.chamados.imprimir-os');
 
     // Módulos adicionais do gerenciador
     Route::get('/admin/controladores', function () {
