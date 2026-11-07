@@ -39,6 +39,7 @@ class SiteAndAdminChamadosTest extends TestCase
         $response = $this->get('/contato');
         $response->assertStatus(200);
         $response->assertSee('Central de Emergência Viária');
+        $response->assertSee('99294-1111');
     }
 
     /**

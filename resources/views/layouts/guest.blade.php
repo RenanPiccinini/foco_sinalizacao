@@ -51,5 +51,8 @@
             </a>
         </div>
     </div>
+
+    <!-- Botão Flutuante do WhatsApp em Todas as Telas -->
+    <x-whatsapp-button />
 </body>
 </html>
