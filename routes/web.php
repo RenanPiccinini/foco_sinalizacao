@@ -37,6 +37,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/admin/chamados/{id}/concluir', [ChamadoController::class, 'concluir'])->name('admin.chamados.concluir');
     Route::get('/admin/chamados/{id}/imprimir-os', [ChamadoController::class, 'imprimirOs'])->name('admin.chamados.imprimir-os');
 
+    // Menu Conexão WhatsApp (Evolution API)
+    Route::get('/admin/conexao', [\App\Http\Controllers\Admin\ConexaoController::class, 'index'])->name('admin.conexao.index');
+    Route::get('/admin/conexao/status', [\App\Http\Controllers\Admin\ConexaoController::class, 'status'])->name('admin.conexao.status');
+    Route::get('/admin/conexao/qrcode', [\App\Http\Controllers\Admin\ConexaoController::class, 'qrcode'])->name('admin.conexao.qrcode');
+    Route::post('/admin/conexao/desconectar', [\App\Http\Controllers\Admin\ConexaoController::class, 'desconectar'])->name('admin.conexao.desconectar');
+    Route::post('/admin/conexao/teste', [\App\Http\Controllers\Admin\ConexaoController::class, 'teste'])->name('admin.conexao.teste');
+
     // Módulos adicionais do gerenciador
     Route::get('/admin/controladores', function () {
         return view('admin.controladores');

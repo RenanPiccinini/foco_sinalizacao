@@ -14,10 +14,8 @@ class EvolutionWhatsAppService
      */
     public static function formatPhoneNumber(string $phone): string
     {
-        // Remove qualquer caractere que não seja número
         $cleaned = preg_replace('/\D/', '', $phone);
 
-        // Se tiver 10 ou 11 dígitos (DDD + número), adiciona o DDI do Brasil (55)
         if (strlen($cleaned) === 10 || strlen($cleaned) === 11) {
             return '55' . $cleaned;
         }
@@ -26,13 +24,260 @@ class EvolutionWhatsAppService
     }
 
     /**
+     * Retorna a URL base da Evolution API
+     */
+    protected function getBaseUrl(): string
+    {
+        return rtrim(config('services.evolution.url', 'https://evolution.piccininidigitalsolutions.com.br'), '/');
+    }
+
+    /**
+     * Retorna a API Key configurada
+     */
+    protected function getApiKey(): string
+    {
+        return config('services.evolution.api_key', '');
+    }
+
+    /**
+     * Retorna o nome da instância configurada
+     */
+    protected function getInstanceName(): string
+    {
+        return config('services.evolution.instance', 'foco_sinalizacao');
+    }
+
+    /**
+     * Verifica o estado de conexão da instância na Evolution API
+     */
+    public function getConnectionState(): array
+    {
+        $apiKey = $this->getApiKey();
+        $instance = $this->getInstanceName();
+        $baseUrl = $this->getBaseUrl();
+
+        if (empty($apiKey)) {
+            return [
+                'configured' => false,
+                'connected' => false,
+                'state' => 'disconnected',
+                'instance' => $instance,
+                'message' => 'Chave EVOLUTION_API_KEY não configurada no .env',
+            ];
+        }
+
+        try {
+            $response = Http::timeout(6)
+                ->withHeaders([
+                    'apikey' => $apiKey,
+                ])
+                ->get("{$baseUrl}/instance/connectionState/{$instance}");
+
+            if ($response->successful()) {
+                $data = $response->json();
+                $state = $data['instance']['state'] ?? $data['state'] ?? $data['connectionStatus'] ?? 'close';
+                $isConnected = strtolower($state) === 'open';
+
+                $info = [
+                    'configured' => true,
+                    'connected' => $isConnected,
+                    'state' => $state,
+                    'instance' => $instance,
+                ];
+
+                // Se estiver conectado, tenta obter dados adicionais do perfil conectado
+                if ($isConnected) {
+                    $instResponse = Http::timeout(5)
+                        ->withHeaders(['apikey' => $apiKey])
+                        ->get("{$baseUrl}/instance/fetchInstances", [
+                            'instanceName' => $instance,
+                        ]);
+
+                    if ($instResponse->successful()) {
+                        $instances = $instResponse->json();
+                        $target = is_array($instances) && isset($instances[0]) ? $instances[0] : $instances;
+                        $info['profileName'] = $target['profileName'] ?? $target['owner'] ?? null;
+                        $info['profilePictureUrl'] = $target['profilePictureUrl'] ?? null;
+                        $info['ownerNumber'] = $target['owner'] ?? null;
+                    }
+                }
+
+                return $info;
+            }
+
+            // Se a instância ainda não existe (404), informa para gerar
+            return [
+                'configured' => true,
+                'connected' => false,
+                'state' => 'not_found',
+                'instance' => $instance,
+                'message' => 'Instância ainda não criada ou offline.',
+            ];
+        } catch (\Throwable $e) {
+            Log::warning("Evolution API: Erro ao verificar estado da instância {$instance}: " . $e->getMessage());
+            return [
+                'configured' => true,
+                'connected' => false,
+                'state' => 'error',
+                'instance' => $instance,
+                'error' => $e->getMessage(),
+            ];
+        }
+    }
+
+    /**
+     * Cria a instância na Evolution API se ela ainda não existir
+     */
+    public function createInstanceIfNotExists(): array
+    {
+        $apiKey = $this->getApiKey();
+        $instance = $this->getInstanceName();
+        $baseUrl = $this->getBaseUrl();
+
+        if (empty($apiKey)) {
+            return ['success' => false, 'message' => 'API Key não configurada.'];
+        }
+
+        try {
+            $response = Http::timeout(8)
+                ->withHeaders([
+                    'apikey' => $apiKey,
+                    'Content-Type' => 'application/json',
+                ])
+                ->post("{$baseUrl}/instance/create", [
+                    'instanceName' => $instance,
+                    'qrcode' => true,
+                    'integration' => 'WHATSAPP-BAILEYS',
+                ]);
+
+            return [
+                'success' => $response->successful(),
+                'status' => $response->status(),
+                'data' => $response->json(),
+            ];
+        } catch (\Throwable $e) {
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Obtém o QR Code em base64 da Evolution API para o cliente escanear
+     */
+    public function getQrCode(): array
+    {
+        $apiKey = $this->getApiKey();
+        $instance = $this->getInstanceName();
+        $baseUrl = $this->getBaseUrl();
+
+        if (empty($apiKey)) {
+            return [
+                'configured' => false,
+                'connected' => false,
+                'qrcode' => null,
+                'message' => 'EVOLUTION_API_KEY ausente no .env',
+            ];
+        }
+
+        // 1. Garante que a instância exista
+        $this->createInstanceIfNotExists();
+
+        try {
+            // 2. Chama o endpoint de conexão para obter o QR Code
+            $response = Http::timeout(10)
+                ->withHeaders([
+                    'apikey' => $apiKey,
+                ])
+                ->get("{$baseUrl}/instance/connect/{$instance}");
+
+            if ($response->successful()) {
+                $data = $response->json();
+
+                // Verifica se já está conectado
+                $state = $data['instance']['state'] ?? $data['state'] ?? null;
+                if (strtolower((string) $state) === 'open') {
+                    return [
+                        'configured' => true,
+                        'connected' => true,
+                        'state' => 'open',
+                        'qrcode' => null,
+                    ];
+                }
+
+                // Extrai o base64 do QR code
+                $base64 = $data['base64'] 
+                    ?? $data['qrcode']['base64'] 
+                    ?? $data['instance']['qrcode'] 
+                    ?? null;
+
+                if ($base64 && !str_starts_with($base64, 'data:image')) {
+                    $base64 = 'data:image/png;base64,' . $base64;
+                }
+
+                $code = $data['code'] ?? $data['pairingCode'] ?? null;
+
+                return [
+                    'configured' => true,
+                    'connected' => false,
+                    'state' => 'connecting',
+                    'qrcode' => $base64,
+                    'code' => $code,
+                ];
+            }
+
+            return [
+                'configured' => true,
+                'connected' => false,
+                'qrcode' => null,
+                'error' => $response->body(),
+            ];
+        } catch (\Throwable $e) {
+            Log::error("Evolution API: Erro ao obter QR Code: " . $e->getMessage());
+            return [
+                'configured' => true,
+                'connected' => false,
+                'qrcode' => null,
+                'error' => $e->getMessage(),
+            ];
+        }
+    }
+
+    /**
+     * Desconecta o WhatsApp (logout da sessão) para poder escanear outro aparelho
+     */
+    public function logout(): array
+    {
+        $apiKey = $this->getApiKey();
+        $instance = $this->getInstanceName();
+        $baseUrl = $this->getBaseUrl();
+
+        if (empty($apiKey)) {
+            return ['success' => false, 'message' => 'API Key não configurada.'];
+        }
+
+        try {
+            $response = Http::timeout(8)
+                ->withHeaders([
+                    'apikey' => $apiKey,
+                ])
+                ->delete("{$baseUrl}/instance/logout/{$instance}");
+
+            return [
+                'success' => $response->successful(),
+                'data' => $response->json(),
+            ];
+        } catch (\Throwable $e) {
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
      * Envia uma mensagem de texto usando a Evolution API instalada na VPS Hostinger
      */
     public function sendMessage(string $number, string $text): array
     {
-        $baseUrl = config('services.evolution.url', 'https://evolution.piccininidigitalsolutions.com.br');
-        $apiKey = config('services.evolution.api_key', '');
-        $instance = config('services.evolution.instance', 'foco_sinalizacao');
+        $baseUrl = $this->getBaseUrl();
+        $apiKey = $this->getApiKey();
+        $instance = $this->getInstanceName();
 
         $formattedNumber = self::formatPhoneNumber($number);
 
@@ -46,7 +291,7 @@ class EvolutionWhatsAppService
             ];
         }
 
-        $endpoint = rtrim($baseUrl, '/') . "/message/sendText/{$instance}";
+        $endpoint = "{$baseUrl}/message/sendText/{$instance}";
 
         try {
             $response = Http::timeout(10)

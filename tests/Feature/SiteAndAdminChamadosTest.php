@@ -188,4 +188,33 @@ class SiteAndAdminChamadosTest extends TestCase
         $this->assertEquals('Substituído módulo LED vermelho e realizado teste de tensão.', $chamado->conserto_executado);
         $this->assertEquals('Técnico Especialista FOCO', $chamado->tecnico_responsavel);
     }
+
+    /**
+     * Testa acesso ao menu 'Conexão' e endpoints de status e QR Code da Evolution API
+     */
+    public function test_admin_can_access_conexao_whatsapp_menu_and_endpoints(): void
+    {
+        $user = User::factory()->create();
+
+        // 1. Acesso à página de conexão
+        $response = $this->actingAs($user)->get('/admin/conexao');
+        $response->assertStatus(200);
+        $response->assertSee('Conexão WhatsApp (Evolution API)');
+        $response->assertSee('foco_sinalizacao');
+
+        // 2. Endpoint de verificação de status JSON
+        $response = $this->actingAs($user)->getJson('/admin/conexao/status');
+        $response->assertStatus(200);
+        $response->assertJsonStructure(['configured', 'connected']);
+
+        // 3. Endpoint de geração de QR Code JSON
+        $response = $this->actingAs($user)->getJson('/admin/conexao/qrcode');
+        $response->assertStatus(200);
+        $response->assertJsonStructure(['configured', 'connected']);
+
+        // 4. Endpoint de desconectar
+        $response = $this->actingAs($user)->post('/admin/conexao/desconectar');
+        $response->assertRedirect();
+        $response->assertSessionHas('success');
+    }
 }
