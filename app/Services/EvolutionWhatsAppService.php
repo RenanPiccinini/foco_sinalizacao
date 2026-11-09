@@ -18,7 +18,7 @@ class EvolutionWhatsAppService
         $cleaned = ltrim($cleaned, '0');
 
         if (strlen($cleaned) === 10 || strlen($cleaned) === 11) {
-            return '55' . $cleaned;
+            return '55'.$cleaned;
         }
 
         return $cleaned;
@@ -91,17 +91,19 @@ class EvolutionWhatsAppService
         }
 
         $state = $this->getConnectionState();
-        if (!empty($state['ownerNumber'])) {
+        if (! empty($state['ownerNumber'])) {
             $extracted = self::extractPhoneNumber((string) $state['ownerNumber']);
             if ($extracted) {
                 $formatted = self::formatPhoneNumber($extracted);
                 cache()->put($cacheKey, $formatted, now()->addMinutes(15));
+
                 return $formatted;
             }
         }
 
         // Fallback seguro para o número oficial da FOCO caso ainda não tenha sido detectado dinamicamente
         $fallback = config('services.evolution.admin_number') ?: env('WHATSAPP_ADMIN_NUMBER', '5551992941111');
+
         return self::formatPhoneNumber($fallback);
     }
 
@@ -166,7 +168,9 @@ class EvolutionWhatsAppService
                         if (is_array($instances)) {
                             // Procura a instância com o nome exato desta aplicação
                             foreach ($instances as $item) {
-                                if (!is_array($item)) continue;
+                                if (! is_array($item)) {
+                                    continue;
+                                }
                                 $instData = $item['instance'] ?? $item;
                                 $name = $instData['instanceName'] ?? $instData['name'] ?? $item['name'] ?? $item['instanceName'] ?? null;
                                 if ($name === $instance) {
@@ -222,7 +226,8 @@ class EvolutionWhatsAppService
                 'message' => 'Instância ainda não criada ou offline.',
             ];
         } catch (\Throwable $e) {
-            Log::warning("Evolution API: Erro ao verificar estado da instância {$instance}: " . $e->getMessage());
+            Log::warning("Evolution API: Erro ao verificar estado da instância {$instance}: ".$e->getMessage());
+
             return [
                 'configured' => true,
                 'connected' => false,
@@ -312,13 +317,13 @@ class EvolutionWhatsAppService
                 }
 
                 // Extrai o base64 do QR code
-                $base64 = $data['base64'] 
-                    ?? $data['qrcode']['base64'] 
-                    ?? $data['instance']['qrcode'] 
+                $base64 = $data['base64']
+                    ?? $data['qrcode']['base64']
+                    ?? $data['instance']['qrcode']
                     ?? null;
 
-                if ($base64 && !str_starts_with($base64, 'data:image')) {
-                    $base64 = 'data:image/png;base64,' . $base64;
+                if ($base64 && ! str_starts_with($base64, 'data:image')) {
+                    $base64 = 'data:image/png;base64,'.$base64;
                 }
 
                 $code = $data['code'] ?? $data['pairingCode'] ?? null;
@@ -339,7 +344,8 @@ class EvolutionWhatsAppService
                 'error' => $response->body(),
             ];
         } catch (\Throwable $e) {
-            Log::error("Evolution API: Erro ao obter QR Code: " . $e->getMessage());
+            Log::error('Evolution API: Erro ao obter QR Code: '.$e->getMessage());
+
             return [
                 'configured' => true,
                 'connected' => false,
@@ -395,6 +401,7 @@ class EvolutionWhatsAppService
         // Se o número não tiver formato válido de telefone (mínimo 10 dígitos)
         if (strlen($formattedNumber) < 10) {
             Log::warning("Evolution API: Número inválido para envio: '{$number}' (formatado: '{$formattedNumber}')");
+
             return [
                 'success' => false,
                 'error' => "Número de WhatsApp inválido ('{$number}'). Informe um telefone válido com DDD (ex: 51992941111).",
@@ -403,7 +410,8 @@ class EvolutionWhatsAppService
 
         // Se a chave de API ainda não foi preenchida no .env, registra em log e não trava a aplicação
         if (empty($apiKey)) {
-            Log::info("Evolution API: Chave não configurada no .env. Simulação de envio para {$formattedNumber}: " . substr($text, 0, 80) . '...');
+            Log::info("Evolution API: Chave não configurada no .env. Simulação de envio para {$formattedNumber}: ".substr($text, 0, 80).'...');
+
             return [
                 'success' => false,
                 'simulated' => true,
@@ -434,20 +442,23 @@ class EvolutionWhatsAppService
 
             if ($response->successful()) {
                 Log::info("Evolution API: Mensagem enviada com sucesso para {$formattedNumber} via instância '{$instance}'");
+
                 return [
                     'success' => true,
                     'response' => $response->json(),
                 ];
             }
 
-            Log::warning("Evolution API: Erro HTTP {$response->status()} ao enviar para {$formattedNumber}: " . $response->body());
+            Log::warning("Evolution API: Erro HTTP {$response->status()} ao enviar para {$formattedNumber}: ".$response->body());
+
             return [
                 'success' => false,
                 'status' => $response->status(),
                 'error' => $response->body(),
             ];
         } catch (\Throwable $e) {
-            Log::error("Evolution API: Exceção ao enviar mensagem para {$formattedNumber}: " . $e->getMessage());
+            Log::error("Evolution API: Exceção ao enviar mensagem para {$formattedNumber}: ".$e->getMessage());
+
             return [
                 'success' => false,
                 'error' => $e->getMessage(),
@@ -464,34 +475,35 @@ class EvolutionWhatsAppService
         $adminNumber = $this->getConnectedNumber();
 
         if (empty($adminNumber)) {
-            Log::info("Evolution API: Nenhum número conectado no momento para receber alerta de novo chamado.");
+            Log::info('Evolution API: Nenhum número conectado no momento para receber alerta de novo chamado.');
+
             return [
                 'success' => false,
                 'message' => 'Nenhum WhatsApp conectado no momento.',
             ];
         }
 
-        $horaAbertura = $chamado->data_hora_abertura 
-            ? $chamado->data_hora_abertura->format('d/m/Y H:i') 
+        $horaAbertura = $chamado->data_hora_abertura
+            ? $chamado->data_hora_abertura->format('d/m/Y H:i')
             : now()->format('d/m/Y H:i');
 
         $urlGerenciador = route('admin.chamados.show', $chamado->id);
 
         $mensagem = "🚨 *NOVO CHAMADO REGISTRADO - FOCO SINALIZAÇÃO*\n\n"
-            . "📋 *Protocolo:* `{$chamado->protocolo}`\n"
-            . "🚦 *Tipo de Ocorrência:* *{$chamado->tipo}*\n"
-            . "👤 *Solicitante:* {$chamado->nome_solicitante}\n"
-            . "📱 *Contato:* {$chamado->telefone_contato}\n"
-            . "📍 *Local:* {$chamado->local}\n"
-            . "⚠️ *Defeito Informado:* {$chamado->defeito}\n"
-            . "⏰ *Horário de Abertura:* {$horaAbertura}\n";
+            ."📋 *Protocolo:* `{$chamado->protocolo}`\n"
+            ."🚦 *Tipo de Ocorrência:* *{$chamado->tipo}*\n"
+            ."👤 *Solicitante:* {$chamado->nome_solicitante}\n"
+            ."📱 *Contato:* {$chamado->telefone_contato}\n"
+            ."📍 *Local:* {$chamado->local}\n"
+            ."⚠️ *Defeito Informado:* {$chamado->defeito}\n"
+            ."⏰ *Horário de Abertura:* {$horaAbertura}\n";
 
-        if (!empty($chamado->observacao)) {
+        if (! empty($chamado->observacao)) {
             $mensagem .= "📝 *Observação:* {$chamado->observacao}\n";
         }
 
         $mensagem .= "\n🔗 *Atender no Gerenciador:* {$urlGerenciador}\n\n"
-            . "_Central Operacional Automática - FOCO Sinalização_";
+            .'_Central Operacional Automática - FOCO Sinalização_';
 
         return $this->sendMessage($adminNumber, $mensagem);
     }
@@ -503,31 +515,31 @@ class EvolutionWhatsAppService
     public function notificarChamadoConcluido(Chamado $chamado): array
     {
         $numeroSolicitante = $chamado->telefone_contato;
-        $horaConclusao = $chamado->data_hora_execucao 
-            ? $chamado->data_hora_execucao->format('d/m/Y H:i') 
+        $horaConclusao = $chamado->data_hora_execucao
+            ? $chamado->data_hora_execucao->format('d/m/Y H:i')
             : now()->format('d/m/Y H:i');
 
         $conserto = $chamado->conserto_executado ?: 'Conserto e calibração semafórica executados com êxito em conformidade técnica.';
         $tecnico = $chamado->tecnico_responsavel ?: 'Equipe de Manutenção FOCO';
 
         $mensagem = "✅ *CHAMADO CONCLUÍDO COM SUCESSO!*\n\n"
-            . "Olá, *{$chamado->nome_solicitante}*!\n\n"
-            . "Informamos que a sua solicitação sob o protocolo *{$chamado->protocolo}* foi *FINALIZADA E CONCLUÍDA* pela nossa equipe técnica em campo.\n\n"
-            . "📌 *Resumo do Atendimento:*\n"
-            . "🚦 *Tipo:* {$chamado->tipo}\n"
-            . "📍 *Local:* {$chamado->local}\n"
-            . "🛠️ *Conserto Executado:* {$conserto}\n"
-            . "⏰ *Horário de Execução:* {$horaConclusao}\n"
-            . "👷 *Técnico Responsável:* {$tecnico}\n";
+            ."Olá, *{$chamado->nome_solicitante}*!\n\n"
+            ."Informamos que a sua solicitação sob o protocolo *{$chamado->protocolo}* foi *FINALIZADA E CONCLUÍDA* pela nossa equipe técnica em campo.\n\n"
+            ."📌 *Resumo do Atendimento:*\n"
+            ."🚦 *Tipo:* {$chamado->tipo}\n"
+            ."📍 *Local:* {$chamado->local}\n"
+            ."🛠️ *Conserto Executado:* {$conserto}\n"
+            ."⏰ *Horário de Execução:* {$horaConclusao}\n"
+            ."👷 *Técnico Responsável:* {$tecnico}\n";
 
-        if (!empty($chamado->observacao_finalizacao)) {
+        if (! empty($chamado->observacao_finalizacao)) {
             $mensagem .= "📝 *Observações:* {$chamado->observacao_finalizacao}\n";
         }
 
         $mensagem .= "\nVocê pode acompanhar e emitir o laudo no site:\n"
-            . route('site.chamados', ['protocolo' => $chamado->protocolo]) . "\n\n"
-            . "Agradecemos pela colaboração com a segurança viária da nossa cidade!\n"
-            . "🟢 *FOCO Sinalização e Sistemas Inteligentes LTDA*";
+            .route('site.chamados', ['protocolo' => $chamado->protocolo])."\n\n"
+            ."Agradecemos pela colaboração com a segurança viária da nossa cidade!\n"
+            .'🟢 *FOCO Sinalização e Sistemas Inteligentes LTDA*';
 
         return $this->sendMessage($numeroSolicitante, $mensagem);
     }

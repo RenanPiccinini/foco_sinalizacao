@@ -36,7 +36,7 @@
 
                 <!-- Subtítulo -->
                 <p class="text-lg sm:text-xl text-slate-300 font-light leading-relaxed max-w-2xl">
-                    Soluções completas viárias <em>turnkey</em> integrando inteligência artificial para otimização de fluxo, sincronismo com <strong>onda verde</strong>, segurança cibernética em nuvem DIGICON e total autonomia energética híbrida com baterias LiFePO4.
+                    Soluções completas viárias <em>turnkey</em> integrando inteligência artificial para otimização de fluxo, sincronismo com <strong>onda verde</strong>, segurança cibernética em nuvem e total autonomia energética híbrida com baterias LiFePO4.
                 </p>
 
                 <!-- Ações / CTAs de Alto Impacto -->
@@ -91,7 +91,7 @@
                             <span class="text-xs font-mono font-bold tracking-wider text-slate-300 uppercase">Sistema Foco Live</span>
                         </div>
                         <span class="text-xs font-mono px-2 py-0.5 rounded bg-foco-yellow-500/20 text-foco-yellow-400 border border-foco-yellow-500/30">
-                            Central Digicon Conectada
+                            Central WEB Conectada
                         </span>
                     </div>
 
@@ -508,7 +508,7 @@
                                 Manutenção puramente reativa e fiscalização presencial lenta com chamados via papel ou telefone manual.
                             </td>
                             <td class="py-5 px-6 text-slate-200 bg-foco-green-500/5 font-medium">
-                                <strong class="text-cyan-400">Plataforma WEB em Nuvem Segura DIGICON</strong> com telemetria em tempo real, ordens de serviço automatizadas por app e controle centralizado.
+                                <strong class="text-cyan-400">Plataforma WEB em Nuvem Segura</strong> com telemetria em tempo real, ordens de serviço automatizadas por app e controle centralizado.
                             </td>
                         </tr>
                     </tbody>
@@ -599,7 +599,7 @@
                         <div class="p-3 rounded-xl bg-foco-green-500/10 border border-foco-green-500/30">
                             <span class="text-[10px] font-mono uppercase font-bold text-cyan-400 block mb-1">Solução Inteligente FOCO:</span>
                             <p class="text-slate-200 leading-relaxed">
-                                <strong class="text-cyan-400">Plataforma WEB em Nuvem Segura DIGICON</strong> com telemetria em tempo real, ordens de serviço automatizadas por app e controle centralizado.
+                                <strong class="text-cyan-400">Plataforma WEB em Nuvem Segura</strong> com telemetria em tempo real, ordens de serviço automatizadas por app e controle centralizado.
                             </p>
                         </div>
                     </div>
@@ -627,7 +627,7 @@
                         Precisa Reportar uma Ocorrência ou Solicitar Ajuste Semafórico?
                     </h2>
                     <p class="text-slate-300 text-base leading-relaxed">
-                        Abra seu chamado técnico diretamente na plataforma. Nossa equipe de engenharia e campo recebe a notificação georreferenciada instantaneamente na nuvem DIGICON com acompanhamento em tempo real via protocolo.
+                        Abra seu chamado técnico diretamente na plataforma. Nossa equipe de engenharia e campo recebe a notificação georreferenciada instantaneamente na central em nuvem com acompanhamento em tempo real via protocolo.
                     </p>
                     
                     <div class="flex flex-wrap items-center gap-3 pt-2 text-xs font-mono text-slate-400">

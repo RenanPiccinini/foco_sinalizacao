@@ -125,7 +125,7 @@ class SiteAndAdminChamadosTest extends TestCase
      */
     public function test_admin_can_access_dashboard_and_finalize_chamado(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
 
         // Cria um chamado inicial
         $chamado = Chamado::create([
@@ -180,8 +180,8 @@ class SiteAndAdminChamadosTest extends TestCase
         $this->assertNotNull($chamado->data_hora_execucao);
         $this->assertEquals('Semáforo testado e operando 100% normalizado.', $chamado->observacao_finalizacao);
 
-        // Testa se os dados de finalização aparecem no site público ao consultar protocolo
-        $response = $this->get("/chamados?protocolo={$chamado->protocolo}");
+        // Testa se os dados de finalização aparecem no site ao consultar protocolo (estando logado)
+        $response = $this->actingAs($user)->get("/chamados?protocolo={$chamado->protocolo}");
         $response->assertStatus(200);
         $response->assertSee('Finalização do Chamado pela Equipe FOCO');
         $response->assertSee('Troca da placa controladora de foco e reconfiguração do ciclo verde.');
@@ -192,7 +192,7 @@ class SiteAndAdminChamadosTest extends TestCase
      */
     public function test_admin_can_conclude_chamado_via_dedicated_endpoint(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
 
         $chamado = Chamado::create([
             'protocolo' => 'FOC-2026-7777',
@@ -226,7 +226,7 @@ class SiteAndAdminChamadosTest extends TestCase
      */
     public function test_admin_can_access_conexao_whatsapp_menu_and_endpoints(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
 
         // 1. Acesso à página de conexão
         $response = $this->actingAs($user)->get('/admin/conexao');
@@ -449,7 +449,7 @@ class SiteAndAdminChamadosTest extends TestCase
             'cnpj' => '12.345.678/0001-90',
             'arquivo' => $file,
             'assunto' => Contato::ASSUNTO_ORCAMENTO_COMPRA_DIRETA,
-            'descricao' => 'Orçamento para 15 conjuntos semafóricos completos e 2 controladores Digicon.',
+            'descricao' => 'Orçamento para 15 conjuntos semafóricos completos e 2 controladores inteligentes.',
         ];
 
         $response = $this->actingAs($user)->post('/contato', $payload);
@@ -557,5 +557,54 @@ class SiteAndAdminChamadosTest extends TestCase
         $deleteResponse = $this->actingAs($admin)->delete("/admin/contatos/{$contato->id}");
         $deleteResponse->assertRedirect('/admin/contatos');
         $this->assertDatabaseMissing('contatos', ['id' => $contato->id]);
+    }
+
+    /**
+     * Testa que cliente normal não pode acessar o painel master e não vê botões de gerenciador/painel
+     */
+    public function test_regular_client_cannot_access_admin_panel_and_buttons_are_hidden(): void
+    {
+        $cliente = User::factory()->create([
+            'role' => 'cliente',
+            'name' => 'Prefeitura de Teste Cliente',
+        ]);
+
+        // 1. Tentar acessar rotas de admin retorna 403 Forbidden
+        $responseDashboard = $this->actingAs($cliente)->get('/dashboard');
+        $responseDashboard->assertStatus(403);
+
+        $responseChamados = $this->actingAs($cliente)->get('/admin/chamados');
+        $responseChamados->assertStatus(403);
+
+        $responseUsers = $this->actingAs($cliente)->get('/admin/users');
+        $responseUsers->assertStatus(403);
+
+        // 2. No site público, cliente logado não vê botões para o Painel Master
+        $responseHome = $this->actingAs($cliente)->get('/');
+        $responseHome->assertStatus(200);
+        $responseHome->assertDontSee('Painel Gestor');
+        $responseHome->assertDontSee('Painel Administrativo');
+        $responseHome->assertDontSee('Área Restrita (Gerenciador)');
+        $responseHome->assertSee('Prefeitura de Teste Cliente');
+        $responseHome->assertSee('Sair');
+    }
+
+    /**
+     * Testa que nenhuma página possui menção à palavra DIGICON
+     */
+    public function test_pages_have_no_digicon_references(): void
+    {
+        $responseHome = $this->get('/');
+        $responseHome->assertStatus(200);
+        $responseHome->assertDontSee('DIGICON');
+        $responseHome->assertDontSee('Digicon');
+        $responseHome->assertSee('Central WEB Conectada');
+
+        $responseSolucoes = $this->get('/solucoes');
+        $responseSolucoes->assertStatus(200);
+        $responseSolucoes->assertDontSee('DIGICON');
+        $responseSolucoes->assertDontSee('Digicon');
+        $responseSolucoes->assertSee('Simulador Comparativo de Onda Verde');
+        $responseSolucoes->assertSee('getCor(1)');
     }
 }

@@ -3,7 +3,7 @@
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/10">
             <div>
                 <span class="text-xs font-mono text-cyan-400 uppercase tracking-widest font-bold">Cybersecurity & Cloud</span>
-                <h1 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">Central Semafórica WEB DIGICON em Nuvem</h1>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">Central Semafórica WEB em Nuvem</h1>
                 <p class="text-xs text-slate-400 mt-1">Gestão centralizada de segurança, trilhas de auditoria (Audit Trail) e políticas de acesso RBAC.</p>
             </div>
             <div class="flex items-center gap-2">

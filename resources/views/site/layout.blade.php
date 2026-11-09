@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'Foco Sinalização e Sistemas Inteligentes | Soluções Integradas em Mobilidade Urbana')</title>
-    <meta name="description" content="Engenharia de tráfego, sinalização semafórica adaptativa, centrais em nuvem WEB Digicon, nobreaks solares híbridos e sistemas inteligentes para cidades do futuro.">
+    <meta name="description" content="Engenharia de tráfego, sinalização semafórica adaptativa, centrais em nuvem WEB Segura, nobreaks solares híbridos e sistemas inteligentes para cidades do futuro.">
 
     <!-- Favicon -->
     <link rel="icon" type="image/jpeg" href="{{ asset('images/logo-banner.jpg') }}">
@@ -32,7 +32,7 @@
                 </span>
                 <span class="text-slate-600">•</span>
                 <span class="text-slate-400">
-                    Nuvem DIGICON: <strong class="text-cyan-400">Online</strong>
+                    Nuvem: <strong class="text-cyan-400">Online</strong>
                 </span>
             </div>
 
@@ -43,10 +43,21 @@
                 </a>
                 <span class="text-slate-600">|</span>
                 @auth
-                    <a href="{{ route('dashboard') }}" class="text-foco-yellow-400 hover:text-white transition font-semibold flex items-center gap-1">
-                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
-                        <span>Painel Gestor</span>
-                    </a>
+                    @if(auth()->user()->isAdmin())
+                        <a href="{{ route('dashboard') }}" class="text-foco-yellow-400 hover:text-white transition font-semibold flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                            <span>Painel Gestor</span>
+                        </a>
+                    @else
+                        <span class="text-slate-300 text-xs flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5 text-foco-yellow-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                            <span>{{ auth()->user()->name }}</span>
+                        </span>
+                        <form method="POST" action="{{ route('logout') }}" class="inline">
+                            @csrf
+                            <button type="submit" class="text-xs text-rose-400 hover:text-rose-300 ml-1 font-mono hover:underline">Sair</button>
+                        </form>
+                    @endif
                 @else
                     <a href="{{ route('login') }}" class="text-slate-300 hover:text-foco-yellow-400 transition flex items-center gap-1">
                         <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
@@ -166,12 +177,22 @@
                                 </a>
                             </div>
                             <div class="flex items-center justify-between text-slate-400">
-                                <span>Central DIGICON:</span>
+                                <span>Central em Nuvem:</span>
                                 <strong class="text-foco-green-400 font-bold">100% Online</strong>
                             </div>
                             <div class="pt-2 border-t border-white/5 text-center">
                                 @auth
-                                    <a href="{{ route('dashboard') }}" class="text-foco-yellow-400 font-bold block py-1">Ir para o Painel do Gestor →</a>
+                                    @if(auth()->user()->isAdmin())
+                                        <a href="{{ route('dashboard') }}" class="text-foco-yellow-400 font-bold block py-1">Ir para o Painel do Gestor →</a>
+                                    @else
+                                        <div class="text-slate-300 text-xs py-1 flex items-center justify-center gap-2">
+                                            <span>Conectado como <strong>{{ auth()->user()->name }}</strong></span>
+                                            <form method="POST" action="{{ route('logout') }}" class="inline">
+                                                @csrf
+                                                <button type="submit" class="text-rose-400 font-mono hover:underline">Sair</button>
+                                            </form>
+                                        </div>
+                                    @endif
                                 @else
                                     <a href="{{ route('login') }}" class="text-slate-300 hover:text-white block py-1">Acesso Restrito do Gerenciador →</a>
                                 @endauth
@@ -205,7 +226,7 @@
                     <div class="flex items-center gap-3 pt-2">
                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono bg-foco-green-500/10 text-foco-green-400 border border-foco-green-500/30">
                             <span class="w-2 h-2 rounded-full bg-foco-green-400"></span>
-                            Central WEB Digicon Conectada
+                            Central WEB Conectada
                         </span>
                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono bg-foco-yellow-500/10 text-foco-yellow-400 border border-foco-yellow-500/30">
                             Nobreak LiFePO4
@@ -234,7 +255,9 @@
                         <li><a href="{{ route('site.chamados') }}#consulta" class="hover:text-slate-200 transition">Consultar Protocolo</a></li>
                         <li><a href="{{ route('site.cidades') }}" class="hover:text-slate-200 transition">Cidades Atendidas</a></li>
                         <li><a href="{{ route('site.sobre') }}" class="hover:text-slate-200 transition">Quem Somos / História</a></li>
-                        <li><a href="{{ route('login') }}" class="hover:text-slate-200 transition">Área Restrita (Gerenciador)</a></li>
+                        @if(!auth()->check() || auth()->user()->isAdmin())
+                            <li><a href="{{ route('login') }}" class="hover:text-slate-200 transition">Área Restrita (Gerenciador)</a></li>
+                        @endif
                     </ul>
                 </div>
 
@@ -260,8 +283,10 @@
                 <p>© {{ date('Y') }} Foco Sinalização e Sistemas Inteligentes LTDA. Todos os direitos reservados.</p>
                 <p class="flex items-center gap-2">
                     <span>Soluções Integradas em Mobilidade Urbana</span>
-                    <span>•</span>
-                    <a href="{{ route('login') }}" class="text-slate-400 hover:text-foco-yellow-400 transition">Painel Administrativo</a>
+                    @if(!auth()->check() || auth()->user()->isAdmin())
+                        <span>•</span>
+                        <a href="{{ route('login') }}" class="text-slate-400 hover:text-foco-yellow-400 transition">Painel Administrativo</a>
+                    @endif
                 </p>
             </div>
         </div>

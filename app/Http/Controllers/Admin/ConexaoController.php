@@ -24,7 +24,7 @@ class ConexaoController extends Controller
         $stateInfo = $this->whatsAppService->getConnectionState();
         $instance = config('services.evolution.instance', 'foco_sinalizacao');
         $apiUrl = config('services.evolution.url', 'https://evolution.piccininidigitalsolutions.com.br');
-        $hasApiKey = !empty(config('services.evolution.api_key'));
+        $hasApiKey = ! empty(config('services.evolution.api_key'));
 
         return view('admin.conexao.index', compact('stateInfo', 'instance', 'apiUrl', 'hasApiKey'));
     }
@@ -76,7 +76,7 @@ class ConexaoController extends Controller
         $digitsOnly = preg_replace('/\D/', '', $numeroInput);
 
         // Se digitou um número com DDD válido (pelo menos 10 dígitos), usa o digitado
-        if (!empty($digitsOnly) && strlen($digitsOnly) >= 10) {
+        if (! empty($digitsOnly) && strlen($digitsOnly) >= 10) {
             $numero = $digitsOnly;
         } else {
             // Caso contrário, usa o próprio número conectado na instância (com fallback oficial)
@@ -86,22 +86,23 @@ class ConexaoController extends Controller
         $hora = now()->format('d/m/Y H:i:s');
 
         $mensagem = "🟢 *TESTE DE CONEXÃO WHATSAPP - FOCO SINALIZAÇÃO*\n\n"
-            . "Parabéns! O seu WhatsApp está conectado com sucesso ao sistema da FOCO Sinalização via Evolution API.\n\n"
-            . "⏰ *Data/Hora do Teste:* {$hora}\n"
-            . "🚀 *Instância:* " . config('services.evolution.instance', 'foco_sinalizacao') . "\n\n"
-            . "As notificações de novos chamados e avisos automáticos de conclusão já estão operacionais e serão enviadas por este número conectado!";
+            ."Parabéns! O seu WhatsApp está conectado com sucesso ao sistema da FOCO Sinalização via Evolution API.\n\n"
+            ."⏰ *Data/Hora do Teste:* {$hora}\n"
+            .'🚀 *Instância:* '.config('services.evolution.instance', 'foco_sinalizacao')."\n\n"
+            .'As notificações de novos chamados e avisos automáticos de conclusão já estão operacionais e serão enviadas por este número conectado!';
 
         $resultado = $this->whatsAppService->sendMessage($numero, $mensagem);
 
-        if (!empty($resultado['success'])) {
+        if (! empty($resultado['success'])) {
             $destinatarioFormatado = EvolutionWhatsAppService::formatPhoneNumber($numero);
+
             return back()->with('success', "Mensagem de teste enviada com sucesso para {$destinatarioFormatado}!");
         }
 
-        if (!empty($resultado['simulated'])) {
-            return back()->with('info', "Simulação realizada! Para envio real, preencha a chave EVOLUTION_API_KEY no arquivo .env.");
+        if (! empty($resultado['simulated'])) {
+            return back()->with('info', 'Simulação realizada! Para envio real, preencha a chave EVOLUTION_API_KEY no arquivo .env.');
         }
 
-        return back()->with('error', "Não foi possível enviar o teste: " . ($resultado['error'] ?? 'Verifique se o WhatsApp está realmente conectado.'));
+        return back()->with('error', 'Não foi possível enviar o teste: '.($resultado['error'] ?? 'Verifique se o WhatsApp está realmente conectado.'));
     }
 }

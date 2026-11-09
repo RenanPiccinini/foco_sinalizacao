@@ -64,14 +64,141 @@
         <!-- SIMULADOR INTERATIVO: ONDA VERDE ADAPTATIVA (TECNOLOGIA FOCO) -->
         <div class="glass-panel-glow p-8 sm:p-10 rounded-3xl mb-16 border border-foco-yellow-500/30 shadow-2xl" x-data="{
             modo: 'foco', // 'foco' ou 'convencional'
-            velocidade: 50,
-            simulando: true,
-            progresso: 15,
+            progresso: 0,
             interval: null,
+            parado: false,
+            tempoParado: 0,
+            paradaAlvo: null,
+
+            setModo(m) {
+                this.modo = m;
+                this.progresso = 0;
+                this.parado = false;
+                this.tempoParado = 0;
+                this.paradaAlvo = null;
+            },
+
+            getCor(cruz) {
+                if (this.modo === 'foco') {
+                    // Onda Verde Inteligente: A sinaleira abre no VERDE antes do carro chegar,
+                    // e logo que o carro passa, ela fica VERMELHO!
+                    if (cruz === 1) {
+                        return this.progresso < 13 ? 'verde' : 'vermelho';
+                    }
+                    if (cruz === 2) {
+                        if (this.progresso < 10) return 'vermelho';
+                        return this.progresso < 38 ? 'verde' : 'vermelho';
+                    }
+                    if (cruz === 3) {
+                        if (this.progresso < 35) return 'vermelho';
+                        return this.progresso < 63 ? 'verde' : 'vermelho';
+                    }
+                    if (cruz === 4) {
+                        if (this.progresso < 60) return 'vermelho';
+                        return this.progresso < 88 ? 'verde' : 'vermelho';
+                    }
+                } else {
+                    // Planos Fixos Antigos (Convencional):
+                    // Semáforos descompassados. O carro só passa quando estiver verde!
+                    // Passa no verde e depois que passa fica vermelho!
+                    if (cruz === 1) {
+                        return this.progresso < 13 ? 'verde' : 'vermelho';
+                    }
+                    if (cruz === 2) {
+                        if (this.progresso < 33) return 'vermelho';
+                        if (this.paradaAlvo === 2) {
+                            return this.tempoParado > 12 ? 'verde' : 'vermelho';
+                        }
+                        return this.progresso < 38 ? 'verde' : 'vermelho';
+                    }
+                    if (cruz === 3) {
+                        if (this.progresso < 58) return 'vermelho';
+                        if (this.paradaAlvo === 3) {
+                            return this.tempoParado > 12 ? 'verde' : 'vermelho';
+                        }
+                        return this.progresso < 63 ? 'verde' : 'vermelho';
+                    }
+                    if (cruz === 4) {
+                        if (this.progresso < 83) return 'vermelho';
+                        if (this.paradaAlvo === 4) {
+                            return this.tempoParado > 12 ? 'verde' : 'vermelho';
+                        }
+                        return this.progresso < 88 ? 'verde' : 'vermelho';
+                    }
+                }
+                return 'vermelho';
+            },
+
+            getLabel(cruz) {
+                const cor = this.getCor(cruz);
+                if (cor === 'verde') {
+                    return this.modo === 'foco' ? 'VERDE (Onda)' : 'VERDE';
+                }
+                if (cor === 'amarelo') return 'AMARELO';
+                return 'VERMELHO';
+            },
+
+            tick() {
+                if (this.modo === 'foco') {
+                    // Onda Verde FOCO: Fluxo contínuo sem parar em nenhum semáforo
+                    this.progresso += 0.8;
+                    if (this.progresso >= 100) {
+                        this.progresso = 0;
+                    }
+                } else {
+                    // Convencional: Verifica se precisa parar antes do sinal vermelho
+                    // Ponto 2 (Cruz. 2): para em 33% se o sinal estiver vermelho
+                    if (this.progresso >= 32.5 && this.progresso < 33.5 && this.paradaAlvo !== 2 && this.progresso < 38) {
+                        this.parado = true;
+                        this.paradaAlvo = 2;
+                        this.tempoParado = 0;
+                        return;
+                    }
+
+                    // Ponto 3 (Cruz. 3): para em 58% se o sinal estiver vermelho
+                    if (this.progresso >= 57.5 && this.progresso < 58.5 && this.paradaAlvo !== 3 && this.progresso < 63) {
+                        this.parado = true;
+                        this.paradaAlvo = 3;
+                        this.tempoParado = 0;
+                        return;
+                    }
+
+                    // Ponto 4 (Cruz. 4): para em 83% se o sinal estiver vermelho
+                    if (this.progresso >= 82.5 && this.progresso < 83.5 && this.paradaAlvo !== 4 && this.progresso < 88) {
+                        this.parado = true;
+                        this.paradaAlvo = 4;
+                        this.tempoParado = 0;
+                        return;
+                    }
+
+                    // Se está parado aguardando o semáforo abrir
+                    if (this.parado) {
+                        this.tempoParado++;
+                        // Sinal abre verde em tempoParado > 12
+                        if (this.tempoParado > 18) {
+                            // Sinal verde aberto! Carro liberado para passar
+                            this.parado = false;
+                            this.paradaAlvo = null;
+                            this.tempoParado = 0;
+                            this.progresso += 0.8;
+                        }
+                        return;
+                    }
+
+                    this.progresso += 0.6;
+                    if (this.progresso >= 100) {
+                        this.progresso = 0;
+                        this.parado = false;
+                        this.tempoParado = 0;
+                        this.paradaAlvo = null;
+                    }
+                }
+            },
+
             init() {
                 this.interval = setInterval(() => {
-                    this.progresso = (this.progresso + (this.modo === 'foco' ? 1.4 : 0.7)) % 100;
-                }, 100);
+                    this.tick();
+                }, 70);
             }
         }">
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6 border-b border-white/10">
@@ -85,12 +212,12 @@
                 </div>
 
                 <div class="flex flex-wrap items-center gap-3">
-                    <button type="button" @click="modo = 'foco'" :class="modo === 'foco' ? 'bg-foco-green-500 text-foco-navy-950 font-black shadow-glow-green' : 'bg-white/5 text-slate-300 hover:text-white'" class="px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2">
+                    <button type="button" @click="setModo('foco')" :class="modo === 'foco' ? 'bg-foco-green-500 text-foco-navy-950 font-black shadow-glow-green' : 'bg-white/5 text-slate-300 hover:text-white'" class="px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full bg-foco-navy-950"></span>
                         <span>Onda Verde FOCO</span>
                     </button>
 
-                    <button type="button" @click="modo = 'convencional'" :class="modo === 'convencional' ? 'bg-rose-500 text-white font-black shadow-glow-red' : 'bg-white/5 text-slate-300 hover:text-white'" class="px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2">
+                    <button type="button" @click="setModo('convencional')" :class="modo === 'convencional' ? 'bg-rose-500 text-white font-black shadow-glow-red' : 'bg-white/5 text-slate-300 hover:text-white'" class="px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full bg-white"></span>
                         <span>Planos Fixos Antigos</span>
                     </button>
@@ -124,60 +251,60 @@
                     <div class="relative py-8 border-y-2 border-dashed border-white/20 bg-slate-900/60 rounded-xl">
                         
                         <!-- Carrinho em deslocamento na via -->
-                        <div class="absolute top-1/2 -translate-y-1/2 transition-all duration-100 flex items-center gap-1 z-20" :style="'left: ' + progresso + '%'">
-                            <div class="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md text-[9px] sm:text-[10px] font-mono font-bold shadow-lg" :class="modo === 'foco' ? 'bg-foco-yellow-500 text-foco-navy-950' : 'bg-slate-300 text-slate-900'">
-                                🚗 Fluxo
+                        <div class="absolute top-1/2 -translate-y-1/2 transition-all duration-75 flex items-center gap-1 z-20" :style="'left: ' + Math.min(progresso, 92) + '%'">
+                            <div class="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md text-[9px] sm:text-[10px] font-mono font-bold shadow-lg flex items-center gap-1" :class="modo === 'foco' ? 'bg-foco-yellow-500 text-foco-navy-950' : (parado ? 'bg-rose-500 text-white animate-pulse' : 'bg-slate-300 text-slate-900')">
+                                <span x-text="parado ? '🛑 Aguardando Verde' : '🚗 Fluxo'"></span>
                             </div>
-                            <span class="w-2 h-2 rounded-full" :class="modo === 'foco' ? 'bg-foco-green-400 animate-ping' : 'bg-rose-400 animate-ping'"></span>
+                            <span class="w-2 h-2 rounded-full" :class="modo === 'foco' ? 'bg-foco-green-400 animate-ping' : (parado ? 'bg-rose-400 animate-ping' : 'bg-amber-400 animate-ping')"></span>
                         </div>
 
                         <!-- 4 Postes Semafóricos Posicionados na Via -->
                         <div class="grid grid-cols-4 gap-2 sm:gap-4 relative z-10 px-2 sm:px-8">
                             <!-- Semáforo 1 -->
                             <div class="flex flex-col items-center">
-                                <div class="w-8 p-1.5 rounded-xl bg-slate-950 border border-white/20 space-y-1.5 shadow-xl">
-                                    <div class="w-5 h-5 rounded-full" :class="modo === 'foco' ? 'bg-rose-950' : 'traffic-lens-red'"></div>
-                                    <div class="w-5 h-5 rounded-full bg-amber-950"></div>
-                                    <div class="w-5 h-5 rounded-full" :class="modo === 'foco' ? 'traffic-lens-green' : 'bg-emerald-950'"></div>
+                                <div class="w-8 p-1.5 rounded-xl bg-slate-950 border border-white/20 space-y-1.5 shadow-xl transition-all">
+                                    <div class="w-5 h-5 rounded-full transition-all duration-200" :class="getCor(1) === 'vermelho' ? 'traffic-lens-red' : 'bg-rose-950'"></div>
+                                    <div class="w-5 h-5 rounded-full transition-all duration-200" :class="getCor(1) === 'amarelo' ? 'traffic-lens-yellow' : 'bg-amber-950'"></div>
+                                    <div class="w-5 h-5 rounded-full transition-all duration-200" :class="getCor(1) === 'verde' ? 'traffic-lens-green' : 'bg-emerald-950'"></div>
                                 </div>
-                                <span class="text-[10px] font-mono mt-2" :class="modo === 'foco' ? 'text-foco-green-400 font-bold' : 'text-rose-400 font-bold'">
-                                    <span x-text="modo === 'foco' ? 'VERDE (Onda)' : 'VERMELHO'"></span>
+                                <span class="text-[10px] font-mono mt-2 font-bold transition-all" :class="getCor(1) === 'verde' ? 'text-foco-green-400' : 'text-rose-400'">
+                                    <span x-text="getLabel(1)"></span>
                                 </span>
                             </div>
 
                             <!-- Semáforo 2 -->
                             <div class="flex flex-col items-center">
-                                <div class="w-8 p-1.5 rounded-xl bg-slate-950 border border-white/20 space-y-1.5 shadow-xl">
-                                    <div class="w-5 h-5 rounded-full" :class="modo === 'foco' ? 'bg-rose-950' : 'bg-rose-950'"></div>
-                                    <div class="w-5 h-5 rounded-full" :class="modo === 'foco' ? 'bg-amber-950' : 'traffic-lens-yellow'"></div>
-                                    <div class="w-5 h-5 rounded-full" :class="modo === 'foco' ? 'traffic-lens-green' : 'bg-emerald-950'"></div>
+                                <div class="w-8 p-1.5 rounded-xl bg-slate-950 border border-white/20 space-y-1.5 shadow-xl transition-all">
+                                    <div class="w-5 h-5 rounded-full transition-all duration-200" :class="getCor(2) === 'vermelho' ? 'traffic-lens-red' : 'bg-rose-950'"></div>
+                                    <div class="w-5 h-5 rounded-full transition-all duration-200" :class="getCor(2) === 'amarelo' ? 'traffic-lens-yellow' : 'bg-amber-950'"></div>
+                                    <div class="w-5 h-5 rounded-full transition-all duration-200" :class="getCor(2) === 'verde' ? 'traffic-lens-green' : 'bg-emerald-950'"></div>
                                 </div>
-                                <span class="text-[10px] font-mono mt-2" :class="modo === 'foco' ? 'text-foco-green-400 font-bold' : 'text-amber-400 font-bold'">
-                                    <span x-text="modo === 'foco' ? 'VERDE (Onda)' : 'AMARELO'"></span>
+                                <span class="text-[10px] font-mono mt-2 font-bold transition-all" :class="getCor(2) === 'verde' ? 'text-foco-green-400' : 'text-rose-400'">
+                                    <span x-text="getLabel(2)"></span>
                                 </span>
                             </div>
 
                             <!-- Semáforo 3 -->
                             <div class="flex flex-col items-center">
-                                <div class="w-8 p-1.5 rounded-xl bg-slate-950 border border-white/20 space-y-1.5 shadow-xl">
-                                    <div class="w-5 h-5 rounded-full" :class="modo === 'foco' ? 'bg-rose-950' : 'traffic-lens-red'"></div>
-                                    <div class="w-5 h-5 rounded-full bg-amber-950"></div>
-                                    <div class="w-5 h-5 rounded-full" :class="modo === 'foco' ? 'traffic-lens-green' : 'bg-emerald-950'"></div>
+                                <div class="w-8 p-1.5 rounded-xl bg-slate-950 border border-white/20 space-y-1.5 shadow-xl transition-all">
+                                    <div class="w-5 h-5 rounded-full transition-all duration-200" :class="getCor(3) === 'vermelho' ? 'traffic-lens-red' : 'bg-rose-950'"></div>
+                                    <div class="w-5 h-5 rounded-full transition-all duration-200" :class="getCor(3) === 'amarelo' ? 'traffic-lens-yellow' : 'bg-amber-950'"></div>
+                                    <div class="w-5 h-5 rounded-full transition-all duration-200" :class="getCor(3) === 'verde' ? 'traffic-lens-green' : 'bg-emerald-950'"></div>
                                 </div>
-                                <span class="text-[10px] font-mono mt-2" :class="modo === 'foco' ? 'text-foco-green-400 font-bold' : 'text-rose-400 font-bold'">
-                                    <span x-text="modo === 'foco' ? 'VERDE (Onda)' : 'VERMELHO'"></span>
+                                <span class="text-[10px] font-mono mt-2 font-bold transition-all" :class="getCor(3) === 'verde' ? 'text-foco-green-400' : 'text-rose-400'">
+                                    <span x-text="getLabel(3)"></span>
                                 </span>
                             </div>
 
                             <!-- Semáforo 4 -->
                             <div class="flex flex-col items-center">
-                                <div class="w-8 p-1.5 rounded-xl bg-slate-950 border border-white/20 space-y-1.5 shadow-xl">
-                                    <div class="w-5 h-5 rounded-full" :class="modo === 'foco' ? 'bg-rose-950' : 'bg-rose-950'"></div>
-                                    <div class="w-5 h-5 rounded-full bg-amber-950"></div>
-                                    <div class="w-5 h-5 rounded-full" :class="modo === 'foco' ? 'traffic-lens-green' : 'traffic-lens-green'"></div>
+                                <div class="w-8 p-1.5 rounded-xl bg-slate-950 border border-white/20 space-y-1.5 shadow-xl transition-all">
+                                    <div class="w-5 h-5 rounded-full transition-all duration-200" :class="getCor(4) === 'vermelho' ? 'traffic-lens-red' : 'bg-rose-950'"></div>
+                                    <div class="w-5 h-5 rounded-full transition-all duration-200" :class="getCor(4) === 'amarelo' ? 'traffic-lens-yellow' : 'bg-amber-950'"></div>
+                                    <div class="w-5 h-5 rounded-full transition-all duration-200" :class="getCor(4) === 'verde' ? 'traffic-lens-green' : 'bg-emerald-950'"></div>
                                 </div>
-                                <span class="text-[10px] font-mono mt-2 text-foco-green-400 font-bold">
-                                    VERDE
+                                <span class="text-[10px] font-mono mt-2 font-bold transition-all" :class="getCor(4) === 'verde' ? 'text-foco-green-400' : 'text-rose-400'">
+                                    <span x-text="getLabel(4)"></span>
                                 </span>
                             </div>
                         </div>
@@ -235,7 +362,7 @@
                     <div class="p-5 rounded-2xl bg-foco-navy-900 border border-white/5 space-y-2">
                         <strong class="text-foco-yellow-400 block text-sm font-bold">🚦 Sinalização Semafórica Inteligente:</strong>
                         <p class="text-xs text-slate-300 leading-relaxed">
-                            Controladores adaptativos, laços virtuais de visão computacional, sincronismo de onda verde, central WEB DIGICON em nuvem e telemetria 4G/GPS com monitoramento em tempo real.
+                            Controladores adaptativos, laços virtuais de visão computacional, sincronismo de onda verde, central WEB em nuvem e telemetria 4G/GPS com monitoramento em tempo real.
                         </p>
                     </div>
 

@@ -43,7 +43,7 @@
                             <span class="block text-xs font-mono font-bold uppercase tracking-widest text-foco-yellow-400">
                                 Gerenciador Central
                             </span>
-                            <span class="text-[11px] text-slate-400">Nuvem WEB DIGICON</span>
+                            <span class="text-[11px] text-slate-400">Nuvem WEB Central</span>
                         </div>
                         <span class="w-2.5 h-2.5 rounded-full bg-foco-green-400 animate-pulse"></span>
                     </div>
@@ -107,10 +107,10 @@
                     <span>Controladores & ITS</span>
                 </a>
 
-                <!-- Item 4: Central WEB DIGICON -->
+                <!-- Item 4: Central WEB em Nuvem -->
                 <a href="{{ route('admin.central-nuvem') }}" class="flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-medium transition {{ request()->routeIs('admin.central-nuvem') ? 'bg-foco-yellow-500 text-foco-navy-950 font-bold shadow-glow-yellow' : 'text-slate-300 hover:text-white hover:bg-white/5' }}">
                     <svg class="w-5 h-5 {{ request()->routeIs('admin.central-nuvem') ? 'text-foco-navy-950' : 'text-cyan-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/></svg>
-                    <span>Central DIGICON Nuvem</span>
+                    <span>Central em Nuvem</span>
                 </a>
 
                 <!-- Item 5: Municípios & Rodovias -->
@@ -179,11 +179,11 @@
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                     </button>
 
-                    <!-- Telemetria & Status Nuvem Digicon (Visível no Computador e no Celular) -->
+                    <!-- Telemetria & Status Nuvem (Visível no Computador e no Celular) -->
                     <div class="flex items-center gap-2 text-[11px] sm:text-xs font-mono">
                         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-foco-green-500/10 text-foco-green-400 border border-foco-green-500/30">
                             <span class="w-1.5 h-1.5 rounded-full bg-foco-green-400 animate-ping"></span>
-                            <span class="font-bold">Digicon Nuvem:</span>
+                            <span class="font-bold">Nuvem:</span>
                             <span>100% Online</span>
                         </span>
                         <span class="text-slate-600 hidden xs:inline">•</span>

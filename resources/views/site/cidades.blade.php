@@ -107,7 +107,7 @@
                 ['nome' => 'Tramandaí', 'desc' => 'Gestão de fluxo sazonal de veraneio com reprogramação dinâmica de planos de tempos via nuvem.'],
                 ['nome' => 'Campo Bom', 'desc' => 'Cruzamentos semafóricos adaptativos integrados e laços virtuais de detecção de veículos.'],
                 ['nome' => 'Entre-Ijuís', 'desc' => 'Sinalização viária segura e assessoria técnica em pontos de confluência rodoviária.'],
-                ['nome' => 'Erechim', 'desc' => 'Modernização do parque semafórico com tecnologia Digicon e telemetria 4G/GPS.'],
+                ['nome' => 'Erechim', 'desc' => 'Modernização do parque semafórico com tecnologia inteligente de ponta e telemetria 4G/GPS.'],
                 ['nome' => 'Guaíba', 'desc' => 'Sistemas de sincronismo veicular para otimização do fluxo de acesso à região metropolitana.'],
                 ['nome' => 'Guaporé', 'desc' => 'Sinalização semafórica eficiente com grupos focais de baixíssimo consumo.'],
                 ['nome' => 'Ivoti', 'desc' => 'Projetos semafóricos integrados à malha urbana com ênfase na segurança dos pedestres.'],

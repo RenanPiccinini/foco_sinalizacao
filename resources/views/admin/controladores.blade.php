@@ -39,7 +39,7 @@
 
                 <div class="space-y-1">
                     <p class="text-white font-medium text-xs">{{ $item['local'] }}</p>
-                    <p class="text-slate-400 font-mono text-[11px]">IP: {{ $item['ip'] }} • Módulo 4G/GPS Digicon</p>
+                    <p class="text-slate-400 font-mono text-[11px]">IP: {{ $item['ip'] }} • Módulo 4G/GPS Homologado</p>
                 </div>
 
                 <div class="grid grid-cols-2 gap-2 text-[11px] font-mono pt-2 border-t border-white/5">

@@ -100,9 +100,9 @@ class ChamadoSeeder extends Seeder
                 'data_hora_abertura' => now()->subDays(2),
                 'status' => 'Finalizado',
                 'tecnico_responsavel' => 'Eng. Ricardo Silveira (Equipe Beta)',
-                'conserto_executado' => 'Substituição do módulo de proteção contra surtos (DPS), reset da placa de potência da controladora Digicon e recalibração dos grupos focais a LED. Sincronismo e onda verde restabelecidos com 100% de êxito.',
+                'conserto_executado' => 'Substituição do módulo de proteção contra surtos (DPS), reset da placa de potência da controladora eletrônica e recalibração dos grupos focais a LED. Sincronismo e onda verde restabelecidos com 100% de êxito.',
                 'data_hora_execucao' => now()->subDays(2)->addHours(3),
-                'observacao_finalizacao' => 'Cruzamento normalizado e validado na Central em Nuvem Digicon às '.now()->subDays(2)->addHours(3)->format('H:i').'. Ordem de serviço concluída.',
+                'observacao_finalizacao' => 'Cruzamento normalizado e validado na Central em Nuvem às '.now()->subDays(2)->addHours(3)->format('H:i').'. Ordem de serviço concluída.',
                 'historico' => [
                     [
                         'data' => now()->subDays(2)->format('d/m/Y H:i'),

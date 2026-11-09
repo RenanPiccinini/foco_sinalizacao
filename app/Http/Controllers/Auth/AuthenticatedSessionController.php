@@ -28,7 +28,19 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        $user = $request->user();
+
+        if ($user && $user->isAdmin()) {
+            return redirect()->intended(route('dashboard', absolute: false));
+        }
+
+        // Se for cliente comum e a URL pretendida for restrita ao painel admin, limpa a URL pretendida
+        $intendedUrl = session()->get('url.intended');
+        if ($intendedUrl && (str_contains($intendedUrl, '/dashboard') || str_contains($intendedUrl, '/admin'))) {
+            session()->forget('url.intended');
+        }
+
+        return redirect()->intended(route('site.chamados', absolute: false));
     }
 
     /**

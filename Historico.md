@@ -24,7 +24,7 @@ A empresa estrutura sua atuação em **5 pilares oficiais de serviços**:
 ### 1. Projetos de Sinalização semafórica, vertical e horizontal
 - **Ciclo Operacional:** Planejamento • Elaboração • Assessoria • Execução
 - **Escopo Técnico:**
-  - **Sinalização Semafórica Inteligente:** Estudos de fluxo veicular, programação e parametrização semafórica para criação de "onda verde", instalação de controladores eletrônicos inteligentes homologados (Digicon), cabeamento estruturado em leitos subterrâneos em PEAD, grupos focais a LED de altíssima intensidade luminosa, sensores com visão computacional (laços virtuais) e conexão 4G/GPS com centrais web em nuvem com telemetria 24/7.
+  - **Sinalização Semafórica Inteligente:** Estudos de fluxo veicular, programação e parametrização semafórica para criação de "onda verde", instalação de controladores eletrônicos inteligentes homologados, cabeamento estruturado em leitos subterrâneos em PEAD, grupos focais a LED de altíssima intensidade luminosa, sensores com visão computacional (laços virtuais) e conexão 4G/GPS com centrais web em nuvem com telemetria 24/7.
   - **Sinalização Horizontal Viária:** Demarcação e pintura viária conforme normas Contran/DNIT. Aplicação de tintas acrílicas e termoplásticas retrorrefletivas a quente e a frio com microesferas de vidro (faixas de retenção, faixas de pedestres, linhas de eixo contínuas e seccionadas, ciclovias e áreas de conflito), além de fornecimento e instalação de tachas e tachões refletivos bidirecionais e monodirecionais.
   - **Sinalização Vertical Regulamentar:** Fabricação, fornecimento e implantação de placas regulamentares, de advertência e indicativas confeccionadas em chapas galvanizadas com películas refletivas prismáticas de alta visibilidade diurna e noturna, sustentadas por colunas, braços projetados, semi-pórticos e pórticos em aço galvanizado a fogo.
 
@@ -103,7 +103,7 @@ foco_sinalizacao/
 │       │   ├── conexao/                     (index.blade.php - QR Code e status WhatsApp)
 │       │   ├── contatos/                    (index.blade.php, show.blade.php - Orçamentos recebidos)
 │       │   ├── users/                       (index.blade.php, create.blade.php, edit.blade.php)
-│       │   ├── central-nuvem.blade.php      (Módulo Nuvem Segura Digicon)
+│       │   ├── central-nuvem.blade.php      (Módulo Central Semafórica WEB em Nuvem)
 │       │   ├── cidades.blade.php            (Módulo Municípios e Concessões)
 │       │   └── controladores.blade.php      (Módulo Controladores & Hardware)
 │       ├── auth/                            (login.blade.php estilizado com logo e cores FOCO)
@@ -145,7 +145,7 @@ foco_sinalizacao/
 ### 4.1 Site Institucional (Público)
 
 1. **Página Inicial (`/` — `home`):**
-   - Barra superior de telemetria live simulada (uptime semafórico de 99.8%, status da Nuvem Digicon e link direto para WhatsApp).
+   - Barra superior de telemetria live simulada (uptime semafórico de 99.8%, status da Nuvem e link direto para Atendimento & Orçamentos).
    - Cabeçalho transparente com glassmorphism contendo a Logomarca oficial da FOCO e navegação principal.
    - **Hero Section:** Mensagem institucional, métricas em destaque (+25 Cidades/Rodovias, 100% Autonomia LiFePO4, 24/7 Telemetria) e widget 3D interativo com luzes semafóricas ativas (Onda Verde 55 km/h, Nobreak 100%).
    - **Narrativa Corporativa (Textos Oficiais):**
@@ -205,11 +205,11 @@ foco_sinalizacao/
 
 ## 4.2 Gerenciador Operacional (Admin / Painel Restrito)
 
-Acesso restrito protegido pelo middleware `['auth', 'verified']`.
-- **Credenciais Padrão:** `admin@focosinalizacao.com.br` / `admin1234`
+Acesso restrito protegido pelo middleware `['auth', 'verified', 'admin']`.
+- **Credenciais Padrão Master:** `admin@focosinalizacao.com.br` / `admin1234`
 - **Layout com Barra Lateral (Sidebar):**
   - Contém a logomarca oficial da empresa.
-  - Indicador de status da Nuvem DIGICON ("Online").
+  - Indicador de status da Nuvem ("Online").
   - Contador dinâmico de chamados com status "Aberto" destacado em amarelo.
 
 1. **Dashboard Geral (`/dashboard`):**
@@ -349,6 +349,38 @@ php artisan route:list
 ---
 
 ## 9. CHANGELOG & HISTÓRICO DE MUDANÇAS
+
+### [2026-11-09 - Atualização 4]
+- **Remoção Total de Referências à Palavra/Marca "DIGICON":**
+  - Removidas todas as menções em todo o projeto mantendo a clareza, fluidez e precisão técnica dos textos:
+    - `"Central WEB Digicon Conectada"` -> `"Central WEB Conectada"`.
+    - `"segurança cibernética em nuvem DIGICON e total autonomia energética híbrida com baterias LiFePO4."` -> `"segurança cibernética em nuvem e total autonomia energética híbrida com baterias LiFePO4."`.
+    - `"Nuvem DIGICON: Online"` -> `"Nuvem: Online"`.
+    - `"Plataforma WEB em Nuvem Segura DIGICON..."` -> `"Plataforma WEB em Nuvem Segura..."`.
+    - Ajustado em `home.blade.php`, `layout.blade.php`, `solucoes.blade.php`, `cidades.blade.php`, `dashboard.blade.php`, `layouts/app.blade.php`, `central-nuvem.blade.php`, `controladores.blade.php`, `ChamadoSeeder.php` e suíte de testes.
+- **Simulador Comparativo de Onda Verde Dinâmico (`solucoes.blade.php`):**
+  - Implementação de máquina de estados reativa com Alpine.js simulando com fidelidade física o comportamento semafórico:
+  - "Passa no verde e depois fica vermelho, só passe quando estiver verde, em todas sinaleiras":
+    - **Modo Onda Verde FOCO:** O veículo avança em sincronia contínua (0 paradas, 52 km/h). Cada um dos 4 semáforos abre em verde antes da aproximação do veículo; o veículo passa no verde e, imediatamente após a passagem de cada cruzamento, o semáforo comuta para a cor vermelha.
+    - **Modo Planos Fixos Antigos (Convencional):** Semáforos descompassados. O veículo para antes do sinal vermelho ("🛑 Aguardando Verde"), aguarda o ciclo abrir em verde, avança passando no verde e, assim que conclui a travessia, o semáforo comuta para vermelho (3 paradas/retenções, 18 km/h).
+  - Lentes semafóricas dotadas de classes LED reativas (`traffic-lens-green`, `traffic-lens-red`, `traffic-lens-yellow`) e rótulos de status sincronizados.
+- **Identificação no Login e Bloqueio Restrito de Acesso do Cliente ao Painel Master:**
+  - **Redirecionamento Inteligente no Login (`AuthenticatedSessionController`):**
+    - Se for `admin` (`role === 'admin'` ou `admin@focosinalizacao.com.br`) -> redireciona diretamente para o Painel Master (`/dashboard`).
+    - Se for `cliente` comum -> redireciona para a Área de Chamados (`/chamados`).
+  - **Bloqueio com `AdminMiddleware`:**
+    - Criado e registrado o middleware `'admin'` protegendo as rotas `/dashboard` e `/admin/*`. Clientes normais que tentarem digitar a URL do painel administrativo recebem `403 Forbidden`.
+  - **Ocultação Completa de Botões e Opções no Frontend:**
+    - Clientes comuns autenticados não visualizam nenhum link ou botão de "Painel Gestor", "Gerenciador", "Área Restrita (Gerenciador)" ou "Painel Administrativo" no cabeçalho superior, na barra de navegação, no drawer móvel ou no rodapé.
+    - É exibido apenas o nome do cliente logado com opção de logout direto ("Sair").
+- **Testes & Qualidade:**
+  - Suíte de testes expandida para 43 testes e 235 asserções (100% aprovados).
+  - Testes específicos adicionados:
+    - Redirecionamento de admin para `/dashboard` e cliente para `/chamados`.
+    - Bloqueio HTTP 403 em `/dashboard`, `/admin/chamados` e `/admin/users` para cliente comum.
+    - Ocultação de todos os botões de gerenciador no site para cliente comum autenticado.
+    - Verificação de ausência de qualquer ocorrência de "DIGICON" nas páginas públicas e no sistema.
+  - Assets Vite compilados com sucesso via `npm run build` e código formatado com `vendor/bin/pint --format agent`.
 
 ### [2026-11-09 - Atualização 3]
 - **Ajuste de Fluxo: Solicitar Orçamento no Formulário & Chamados com Login Obrigatório:**

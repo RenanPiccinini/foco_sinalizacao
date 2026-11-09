@@ -35,7 +35,7 @@ Route::middleware('auth')->group(function () {
 | Rotas Protegidas do Gerenciador (Painel Admin)
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     // Dashboard principal
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -78,8 +78,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/admin/cidades', function () {
         return view('admin.cidades');
     })->name('admin.cidades');
+});
 
-    // Perfil do Administrador
+// Perfil do Usuário Autenticado
+Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

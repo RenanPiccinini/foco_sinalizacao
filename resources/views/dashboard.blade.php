@@ -62,7 +62,7 @@
                     <span class="text-3xl font-black font-mono text-white">{{ $stats['controladores_online'] }}</span>
                     <span class="text-xs text-foco-green-400 font-medium">{{ $stats['eficiencia_onda_verde'] }} Onda Verde</span>
                 </div>
-                <span class="mt-3 block text-xs text-slate-400 font-mono">Digicon 4G/GPS Conectados</span>
+                <span class="mt-3 block text-xs text-slate-400 font-mono">Controladores 4G/GPS Conectados</span>
             </div>
 
             <!-- KPI 4: Uptime Nobreaks LiFePO4 -->
@@ -181,7 +181,7 @@
                 </div>
                 <span class="text-xs font-mono text-foco-green-400 flex items-center gap-1.5 self-start sm:self-auto">
                     <span class="w-2 h-2 rounded-full bg-foco-green-400 animate-ping"></span>
-                    <span>Central DIGICON Nuvem Sincronizada</span>
+                    <span>Central em Nuvem Sincronizada</span>
                 </span>
             </div>
 

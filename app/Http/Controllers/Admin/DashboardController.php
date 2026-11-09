@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Chamado;
-use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
@@ -43,4 +42,3 @@ class DashboardController extends Controller
         return view('dashboard', compact('stats', 'recentes', 'controladoresDestaque'));
     }
 }
-
