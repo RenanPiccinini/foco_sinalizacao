@@ -12,7 +12,7 @@
     <div class="mb-6">
         <h2 class="text-xl font-bold text-white">Acesso ao Sistema</h2>
         <p class="text-xs text-slate-400 mt-1">
-            Entre com suas credenciais para gerenciar a plataforma ou solicitar orçamentos técnicos de engenharia.
+            Entre com suas credenciais para abertura e gestão de chamados operacionais ou acesso administrativo.
         </p>
     </div>
 
@@ -20,10 +20,10 @@
     <div class="mb-5 p-3.5 rounded-2xl bg-foco-navy-900 border border-white/10 text-xs text-slate-300 space-y-1">
         <div class="flex items-center gap-1.5 text-foco-yellow-400 font-mono font-bold text-[11px] uppercase">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-            <span>Área de Acesso Restrito</span>
+            <span>Abertura de Chamados Operacionais</span>
         </div>
         <p class="text-[11px] text-slate-400 leading-relaxed">
-            A criação de novos acessos e liberação de permissões é gerenciada unicamente pela administração central da FOCO.
+            A abertura de chamados é exclusiva para prefeituras, órgãos públicos e clientes credenciados. Caso sua instituição ainda não possua acesso, solicite o credenciamento através de nosso <a href="{{ route('site.contato') }}" class="text-foco-yellow-400 hover:underline">formulário de contato</a>.
         </p>
     </div>
 

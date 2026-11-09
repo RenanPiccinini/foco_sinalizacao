@@ -27,8 +27,12 @@ class SiteAndAdminChamadosTest extends TestCase
         $response->assertSee('SERVIÇOS PRESTADOS PELA FOCO');
 
         $response = $this->get('/chamados');
+        $response->assertRedirect('/login');
+
+        $response = $this->get('/orcamento');
         $response->assertStatus(200);
-        $response->assertSee('Abertura e Acompanhamento de Chamados');
+        $response->assertSee('FORMULÁRIO');
+        $response->assertSee('ORÇAMENTO COMPRA DIRETA');
 
         $response = $this->get('/solucoes');
         $response->assertStatus(200);
@@ -76,13 +80,23 @@ class SiteAndAdminChamadosTest extends TestCase
         $payload = [
             'tipo' => '01 - AP – Amarelo Piscante',
             'nome_solicitante' => 'Inspetor Gabriel Ramos',
-            'telefone_contato' => '(51) 99294-1111',
+            'telefone_contato' => '(51) 98765-4321',
             'local' => 'Av. Brasil cruzamento com Av. Alvin Bauer',
             'defeito' => 'Semáforo veicular em amarelo piscante após oscilação da concessionária de energia.',
             'observacao' => 'Nobreak mantendo o controlador ativo, equipe de trânsito no local.',
         ];
 
-        $response = $this->post('/chamados', $payload);
+        // Convidado tentando abrir chamado é redirecionado para login
+        $guestResponse = $this->post('/chamados', $payload);
+        $guestResponse->assertRedirect('/login');
+
+        // Usuário logado abre chamado com sucesso
+        $user = User::factory()->create([
+            'role' => 'cliente',
+            'is_active' => true,
+        ]);
+
+        $response = $this->actingAs($user)->post('/chamados', $payload);
         $response->assertRedirect();
         $response->assertSessionHas('success');
         $response->assertSessionHas('novo_protocolo');
@@ -91,7 +105,7 @@ class SiteAndAdminChamadosTest extends TestCase
         $this->assertDatabaseHas('chamados', [
             'tipo' => '01 - AP – Amarelo Piscante',
             'nome_solicitante' => 'Inspetor Gabriel Ramos',
-            'telefone_contato' => '(51) 99294-1111',
+            'telefone_contato' => '(51) 98765-4321',
             'local' => 'Av. Brasil cruzamento com Av. Alvin Bauer',
             'status' => 'Aberto',
         ]);
@@ -268,8 +282,9 @@ class SiteAndAdminChamadosTest extends TestCase
             $this->assertEquals($descricaoCompleta, Chamado::formatarTipo($codigo));
         }
 
-        // Testa renderização dos 8 defeitos na página pública de chamados
-        $response = $this->get('/chamados');
+        // Testa renderização dos 8 defeitos na página de chamados para usuário autenticado
+        $user = User::factory()->create(['role' => 'cliente', 'is_active' => true]);
+        $response = $this->actingAs($user)->get('/chamados');
         $response->assertStatus(200);
         foreach (Chamado::DEFEITOS_RECLAMADOS as $codigo => $descricao) {
             $response->assertSee($codigo);
@@ -289,29 +304,32 @@ class SiteAndAdminChamadosTest extends TestCase
     }
 
     /**
-     * Testa que "Solicitar Orçamento" redireciona convidados para login
+     * Testa que "Abrir Chamado" requer login e redireciona convidados para login
      */
-    public function test_solicitar_orcamento_requires_login(): void
+    public function test_abrir_chamado_requires_login(): void
     {
-        $response = $this->get('/orcamento');
+        $response = $this->get('/chamados');
         $response->assertRedirect('/login');
+
+        $responsePost = $this->post('/chamados', [
+            'tipo' => '01 - AP – Amarelo Piscante',
+            'nome_solicitante' => 'Inspetor Teste',
+            'telefone_contato' => '(51) 98765-4321',
+            'local' => 'Av. Brasil',
+        ]);
+        $responsePost->assertRedirect('/login');
     }
 
     /**
-     * Testa que usuário autenticado consegue acessar a tela de solicitar orçamento
+     * Testa que "Solicitar Orçamento" é público e renderiza o formulário oficial
      */
-    public function test_authenticated_user_can_access_solicitar_orcamento(): void
+    public function test_solicitar_orcamento_is_public_and_renders_form(): void
     {
-        $user = User::factory()->create([
-            'role' => 'cliente',
-            'is_active' => true,
-        ]);
-
-        $response = $this->actingAs($user)->get('/orcamento');
+        $response = $this->get('/orcamento');
         $response->assertStatus(200);
-        $response->assertSee('Solicitar Orçamento');
         $response->assertSee('FORMULÁRIO');
         $response->assertSee('ORÇAMENTO COMPRA DIRETA');
+        $response->assertSee('ORÇAMENTO PARA MONTAR PROCESSO');
     }
 
     /**
@@ -451,25 +469,33 @@ class SiteAndAdminChamadosTest extends TestCase
     }
 
     /**
-     * Testa que convidado não autenticado é impedido de enviar opções de Orçamento
+     * Testa que qualquer visitante/convidado pode enviar solicitação de orçamento pelo formulário oficial sem login
      */
-    public function test_guest_cannot_submit_orcamento_options_without_login(): void
+    public function test_guest_can_submit_orcamento_directly_without_login(): void
     {
+        Storage::fake('public');
+
+        $file = UploadedFile::fake()->create('planilha_quantitativos.xlsx', 100);
+
         $payload = [
-            'empresa' => 'Empresa Externa',
+            'empresa' => 'Empresa Externa Solicitante',
             'responsavel' => 'Fulano de Tal',
             'fone' => '(11) 99999-9999',
             'email' => 'externo@empresa.com',
             'endereco' => 'Av Paulista, 1000',
             'cnpj' => '00.000.000/0001-00',
+            'arquivo' => $file,
             'assunto' => Contato::ASSUNTO_ORCAMENTO_COMPRA_DIRETA,
-            'descricao' => 'Tentativa de orçamento sem login prévio',
+            'descricao' => 'Solicitação de orçamento com quantitativos sem login prévio',
         ];
 
         $response = $this->post('/contato', $payload);
-        $response->assertRedirect('/login');
-        $this->assertDatabaseMissing('contatos', [
-            'empresa' => 'Empresa Externa',
+        $response->assertRedirect();
+        $response->assertSessionHas('novo_protocolo_contato');
+
+        $this->assertDatabaseHas('contatos', [
+            'empresa' => 'Empresa Externa Solicitante',
+            'assunto' => Contato::ASSUNTO_ORCAMENTO_COMPRA_DIRETA,
         ]);
     }
 

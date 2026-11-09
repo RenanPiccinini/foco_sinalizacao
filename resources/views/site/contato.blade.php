@@ -4,18 +4,7 @@
 
 @section('content')
 <div class="py-14 bg-foco-navy-950 relative overflow-hidden" x-data="{
-    assuntoSelecionado: '{{ old('assunto', $assuntoPredefinido ?: (auth()->check() ? 'ORÇAMENTO COMPRA DIRETA' : 'QUESTIONAMENTO/SOLICITAÇÃO/OUTROS')) }}',
-    isLoggedIn: {{ auth()->check() ? 'true' : 'false' }},
-    showLoginAlert: false,
-    selecionarAssunto(opcao) {
-        if ((opcao === 'ORÇAMENTO COMPRA DIRETA' || opcao === 'ORÇAMENTO PARA MONTAR PROCESSO') && !this.isLoggedIn) {
-            this.showLoginAlert = true;
-            this.assuntoSelecionado = opcao;
-        } else {
-            this.showLoginAlert = false;
-            this.assuntoSelecionado = opcao;
-        }
-    }
+    assuntoSelecionado: '{{ old('assunto', $assuntoPredefinido ?: 'ORÇAMENTO COMPRA DIRETA') }}'
 }">
 
     <!-- Efeitos de iluminação de fundo -->
@@ -81,28 +70,11 @@
                     <span>Usuário Autenticado: <strong>{{ auth()->user()->name }}</strong></span>
                 </div>
                 @else
-                <a href="{{ route('login') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-mono text-foco-yellow-400 border border-foco-yellow-500/30 transition self-start sm:self-auto">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
-                    <span>Fazer Login para Orçamentos</span>
-                </a>
+                <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-foco-yellow-500/10 border border-foco-yellow-500/30 text-xs font-mono text-foco-yellow-400">
+                    <span class="w-2 h-2 rounded-full bg-foco-yellow-400 animate-pulse"></span>
+                    <span>Envio Imediato • Sem Necessidade de Cadastro</span>
+                </div>
                 @endif
-            </div>
-
-            <!-- Banner Informativo quando visitante seleciona opção de Orçamento -->
-            <div x-show="showLoginAlert && !isLoggedIn" x-transition class="mb-6 p-4 rounded-2xl bg-amber-500/15 border-2 border-amber-500/50 text-amber-200 text-xs font-mono space-y-2">
-                <div class="flex items-center gap-2 font-bold text-amber-300">
-                    <svg class="w-5 h-5 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                    <span>ATENÇÃO: LOGIN OBRIGATÓRIO PARA ORÇAMENTO</span>
-                </div>
-                <p class="leading-relaxed">
-                    Conforme as diretrizes da FOCO, <strong>apenas usuários autorizados e cadastrados com login e senha</strong> podem solicitar orçamentos (Compra Direta ou Montar Processo).
-                </p>
-                <div class="pt-1">
-                    <a href="{{ route('login') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-foco-yellow-500 text-foco-navy-950 hover:bg-foco-yellow-400 transition shadow-glow-yellow font-sans">
-                        <span>Acessar Tela de Login Agora</span>
-                        <span>→</span>
-                    </a>
-                </div>
             </div>
 
             <form action="{{ route('site.contato.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
@@ -203,7 +175,7 @@
 
                     <div class="space-y-2.5">
                         <!-- Opção 1: ORÇAMENTO COMPRA DIRETA -->
-                        <label @click="selecionarAssunto('ORÇAMENTO COMPRA DIRETA')" class="cursor-pointer relative p-3.5 rounded-2xl border transition flex items-center justify-between"
+                        <label @click="assuntoSelecionado = 'ORÇAMENTO COMPRA DIRETA'" class="cursor-pointer relative p-3.5 rounded-2xl border transition flex items-center justify-between"
                             :class="assuntoSelecionado === 'ORÇAMENTO COMPRA DIRETA' ? 'bg-foco-yellow-500/15 border-foco-yellow-500 text-white shadow-glow-yellow' : 'bg-foco-navy-900 border-white/10 text-slate-300 hover:border-white/30'">
                             <div class="flex items-center gap-3">
                                 <input type="radio" name="assunto" value="ORÇAMENTO COMPRA DIRETA" class="sr-only" x-model="assuntoSelecionado" required>
@@ -214,7 +186,7 @@
                         </label>
 
                         <!-- Opção 2: ORÇAMENTO PARA MONTAR PROCESSO -->
-                        <label @click="selecionarAssunto('ORÇAMENTO PARA MONTAR PROCESSO')" class="cursor-pointer relative p-3.5 rounded-2xl border transition flex items-center justify-between"
+                        <label @click="assuntoSelecionado = 'ORÇAMENTO PARA MONTAR PROCESSO'" class="cursor-pointer relative p-3.5 rounded-2xl border transition flex items-center justify-between"
                             :class="assuntoSelecionado === 'ORÇAMENTO PARA MONTAR PROCESSO' ? 'bg-purple-500/15 border-purple-400 text-white shadow-lg' : 'bg-foco-navy-900 border-white/10 text-slate-300 hover:border-white/30'">
                             <div class="flex items-center gap-3">
                                 <input type="radio" name="assunto" value="ORÇAMENTO PARA MONTAR PROCESSO" class="sr-only" x-model="assuntoSelecionado" required>
@@ -225,7 +197,7 @@
                         </label>
 
                         <!-- Opção 3: QUESTIONAMENTO/SOLICITAÇÃO/OUTROS -->
-                        <label @click="selecionarAssunto('QUESTIONAMENTO/SOLICITAÇÃO/OUTROS')" class="cursor-pointer relative p-3.5 rounded-2xl border transition flex items-center justify-between"
+                        <label @click="assuntoSelecionado = 'QUESTIONAMENTO/SOLICITAÇÃO/OUTROS'" class="cursor-pointer relative p-3.5 rounded-2xl border transition flex items-center justify-between"
                             :class="assuntoSelecionado === 'QUESTIONAMENTO/SOLICITAÇÃO/OUTROS' ? 'bg-cyan-500/15 border-cyan-400 text-white shadow-glow-blue' : 'bg-foco-navy-900 border-white/10 text-slate-300 hover:border-white/30'">
                             <div class="flex items-center gap-3">
                                 <input type="radio" name="assunto" value="QUESTIONAMENTO/SOLICITAÇÃO/OUTROS" class="sr-only" x-model="assuntoSelecionado" required>

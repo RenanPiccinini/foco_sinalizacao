@@ -15,20 +15,20 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 Route::get('/', [SiteController::class, 'index'])->name('home');
-Route::get('/chamados', [SiteController::class, 'chamados'])->name('site.chamados');
-Route::post('/chamados', [SiteController::class, 'storeChamado'])->name('site.chamados.store');
 Route::get('/solucoes', [SiteController::class, 'solucoes'])->name('site.solucoes');
 Route::get('/sobre', [SiteController::class, 'sobre'])->name('site.sobre');
 Route::get('/cidades-e-rodovias', [SiteController::class, 'cidades'])->name('site.cidades');
 
-// Formulário de Contato e Solicitações
+// Formulário de Contato e Solicitação de Orçamento (Público com os campos da foto)
 Route::get('/contato', [SiteController::class, 'contato'])->name('site.contato');
+Route::get('/orcamento', [SiteController::class, 'orcamento'])->name('site.orcamento');
 Route::post('/contato', [SiteController::class, 'storeContato'])->name('site.contato.store');
 
-// Solicitar Orçamento (Exclusivo para Usuários Autenticados com Login e Senha)
-Route::get('/orcamento', [SiteController::class, 'orcamento'])
-    ->middleware('auth')
-    ->name('site.orcamento');
+// Abertura e Acompanhamento de Chamados (Exclusivo para Usuários Autenticados com Login e Senha)
+Route::middleware('auth')->group(function () {
+    Route::get('/chamados', [SiteController::class, 'chamados'])->name('site.chamados');
+    Route::post('/chamados', [SiteController::class, 'storeChamado'])->name('site.chamados.store');
+});
 
 /*
 |--------------------------------------------------------------------------

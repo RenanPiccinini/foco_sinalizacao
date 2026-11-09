@@ -91,9 +91,9 @@
                         Contato
                     </a>
 
-                    <!-- BOTÃO SOLICITAR ORÇAMENTO (RESTRITO / LOGIN) -->
+                    <!-- BOTÃO SOLICITAR ORÇAMENTO (FORMULÁRIO PÚBLICO) -->
                     <a href="{{ route('site.orcamento') }}" class="px-3.5 py-2 rounded-lg border border-foco-yellow-500/40 text-foco-yellow-400 hover:bg-foco-yellow-500/10 hover:border-foco-yellow-400 transition font-semibold text-xs tracking-wide uppercase flex items-center gap-1.5">
-                        <svg class="w-3.5 h-3.5 text-foco-yellow-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                        <svg class="w-3.5 h-3.5 text-foco-yellow-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                         <span>Solicitar Orçamento</span>
                     </a>
 
@@ -141,7 +141,7 @@
                         </a>
                         <a href="{{ route('site.orcamento') }}" class="py-2.5 px-3 rounded-xl text-foco-yellow-400 hover:bg-white/5 flex items-center justify-between font-semibold">
                             <span class="flex items-center gap-1.5">
-                                <svg class="w-4 h-4 text-foco-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                                <svg class="w-4 h-4 text-foco-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                                 <span>Solicitar Orçamento</span>
                             </span>
                             <span class="text-xs text-foco-yellow-400">→</span>
@@ -244,7 +244,7 @@
                     <p class="text-xs text-slate-400 mb-3">Solicite orçamentos técnicos e envie suas demandas através de nosso formulário integrado:</p>
                     <div class="space-y-2">
                         <a href="{{ route('site.orcamento') }}" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-foco-yellow-500/10 border border-foco-yellow-500/30 text-foco-yellow-400 hover:bg-foco-yellow-500/20 text-xs font-bold transition w-full justify-center">
-                            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                             <span>Solicitar Orçamento</span>
                         </a>
                         <a href="{{ route('site.contato') }}" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-slate-200 hover:bg-white/10 text-xs font-medium transition w-full justify-center">

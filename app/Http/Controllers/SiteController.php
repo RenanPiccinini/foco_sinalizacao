@@ -198,12 +198,6 @@ class SiteController
             'arquivo' => ['nullable', 'file', 'max:20480', 'mimes:pdf,xls,xlsx,csv,doc,docx,png,jpg,jpeg,zip,rar'],
         ]);
 
-        // Regra de Negócio Estrita: Apenas usuários autenticados podem solicitar orçamentos
-        if (in_array($validated['assunto'], [Contato::ASSUNTO_COMPRA_DIRETA, Contato::ASSUNTO_MONTAR_PROCESSO]) && ! auth()->check()) {
-            return redirect()->route('login')
-                ->with('info', 'Para solicitar orçamento (Compra Direta ou Montar Processo), é obrigatório possuir login e senha no sistema.');
-        }
-
         $arquivoPath = null;
         $arquivoNome = null;
 

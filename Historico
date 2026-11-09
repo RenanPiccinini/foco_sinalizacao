@@ -315,13 +315,13 @@ O sistema possui suíte completa de testes automatizados com PHPUnit / Laravel T
   - Autenticação e proteção de rotas administrativas.
   - Conclusão de chamados pelo gerenciador e emissão de mensagens.
   - Endpoints de status, QR Code e envio de teste da conexão WhatsApp.
-  - **Fluxo de "Solicitar Orçamento" restrito a usuários logados** (`/orcamento` redireciona convidados para `/login`).
+  - **Fluxo de "Abrir Chamado" restrito a usuários logados** (`/chamados` redireciona convidados para `/login`).
+  - **Fluxo de "Solicitar Orçamento" público** (`/orcamento` e `/contato` renderizam o formulário oficial com upload de arquivos/planilhas).
   - **Bloqueio de registro público e recuperação de senha** (redirecionam para `/login`).
   - **Bloqueio de login para usuários inativos / bloqueados**.
   - **Módulo de Usuários no Admin Master**: listagem, criação, edição, alternância de bloqueio (bloquear/liberar) e exclusão.
   - **Proteção de acesso não autorizado**: usuários comuns recebem 403 ao tentar acessar o gerenciador de usuários.
-  - **Envio do formulário de contato oficial com anexo** (validação, upload, gravação de banco e geração de protocolo).
-  - **Impedimento de solicitação de orçamento por convidados sem autenticação**.
+  - **Envio do formulário de contato e orçamento com anexo sem necessidade de login** (validação, upload, gravação de banco e geração de protocolo).
   - **Gestão de contatos/orçamentos no Admin**: listagem, detalhe, download de planilha/arquivo, troca de status e exclusão.
 
 ---
@@ -351,11 +351,11 @@ php artisan route:list
 ## 9. CHANGELOG & HISTÓRICO DE MUDANÇAS
 
 ### [2026-11-09 - Atualização 3]
-- **Solicitação de Orçamento Restrita a Usuários Cadastrados:**
-  - O botão "Solicitar Orçamento" agora redireciona obrigatoriamente para a tela de Login (`/orcamento` protegido por middleware `auth`).
-  - Apenas usuários cadastrados e liberados pela Diretoria/Admin Master conseguem solicitar orçamentos.
-  - Tentativas de convidados enviarem formulário marcando opções de orçamento são interceptadas tanto no frontend quanto no backend, redirecionando para o login.
-  - **Desativação Total de Criação de Conta e Recuperação de Senha:** Não é possível criar conta pelo site nem recuperar senha. Todas as rotas de registro e recuperação pública redirecionam para `/login`.
+- **Ajuste de Fluxo: Solicitar Orçamento no Formulário & Chamados com Login Obrigatório:**
+  - **Solicitar Orçamento (Público):** O botão "Solicitar Orçamento" direciona diretamente para o formulário oficial com os campos da Foto 2 (`/orcamento` e `/contato`). Qualquer visitante ou cliente pode solicitar orçamento e enviar planilhas/anexos sem necessidade de login.
+  - **Abrir Chamado (Restrito):** "Abrir Chamado" redireciona convidados para a tela de Login (`/chamados` protegido por middleware `auth`). **Só pode abrir chamado quem estiver autenticado com login e senha**.
+  - **Acesso Restrito:** Apenas prefeituras, concessionárias e operadores credenciados pelo Administrador Master conseguem abrir chamados.
+  - **Desativação Total de Criação de Conta e Recuperação de Senha:** Não é possível criar conta pelo site nem recuperar senha. Todas as rotas públicas de registro e recuperação redirecionam para `/login`.
 - **Módulo de Gestão de Usuários no Gerenciador (Admin Master):**
   - Implementado menu "Usuários" exclusivo para administradores no Admin Master (`admin@focosinalizacao.com.br`).
   - Listagem completa com busca por nome/email e filtros por status (Liberado/Bloqueado) e perfil (Admin/Cliente).
@@ -364,14 +364,15 @@ php artisan route:list
   - Proteção do Administrador Master: o usuário master e o usuário da sessão ativa não podem ser excluídos nem bloqueados por si mesmos.
 - **Tela de Login com Laravel Breeze Customizada:**
   - Tela de login redesenhada com a identidade visual da FOCO: fundo escuro (`foco-navy-950`), logo oficial da empresa em alta definição, botões e acentos em amarelo FOCO (`foco-yellow-500`).
+  - Avisos em tela informando que a abertura de chamados operacionais é exclusiva a clientes credenciados.
   - Removidos quaisquer links de cadastro ou recuperação de senha.
 - **Exclusão da Seção de Parcerias (Foto 1 do Cliente):**
-  - Removida integralmente a seção "Parcerias em serviços, equipamentos e engenharia integrada" da homepage (`resources/views/site/home.blade.php`), incluindo todos os 10 cards de parceiros (Digicon, Sinaway, Signasul, Contransin, Pavicon, Sinaltran, LCM Construtora, Chiorri Informática, TR Sul Engenharia, Prefeituras & Concessões).
+  - Removida integralmente a seção "Parcerias em serviços, equipamentos e engenharia integrada" da homepage (`resources/views/site/home.blade.php`), incluindo todos os 10 cards de parceiros.
 - **Remoção de Todos os Contatos e Links para WhatsApp no Site Público:**
   - Removidos todos os botões flutuantes, links `https://wa.me/...` e números de WhatsApp da barra superior, cabeçalho, drawer mobile, cards de serviços, detalhes de soluções e rodapé.
   - Componente flutuante do WhatsApp desativado.
-- **Novo Formulário de Contato Oficial (Foto 2 do Cliente):**
-  - Construído formulário na rota `/contato` rigorosamente com os campos solicitados:
+- **Formulário de Contato e Orçamento Oficial (Foto 2 do Cliente):**
+  - Construído formulário na rota `/contato` e `/orcamento` rigorosamente com os campos solicitados:
     - `EMPRESA –`
     - `RESPONSÁVEL –`
     - `FONE-`
@@ -383,6 +384,9 @@ php artisan route:list
       - `➤ ORÇAMENTO COMPRA DIRETA ( )`
       - `➤ ORÇAMENTO PARA MONTAR PROCESSO ( )`
       - `➤ QUESTIONAMENTO/SOLICITAÇÃO/OUTROS ( )`
+    - `Descrição do orçamento com especificação em anexo do produto/equipamento ou serviço, inserindo quantitativos.`
+  - Geração automática de protocolo único no formato `SOL-AAAA-XXXX`.
+  - Módulo administrativo no painel para visualização de contatos/orçamentos recebidos, download seguro de planilhas/anexos e atualização de status (Novo, Em Análise, Respondido, Concluído).
     - `Descrição do orçamento com especificação em anexo do produto/equipamento ou serviço, inserindo quantitativos.`
   - Geração automática de protocolo único no formato `SOL-AAAA-XXXX`.
   - Módulo administrativo no painel para visualização de contatos/orçamentos recebidos, download seguro de planilhas/anexos e atualização de status (Novo, Em Análise, Respondido, Concluído).
