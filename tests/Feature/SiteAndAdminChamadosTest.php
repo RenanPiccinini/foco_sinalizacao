@@ -3,9 +3,12 @@
 namespace Tests\Feature;
 
 use App\Models\Chamado;
+use App\Models\Contato;
 use App\Models\User;
 use App\Services\EvolutionWhatsAppService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class SiteAndAdminChamadosTest extends TestCase
@@ -43,8 +46,19 @@ class SiteAndAdminChamadosTest extends TestCase
 
         $response = $this->get('/contato');
         $response->assertStatus(200);
-        $response->assertSee('Central de Emergência Viária');
-        $response->assertSee('99294-1111');
+        $response->assertSee('FORMULÁRIO');
+        $response->assertSee('ORÇAMENTO COMPRA DIRETA');
+        $response->assertSee('ORÇAMENTO PARA MONTAR PROCESSO');
+        $response->assertSee('QUESTIONAMENTO/SOLICITAÇÃO/OUTROS');
+        $response->assertDontSee('99294-1111');
+        $response->assertDontSee('wa.me');
+
+        // Garante que a seção de parcerias foi removida da home
+        $responseHome = $this->get('/');
+        $responseHome->assertDontSee('PARCERIAS EM SERVIÇOS, EQUIPAMENTOS E ENGENHARIA INTEGRADA');
+        $responseHome->assertDontSee('Digicon S/A');
+        $responseHome->assertDontSee('wa.me');
+        $responseHome->assertDontSee('99294-1111');
     }
 
     /**
@@ -272,5 +286,250 @@ class SiteAndAdminChamadosTest extends TestCase
         $responseSobre->assertStatus(200);
         $responseSobre->assertSee('Mais do que entregar excelência técnica, esse grande projeto nos permitiu enxergar de perto uma carência latente no mercado por soluções inteligentes e integradas de engenharia de tráfego.');
         $responseSobre->assertSee('Expertise técnica em Projetos de Tecnologias Emergentes (Deep Tech), aliado a cases consolidados do mercado');
+    }
+
+    /**
+     * Testa que "Solicitar Orçamento" redireciona convidados para login
+     */
+    public function test_solicitar_orcamento_requires_login(): void
+    {
+        $response = $this->get('/orcamento');
+        $response->assertRedirect('/login');
+    }
+
+    /**
+     * Testa que usuário autenticado consegue acessar a tela de solicitar orçamento
+     */
+    public function test_authenticated_user_can_access_solicitar_orcamento(): void
+    {
+        $user = User::factory()->create([
+            'role' => 'cliente',
+            'is_active' => true,
+        ]);
+
+        $response = $this->actingAs($user)->get('/orcamento');
+        $response->assertStatus(200);
+        $response->assertSee('Solicitar Orçamento');
+        $response->assertSee('FORMULÁRIO');
+        $response->assertSee('ORÇAMENTO COMPRA DIRETA');
+    }
+
+    /**
+     * Testa que usuário bloqueado não consegue fazer login
+     */
+    public function test_blocked_user_cannot_login(): void
+    {
+        $user = User::factory()->create([
+            'password' => bcrypt('password123'),
+            'is_active' => false,
+        ]);
+
+        $response = $this->post('/login', [
+            'email' => $user->email,
+            'password' => 'password123',
+        ]);
+
+        $this->assertGuest();
+        $response->assertSessionHasErrors('email');
+    }
+
+    /**
+     * Testa que o Master Admin consegue acessar o menu Usuários e criar um usuário
+     */
+    public function test_master_admin_can_manage_users(): void
+    {
+        $admin = User::factory()->create([
+            'email' => 'admin@focosinalizacao.com.br',
+            'role' => 'admin',
+            'is_active' => true,
+        ]);
+
+        // Listagem
+        $response = $this->actingAs($admin)->get('/admin/users');
+        $response->assertStatus(200);
+        $response->assertSee('Gestão de Usuários');
+
+        // Criação de novo usuário
+        $createResponse = $this->actingAs($admin)->post('/admin/users', [
+            'name' => 'Prefeitura de Teste',
+            'email' => 'prefeitura@cidade.gov.br',
+            'password' => 'senha12345',
+            'password_confirmation' => 'senha12345',
+            'role' => 'cliente',
+            'is_active' => '1',
+        ]);
+
+        $createResponse->assertRedirect('/admin/users');
+        $this->assertDatabaseHas('users', [
+            'email' => 'prefeitura@cidade.gov.br',
+            'role' => 'cliente',
+            'is_active' => 1,
+        ]);
+    }
+
+    /**
+     * Testa que o Master Admin pode bloquear e liberar um usuário
+     */
+    public function test_master_admin_can_toggle_block_user(): void
+    {
+        $admin = User::factory()->create([
+            'email' => 'admin@focosinalizacao.com.br',
+            'role' => 'admin',
+            'is_active' => true,
+        ]);
+
+        $cliente = User::factory()->create([
+            'role' => 'cliente',
+            'is_active' => true,
+        ]);
+
+        // Bloquear
+        $response = $this->actingAs($admin)->patch("/admin/users/{$cliente->id}/toggle-status");
+        $response->assertRedirect('/admin/users');
+        $this->assertFalse($cliente->fresh()->is_active);
+
+        // Liberar novamente
+        $response = $this->actingAs($admin)->patch("/admin/users/{$cliente->id}/toggle-status");
+        $response->assertRedirect('/admin/users');
+        $this->assertTrue($cliente->fresh()->is_active);
+    }
+
+    /**
+     * Testa que usuários não administradores não podem acessar o módulo de usuários
+     */
+    public function test_non_admin_cannot_access_user_management(): void
+    {
+        $cliente = User::factory()->create([
+            'role' => 'cliente',
+            'is_active' => true,
+        ]);
+
+        $response = $this->actingAs($cliente)->get('/admin/users');
+        $response->assertStatus(403);
+    }
+
+    /**
+     * Testa envio de contato com arquivo anexo
+     */
+    public function test_contact_form_submission_with_attachment(): void
+    {
+        Storage::fake('public');
+
+        $user = User::factory()->create([
+            'role' => 'cliente',
+            'is_active' => true,
+        ]);
+
+        $file = UploadedFile::fake()->create('planilha_quantitativos.xlsx', 100);
+
+        $payload = [
+            'empresa' => 'Consórcio Viário Catarinense',
+            'responsavel' => 'Eng. Roberto Santos',
+            'fone' => '(47) 98888-7777',
+            'email' => 'roberto@consorcio.com.br',
+            'endereco' => 'Rua das Flores, 500, Centro',
+            'cnpj' => '12.345.678/0001-90',
+            'arquivo' => $file,
+            'assunto' => Contato::ASSUNTO_ORCAMENTO_COMPRA_DIRETA,
+            'descricao' => 'Orçamento para 15 conjuntos semafóricos completos e 2 controladores Digicon.',
+        ];
+
+        $response = $this->actingAs($user)->post('/contato', $payload);
+        $response->assertRedirect();
+        $response->assertSessionHas('novo_protocolo_contato');
+
+        $this->assertDatabaseHas('contatos', [
+            'empresa' => 'Consórcio Viário Catarinense',
+            'responsavel' => 'Eng. Roberto Santos',
+            'assunto' => Contato::ASSUNTO_ORCAMENTO_COMPRA_DIRETA,
+        ]);
+
+        $contato = Contato::where('empresa', 'Consórcio Viário Catarinense')->first();
+        $this->assertNotNull($contato);
+        $this->assertNotNull($contato->arquivo_path);
+        Storage::disk('public')->assertExists($contato->arquivo_path);
+    }
+
+    /**
+     * Testa que convidado não autenticado é impedido de enviar opções de Orçamento
+     */
+    public function test_guest_cannot_submit_orcamento_options_without_login(): void
+    {
+        $payload = [
+            'empresa' => 'Empresa Externa',
+            'responsavel' => 'Fulano de Tal',
+            'fone' => '(11) 99999-9999',
+            'email' => 'externo@empresa.com',
+            'endereco' => 'Av Paulista, 1000',
+            'cnpj' => '00.000.000/0001-00',
+            'assunto' => Contato::ASSUNTO_ORCAMENTO_COMPRA_DIRETA,
+            'descricao' => 'Tentativa de orçamento sem login prévio',
+        ];
+
+        $response = $this->post('/contato', $payload);
+        $response->assertRedirect('/login');
+        $this->assertDatabaseMissing('contatos', [
+            'empresa' => 'Empresa Externa',
+        ]);
+    }
+
+    /**
+     * Testa que o administrador pode visualizar, atualizar status e gerenciar contatos e orçamentos
+     */
+    public function test_admin_can_manage_contatos_and_orcamentos(): void
+    {
+        Storage::fake('public');
+
+        $admin = User::factory()->create([
+            'email' => 'admin@focosinalizacao.com.br',
+            'role' => 'admin',
+            'is_active' => true,
+        ]);
+
+        $filePath = 'orcamentos/teste.xlsx';
+        Storage::disk('public')->put($filePath, 'conteudo de teste');
+
+        $contato = Contato::create([
+            'protocolo' => 'SOL-2026-TEST',
+            'empresa' => 'Prefeitura de Teste',
+            'responsavel' => 'Secretário de Obras',
+            'fone' => '(47) 99999-8888',
+            'email' => 'obras@teste.gov.br',
+            'endereco' => 'Praça Central, 1',
+            'cnpj' => '11.222.333/0001-44',
+            'arquivo_path' => $filePath,
+            'arquivo_nome' => 'planilha_obras.xlsx',
+            'assunto' => Contato::ASSUNTO_MONTAR_PROCESSO,
+            'descricao' => 'Solicitação de orçamento com quantitativos para processo licitatório.',
+            'status' => 'Novo',
+            'ip' => '127.0.0.1',
+        ]);
+
+        // Listagem
+        $response = $this->actingAs($admin)->get('/admin/contatos');
+        $response->assertStatus(200);
+        $response->assertSee('Prefeitura de Teste');
+        $response->assertSee('SOL-2026-TEST');
+
+        // Detalhe
+        $showResponse = $this->actingAs($admin)->get("/admin/contatos/{$contato->id}");
+        $showResponse->assertStatus(200);
+        $showResponse->assertSee('Secretário de Obras');
+
+        // Download do anexo
+        $downloadResponse = $this->actingAs($admin)->get("/admin/contatos/{$contato->id}/download");
+        $downloadResponse->assertStatus(200);
+
+        // Atualização de status
+        $statusResponse = $this->actingAs($admin)->patch("/admin/contatos/{$contato->id}/status", [
+            'status' => 'Em Análise',
+        ]);
+        $statusResponse->assertRedirect();
+        $this->assertEquals('Em Análise', $contato->fresh()->status);
+
+        // Exclusão
+        $deleteResponse = $this->actingAs($admin)->delete("/admin/contatos/{$contato->id}");
+        $deleteResponse->assertRedirect('/admin/contatos');
+        $this->assertDatabaseMissing('contatos', ['id' => $contato->id]);
     }
 }

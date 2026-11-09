@@ -50,6 +50,16 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        $user = Auth::user();
+        if ($user && ! $user->isActive()) {
+            Auth::logout();
+            RateLimiter::hit($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'email' => 'Seu usuário está bloqueado pela administração da FOCO Sinalização. Entre em contato para liberação.',
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 

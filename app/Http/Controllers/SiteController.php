@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Chamado;
+use App\Models\Contato;
 use App\Services\EvolutionWhatsAppService;
 use Illuminate\Http\Request;
 
@@ -47,21 +48,9 @@ class SiteController
             'Rodovia BR 290',
         ];
 
-        $parceiros = [
-            ['nome' => 'Digicon S/A', 'tipo' => 'Controle Eletrônico para Mecânica'],
-            ['nome' => 'Sinaway', 'tipo' => 'Comércio de Sinalização'],
-            ['nome' => 'Signasul', 'tipo' => 'Engenharia de Sinalização'],
-            ['nome' => 'Contransin', 'tipo' => 'Indústria e Comércio'],
-            ['nome' => 'Pavicon', 'tipo' => 'Pavimentações Ltda'],
-            ['nome' => 'Sinaltran', 'tipo' => 'Sinalizações Viárias'],
-            ['nome' => 'LCM Construtora', 'tipo' => 'Obras & Infraestrutura'],
-            ['nome' => 'Chiorri Informática', 'tipo' => 'Consultoria em Tráfego'],
-            ['nome' => 'TR Sul Engenharia', 'tipo' => 'Projetos de Mobilidade'],
-        ];
-
         $ultimosChamados = Chamado::latest('data_hora_abertura')->take(3)->get();
 
-        return view('site.home', compact('municipiosSC', 'municipiosRS', 'rodovias', 'parceiros', 'ultimosChamados'));
+        return view('site.home', compact('municipiosSC', 'municipiosRS', 'rodovias', 'ultimosChamados'));
     }
 
     /**
@@ -163,10 +152,88 @@ class SiteController
     }
 
     /**
-     * Página de Contato e Plantão 24h.
+     * Página de Contato Oficial com o Formulário Institucional.
      */
-    public function contato()
+    public function contato(Request $request)
     {
-        return view('site.contato');
+        $assuntoPredefinido = $request->query('assunto', '');
+
+        return view('site.contato', [
+            'assuntoPredefinido' => $assuntoPredefinido,
+            'isOrcamento' => false,
+        ]);
+    }
+
+    /**
+     * Tela dedicada à Solicitação de Orçamento (Exclusiva para Usuários Autenticados).
+     */
+    public function orcamento(Request $request)
+    {
+        $assuntoPredefinido = $request->query('assunto', Contato::ASSUNTO_COMPRA_DIRETA);
+
+        return view('site.contato', [
+            'assuntoPredefinido' => $assuntoPredefinido,
+            'isOrcamento' => true,
+        ]);
+    }
+
+    /**
+     * Processa o envio do formulário de contato / solicitação de orçamento.
+     * Dados conforme padrão oficial:
+     * EMPRESA, RESPONSÁVEL, FONE, E-MAIL, ENDEREÇO, CNPJ, ANEXAR PLANILHA/ARQUIVO
+     * ASSUNTO: ORÇAMENTO COMPRA DIRETA / ORÇAMENTO PARA MONTAR PROCESSO / QUESTIONAMENTO/SOLICITAÇÃO/OUTROS
+     * Descrição do orçamento com especificação em anexo do produto/equipamento ou serviço, inserindo quantitativos.
+     */
+    public function storeContato(Request $request)
+    {
+        $validated = $request->validate([
+            'empresa' => ['required', 'string', 'max:180'],
+            'responsavel' => ['required', 'string', 'max:120'],
+            'fone' => ['required', 'string', 'max:40'],
+            'email' => ['required', 'email', 'max:120'],
+            'endereco' => ['required', 'string', 'max:255'],
+            'cnpj' => ['required', 'string', 'max:30'],
+            'assunto' => ['required', 'string', 'in:'.implode(',', Contato::ASSUNTOS)],
+            'descricao' => ['required', 'string', 'max:8000'],
+            'arquivo' => ['nullable', 'file', 'max:20480', 'mimes:pdf,xls,xlsx,csv,doc,docx,png,jpg,jpeg,zip,rar'],
+        ]);
+
+        // Regra de Negócio Estrita: Apenas usuários autenticados podem solicitar orçamentos
+        if (in_array($validated['assunto'], [Contato::ASSUNTO_COMPRA_DIRETA, Contato::ASSUNTO_MONTAR_PROCESSO]) && ! auth()->check()) {
+            return redirect()->route('login')
+                ->with('info', 'Para solicitar orçamento (Compra Direta ou Montar Processo), é obrigatório possuir login e senha no sistema.');
+        }
+
+        $arquivoPath = null;
+        $arquivoNome = null;
+
+        if ($request->hasFile('arquivo')) {
+            $arquivoPath = $request->file('arquivo')->store('orcamentos', 'public');
+            $arquivoNome = $request->file('arquivo')->getClientOriginalName();
+        }
+
+        $protocolo = Contato::gerarProtocolo();
+
+        $contato = Contato::create([
+            'protocolo' => $protocolo,
+            'user_id' => auth()->id(),
+            'empresa' => $validated['empresa'],
+            'responsavel' => $validated['responsavel'],
+            'fone' => $validated['fone'],
+            'email' => $validated['email'],
+            'endereco' => $validated['endereco'],
+            'cnpj' => $validated['cnpj'],
+            'arquivo_path' => $arquivoPath,
+            'arquivo_nome' => $arquivoNome,
+            'assunto' => $validated['assunto'],
+            'descricao' => $validated['descricao'],
+            'status' => 'Novo',
+            'ip' => $request->ip(),
+        ]);
+
+        return redirect()->route('site.contato')
+            ->with('success', "Solicitação registrada com sucesso! Protocolo gerado: {$contato->protocolo}")
+            ->with('protocolo_contato', $contato->protocolo)
+            ->with('novo_protocolo_contato', $contato->protocolo);
     }
 }

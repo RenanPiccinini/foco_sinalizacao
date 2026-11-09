@@ -20,7 +20,7 @@
         const elSelect = document.getElementById('tipo_select');
         if (elSelect) elSelect.value = '01 - AP – Amarelo Piscante';
         document.getElementById('nome_solicitante').value = 'Inspetor Gabriel Ramos (DTT)';
-        document.getElementById('telefone_contato').value = '(51) 99294-1111';
+        document.getElementById('telefone_contato').value = '(51) 98765-4321';
         document.getElementById('local').value = 'Av. Brasil cruzamento com Av. Alvin Bauer';
         document.getElementById('defeito').value = 'Semáforo veicular operando em amarelo piscante (AP) após oscilação da concessionária de energia.';
         document.getElementById('observacao').value = 'Tráfego intenso no sentido orla. Nobreak mantendo o controlador ativo, equipe de trânsito orientando motoristas.';
@@ -181,7 +181,7 @@
 
                         <div>
                             <label for="telefone_contato" class="block text-xs font-mono font-bold text-slate-300 mb-1">
-                                Número para Contato (WhatsApp) *
+                                Telefone / Ramal para Contato *
                             </label>
                             <input type="text" name="telefone_contato" id="telefone_contato" required value="{{ old('telefone_contato') }}" placeholder="(51) 99999-9999" class="w-full bg-foco-navy-900 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-foco-yellow-500 focus:ring-1 focus:ring-foco-yellow-500 transition">
                             @error('telefone_contato')

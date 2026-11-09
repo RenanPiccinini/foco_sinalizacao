@@ -12,8 +12,8 @@
 - **Razão Social:** FOCO Sinalização e Sistemas Inteligentes LTDA
 - **Atividade-Fim:** Engenharia de tráfego, sinalização viária (semafórica, vertical e horizontal), energia limpa e autossustentável (solar e eólica), instalações elétricas prediais/comerciais de baixa tensão, segurança patrimonial eletrônica (CFTV e alarmes) e serviços aéreos especializados com caminhão cesto aéreo até 10 metros.
 - **Cobertura Operacional:** Atuação em mais de 25 municípios em Santa Catarina e Rio Grande do Sul e nas principais rodovias federais do Sul do Brasil (BR 101, BR 116, BR 153 e BR 290).
-- **Atendimento de Plantão:** Canal centralizado 24 horas por dia, 7 dias por semana no WhatsApp oficial: **(51) 99294-1111**, integrado nativamente ao sistema via Evolution API.
-- **Parceiros Oficiais Homologados:** Digicon S/A (Controladores eletrônicos e Central Web em nuvem), Sinaway, Signasul, Contransin, Pavicon, Sinaltran, LCM Construtora, Chiorri Informática e TR Sul Engenharia.
+- **Atendimento e Orçamentos:** Canal centralizado através do formulário institucional integrado no site (`/contato` e `/orcamento`). Orçamentos protegidos por login e credenciamento prévio.
+- **Parceiros Operacionais Homologados:** Atuação integrada com concessionárias e órgãos públicos de trânsito em mais de 25 cidades e rodovias federais.
 
 ---
 
@@ -72,47 +72,52 @@ foco_sinalizacao/
 │   │   │   ├── Admin/
 │   │   │   │   ├── ChamadoController.php    (CRUD de chamados, filtros, conclusão, O.S., CSV)
 │   │   │   │   ├── ConexaoController.php    (Gerenciamento da Evolution API WhatsApp)
-│   │   │   │   └── DashboardController.php  (Métricas operacionais, KPIs, status controladores)
-│   │   │   ├── Auth/                        (Controllers do Laravel Breeze para autenticação)
+│   │   │   │   ├── ContatoController.php    (Gestão de orçamentos e contatos recebidos, download anexo)
+│   │   │   │   ├── DashboardController.php  (Métricas operacionais, KPIs, status controladores)
+│   │   │   │   └── UserController.php       (Gestão de usuários: criar, editar, excluir, bloquear, liberar)
+│   │   │   ├── Auth/                        (Autenticação Laravel Breeze personalizada com tema escuro FOCO)
 │   │   │   ├── ProfileController.php        (Gestão do perfil do usuário logado)
-│   │   │   └── SiteController.php           (Rotas públicas do site institucional e chamados)
-│   │   └── Requests/                        (Form Requests validados)
+│   │   │   └── SiteController.php           (Rotas públicas do site, orçamento restrito e envio de formulário)
+│   │   └── Requests/                        (Form Requests com bloqueio de usuários inativos)
 │   ├── Models/
-│   │   ├── Chamado.php                      (Model principal de chamados, DEFEITOS_RECLAMADOS oficiais)
-│   │   └── User.php                         (Model do usuário administrativo)
+│   │   ├── Chamado.php                      (Model principal de chamados, 8 defeitos oficiais)
+│   │   ├── Contato.php                      (Model de orçamentos/contatos, protocolo SOL-AAAA-XXXX, anexos)
+│   │   └── User.php                         (Model de usuários: role 'admin'/'cliente', is_active)
 │   ├── Providers/
 │   │   └── AppServiceProvider.php           (Configurações de providers do Laravel 12)
 │   └── Services/
 │       └── EvolutionWhatsAppService.php     (Integração completa com a Evolution API v2)
 ├── database/
-│   ├── migrations/                          (Migrações de users, cache, jobs e chamados)
+│   ├── migrations/                          (Migrações: users com role/is_active, contatos, chamados)
 │   └── seeders/
-│       ├── DatabaseSeeder.php               (Cria admin@focosinalizacao.com.br / admin1234)
+│       ├── DatabaseSeeder.php               (Cria admin master e cliente de teste)
 │       └── ChamadoSeeder.php                (Popula dados fakes realistas de chamados)
 ├── resources/
 │   ├── css/
 │   │   └── app.css                          (Estilização Tailwind CSS + classes neon/glass/traffic)
 │   ├── js/
-│   │   ├── app.js                           (Setup Alpine.js + scripts)
-│   │   └── bootstrap.js                     (Axios configurado com headers)
+│   │   └── app.js                           (Setup Alpine.js + scripts)
 │   └── views/
 │       ├── admin/                           (Telas administrativas do gerenciador)
 │       │   ├── chamados/                    (index.blade.php, show.blade.php, os.blade.php)
 │       │   ├── conexao/                     (index.blade.php - QR Code e status WhatsApp)
+│       │   ├── contatos/                    (index.blade.php, show.blade.php - Orçamentos recebidos)
+│       │   ├── users/                       (index.blade.php, create.blade.php, edit.blade.php)
 │       │   ├── central-nuvem.blade.php      (Módulo Nuvem Segura Digicon)
 │       │   ├── cidades.blade.php            (Módulo Municípios e Concessões)
 │       │   └── controladores.blade.php      (Módulo Controladores & Hardware)
-│       ├── components/                      (application-logo, modal, whatsapp-button, etc.)
+│       ├── auth/                            (login.blade.php estilizado com logo e cores FOCO)
+│       ├── components/                      (application-logo, modal, whatsapp-button desativado)
 │       ├── layouts/
-│       │   ├── app.blade.php                (Layout administrativo com Sidebar e logo oficial)
-│       │   └── guest.blade.php              (Layout de login e telas públicas de autenticação)
-│       ├── site/                            (Telas públicas do portal)
-│       │   ├── home.blade.php               (Landing page completa com serviços e chamados)
-│       │   ├── solucoes.blade.php           (Detalhamento dos 5 serviços e simulador de tráfego)
+│       │   ├── app.blade.php                (Layout administrativo com Sidebar, menu Usuários e Orçamentos)
+│       │   └── guest.blade.php              (Layout de login limpo e responsivo)
+│       ├── site/                            (Telas públicas do portal sem links externos de WhatsApp)
+│       │   ├── home.blade.php               (Landing page sem seção de parceiros e links wa.me)
+│       │   ├── solucoes.blade.php           (Detalhamento dos 5 serviços com solicitação de orçamento)
 │       │   ├── chamados.blade.php           (Portal com abertura, consulta e monitoramento)
 │       │   ├── cidades.blade.php            (Cobertura geográfica SC, RS e Rodovias)
-│       │   ├── sobre.blade.php              (História da empresa, missão, visão e valores)
-│       │   ├── contato.blade.php            (Canal oficial de atendimento via WhatsApp)
+│       │   ├── sobre.blade.php              (História da empresa e Quem Somos Deep Tech)
+│       │   └── contato.blade.php            (Formulário oficial: Empresa, Responsável, Fone, Anexo, Assuntos)
 │       │   └── layout.blade.php             (Header glassmorphic, telemetria e footer completo)
 │       └── dashboard.blade.php              (Dashboard principal do administrador)
 ├── routes/
@@ -300,7 +305,7 @@ Acesso restrito protegido pelo middleware `['auth', 'verified']`.
 
 O sistema possui suíte completa de testes automatizados com PHPUnit / Laravel Test Runner:
 - **Execução:** `php artisan test`
-- **Total de Testes:** 31 testes automatizados, 157 asserções (100% aprovados sem falhas).
+- **Total de Testes:** 40 testes automatizados, 207 asserções (100% aprovados sem falhas).
 - **Cobertura:**
   - Acesso a todas as rotas públicas do site (`/`, `/chamados`, `/solucoes`, `/sobre`, `/cidades-e-rodovias`, `/contato`).
   - Verificação visual dos 5 serviços prestados pela FOCO no site e nas soluções.
@@ -310,6 +315,14 @@ O sistema possui suíte completa de testes automatizados com PHPUnit / Laravel T
   - Autenticação e proteção de rotas administrativas.
   - Conclusão de chamados pelo gerenciador e emissão de mensagens.
   - Endpoints de status, QR Code e envio de teste da conexão WhatsApp.
+  - **Fluxo de "Solicitar Orçamento" restrito a usuários logados** (`/orcamento` redireciona convidados para `/login`).
+  - **Bloqueio de registro público e recuperação de senha** (redirecionam para `/login`).
+  - **Bloqueio de login para usuários inativos / bloqueados**.
+  - **Módulo de Usuários no Admin Master**: listagem, criação, edição, alternância de bloqueio (bloquear/liberar) e exclusão.
+  - **Proteção de acesso não autorizado**: usuários comuns recebem 403 ao tentar acessar o gerenciador de usuários.
+  - **Envio do formulário de contato oficial com anexo** (validação, upload, gravação de banco e geração de protocolo).
+  - **Impedimento de solicitação de orçamento por convidados sem autenticação**.
+  - **Gestão de contatos/orçamentos no Admin**: listagem, detalhe, download de planilha/arquivo, troca de status e exclusão.
 
 ---
 
@@ -336,6 +349,46 @@ php artisan route:list
 ---
 
 ## 9. CHANGELOG & HISTÓRICO DE MUDANÇAS
+
+### [2026-11-09 - Atualização 3]
+- **Solicitação de Orçamento Restrita a Usuários Cadastrados:**
+  - O botão "Solicitar Orçamento" agora redireciona obrigatoriamente para a tela de Login (`/orcamento` protegido por middleware `auth`).
+  - Apenas usuários cadastrados e liberados pela Diretoria/Admin Master conseguem solicitar orçamentos.
+  - Tentativas de convidados enviarem formulário marcando opções de orçamento são interceptadas tanto no frontend quanto no backend, redirecionando para o login.
+  - **Desativação Total de Criação de Conta e Recuperação de Senha:** Não é possível criar conta pelo site nem recuperar senha. Todas as rotas de registro e recuperação pública redirecionam para `/login`.
+- **Módulo de Gestão de Usuários no Gerenciador (Admin Master):**
+  - Implementado menu "Usuários" exclusivo para administradores no Admin Master (`admin@focosinalizacao.com.br`).
+  - Listagem completa com busca por nome/email e filtros por status (Liberado/Bloqueado) e perfil (Admin/Cliente).
+  - Capacidade completa de Criar novo usuário, Editar dados/senha, Excluir usuário, e Bloquear/Liberar em 1 clique.
+  - Usuários bloqueados não conseguem fazer login (recebem aviso na tela de login).
+  - Proteção do Administrador Master: o usuário master e o usuário da sessão ativa não podem ser excluídos nem bloqueados por si mesmos.
+- **Tela de Login com Laravel Breeze Customizada:**
+  - Tela de login redesenhada com a identidade visual da FOCO: fundo escuro (`foco-navy-950`), logo oficial da empresa em alta definição, botões e acentos em amarelo FOCO (`foco-yellow-500`).
+  - Removidos quaisquer links de cadastro ou recuperação de senha.
+- **Exclusão da Seção de Parcerias (Foto 1 do Cliente):**
+  - Removida integralmente a seção "Parcerias em serviços, equipamentos e engenharia integrada" da homepage (`resources/views/site/home.blade.php`), incluindo todos os 10 cards de parceiros (Digicon, Sinaway, Signasul, Contransin, Pavicon, Sinaltran, LCM Construtora, Chiorri Informática, TR Sul Engenharia, Prefeituras & Concessões).
+- **Remoção de Todos os Contatos e Links para WhatsApp no Site Público:**
+  - Removidos todos os botões flutuantes, links `https://wa.me/...` e números de WhatsApp da barra superior, cabeçalho, drawer mobile, cards de serviços, detalhes de soluções e rodapé.
+  - Componente flutuante do WhatsApp desativado.
+- **Novo Formulário de Contato Oficial (Foto 2 do Cliente):**
+  - Construído formulário na rota `/contato` rigorosamente com os campos solicitados:
+    - `EMPRESA –`
+    - `RESPONSÁVEL –`
+    - `FONE-`
+    - `E-MAIL`
+    - `ENDEREÇO –`
+    - `CNPJ –`
+    - `ANEXAR PLANILHA/ARQUIVO –` (suporte a Excel, PDF, Word, Imagens, ZIP de até 20MB)
+    - `ASSUNTO:`
+      - `➤ ORÇAMENTO COMPRA DIRETA ( )`
+      - `➤ ORÇAMENTO PARA MONTAR PROCESSO ( )`
+      - `➤ QUESTIONAMENTO/SOLICITAÇÃO/OUTROS ( )`
+    - `Descrição do orçamento com especificação em anexo do produto/equipamento ou serviço, inserindo quantitativos.`
+  - Geração automática de protocolo único no formato `SOL-AAAA-XXXX`.
+  - Módulo administrativo no painel para visualização de contatos/orçamentos recebidos, download seguro de planilhas/anexos e atualização de status (Novo, Em Análise, Respondido, Concluído).
+- **Testes & Qualidade:**
+  - Testes expandidos de 31 para 40 testes (207 asserções), cobrindo login, restrição de orçamento, bloqueio/liberação de usuários, envio de formulário com anexo e permissões administrativas.
+  - Build de frontend (`npm run build`) e formatação com Pint (`vendor/bin/pint --format agent`).
 
 ### [2026-11-09 - Atualização 2]
 - **Tipos Oficiais de Defeitos na Abertura de Chamados (Tabela Oficial da Foto):**

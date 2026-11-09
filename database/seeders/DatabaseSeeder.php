@@ -18,8 +18,21 @@ class DatabaseSeeder extends Seeder
         User::updateOrCreate(
             ['email' => 'admin@focosinalizacao.com.br'],
             [
-                'name' => 'Diretoria Operacional',
+                'name' => 'Diretoria Operacional (Admin Master)',
                 'password' => bcrypt('admin1234'),
+                'role' => 'admin',
+                'is_active' => true,
+                'email_verified_at' => now(),
+            ]
+        );
+
+        User::updateOrCreate(
+            ['email' => 'cliente@prefeitura.gov.br'],
+            [
+                'name' => 'Secretaria de Mobilidade Urbana',
+                'password' => bcrypt('cliente1234'),
+                'role' => 'cliente',
+                'is_active' => true,
                 'email_verified_at' => now(),
             ]
         );

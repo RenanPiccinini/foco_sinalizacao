@@ -255,8 +255,9 @@
                 </div>
 
                 <div class="flex flex-wrap items-center gap-3 pt-2">
-                    <a href="https://wa.me/5551992941111?text=Ol%C3%A1%2C+gostaria+de+solicitar+uma+proposta+sobre+Projetos+de+Sinaliza%C3%A7%C3%A3o+Semaf%C3%B3rica%2C+Vertical+e+Horizontal" target="_blank" rel="noopener noreferrer" class="px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-foco-yellow-500 text-foco-navy-950 hover:bg-foco-yellow-400 transition shadow-glow-yellow">
-                        Solicitar Proposta de Sinalização
+                    <a href="{{ route('site.orcamento') }}" class="px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-foco-yellow-500 text-foco-navy-950 hover:bg-foco-yellow-400 transition shadow-glow-yellow flex items-center gap-1.5">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                        <span>Solicitar Proposta de Sinalização</span>
                     </a>
                 </div>
             </div>
@@ -304,8 +305,9 @@
                 </div>
 
                 <div class="flex flex-wrap items-center gap-3 pt-2">
-                    <a href="https://wa.me/5551992941111?text=Ol%C3%A1%2C+gostaria+de+solicitar+uma+proposta+sobre+Projetos+de+Energia+Alternativa+Auto+Sustent%C3%A1vel" target="_blank" rel="noopener noreferrer" class="px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-emerald-500 hover:bg-emerald-400 text-foco-navy-950 transition shadow-glow-green">
-                        Solicitar Proposta de Energia Limpa
+                    <a href="{{ route('site.orcamento') }}" class="px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-emerald-500 hover:bg-emerald-400 text-foco-navy-950 transition shadow-glow-green flex items-center gap-1.5">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                        <span>Solicitar Proposta de Energia Limpa</span>
                     </a>
                 </div>
             </div>
@@ -353,8 +355,9 @@
                 </div>
 
                 <div class="flex flex-wrap items-center gap-3 pt-2">
-                    <a href="https://wa.me/5551992941111?text=Ol%C3%A1%2C+gostaria+de+solicitar+uma+proposta+sobre+Instala%C3%A7%C3%B5es+El%C3%A9tricas+de+Baixa+Tens%C3%A3o" target="_blank" rel="noopener noreferrer" class="px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-cyan-500 hover:bg-cyan-400 text-foco-navy-950 transition">
-                        Solicitar Proposta Elétrica
+                    <a href="{{ route('site.orcamento') }}" class="px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-cyan-500 hover:bg-cyan-400 text-foco-navy-950 transition flex items-center gap-1.5">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                        <span>Solicitar Proposta Elétrica</span>
                     </a>
                 </div>
             </div>
@@ -402,8 +405,9 @@
                 </div>
 
                 <div class="flex flex-wrap items-center gap-3 pt-2">
-                    <a href="https://wa.me/5551992941111?text=Ol%C3%A1%2C+gostaria+de+solicitar+uma+proposta+sobre+C%C3%A2meras+de+Monitoramento+e+Alarmes" target="_blank" rel="noopener noreferrer" class="px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-blue-500 hover:bg-blue-400 text-white transition">
-                        Solicitar Proposta de Monitoramento
+                    <a href="{{ route('site.orcamento') }}" class="px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-blue-500 hover:bg-blue-400 text-white transition flex items-center gap-1.5">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                        <span>Solicitar Proposta de Monitoramento</span>
                     </a>
                 </div>
             </div>
@@ -459,8 +463,9 @@
                             Operador habilitado com certificações ativas de segurança nas normas <strong>NR-35</strong> (Trabalho em Altura) e <strong>NR-10</strong> (Segurança em Instalações Elétricas).
                         </div>
                     </div>
-                    <a href="https://wa.me/5551992941111?text=Ol%C3%A1%2C+gostaria+de+or%C3%A7ar+o+Aluguel+de+Caminh%C3%A3o+com+Cesto+A%C3%A9reo" target="_blank" rel="noopener noreferrer" class="px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-amber-500 hover:bg-amber-400 text-foco-navy-950 transition shadow-glow-yellow shrink-0 text-center">
-                        Contratar Cesto Aéreo
+                    <a href="{{ route('site.orcamento') }}" class="px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-amber-500 hover:bg-amber-400 text-foco-navy-950 transition shadow-glow-yellow shrink-0 text-center flex items-center justify-center gap-1.5">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                        <span>Contratar Cesto Aéreo</span>
                     </a>
                 </div>
             </div>

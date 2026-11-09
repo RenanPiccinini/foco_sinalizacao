@@ -1,7 +1,10 @@
 <?php
 
 use App\Http\Controllers\Admin\ChamadoController;
+use App\Http\Controllers\Admin\ConexaoController;
+use App\Http\Controllers\Admin\ContatoController as AdminContatoController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SiteController;
 use Illuminate\Support\Facades\Route;
@@ -17,7 +20,15 @@ Route::post('/chamados', [SiteController::class, 'storeChamado'])->name('site.ch
 Route::get('/solucoes', [SiteController::class, 'solucoes'])->name('site.solucoes');
 Route::get('/sobre', [SiteController::class, 'sobre'])->name('site.sobre');
 Route::get('/cidades-e-rodovias', [SiteController::class, 'cidades'])->name('site.cidades');
+
+// Formulário de Contato e Solicitações
 Route::get('/contato', [SiteController::class, 'contato'])->name('site.contato');
+Route::post('/contato', [SiteController::class, 'storeContato'])->name('site.contato.store');
+
+// Solicitar Orçamento (Exclusivo para Usuários Autenticados com Login e Senha)
+Route::get('/orcamento', [SiteController::class, 'orcamento'])
+    ->middleware('auth')
+    ->name('site.orcamento');
 
 /*
 |--------------------------------------------------------------------------
@@ -37,12 +48,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/admin/chamados/{id}/concluir', [ChamadoController::class, 'concluir'])->name('admin.chamados.concluir');
     Route::get('/admin/chamados/{id}/imprimir-os', [ChamadoController::class, 'imprimirOs'])->name('admin.chamados.imprimir-os');
 
+    // Menu Usuários (Controle Master de Usuários - Criar/Editar/Excluir/Bloquear/Liberar)
+    Route::resource('admin/users', UserController::class)->names('admin.users');
+    Route::patch('admin/users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('admin.users.toggle-status');
+
+    // Menu Solicitações & Orçamentos Recebidos
+    Route::get('/admin/contatos', [AdminContatoController::class, 'index'])->name('admin.contatos.index');
+    Route::get('/admin/contatos/{contato}', [AdminContatoController::class, 'show'])->name('admin.contatos.show');
+    Route::patch('/admin/contatos/{contato}/status', [AdminContatoController::class, 'updateStatus'])->name('admin.contatos.status');
+    Route::get('/admin/contatos/{contato}/download', [AdminContatoController::class, 'downloadArquivo'])->name('admin.contatos.download');
+    Route::delete('/admin/contatos/{contato}', [AdminContatoController::class, 'destroy'])->name('admin.contatos.destroy');
+
     // Menu Conexão WhatsApp (Evolution API)
-    Route::get('/admin/conexao', [\App\Http\Controllers\Admin\ConexaoController::class, 'index'])->name('admin.conexao.index');
-    Route::get('/admin/conexao/status', [\App\Http\Controllers\Admin\ConexaoController::class, 'status'])->name('admin.conexao.status');
-    Route::get('/admin/conexao/qrcode', [\App\Http\Controllers\Admin\ConexaoController::class, 'qrcode'])->name('admin.conexao.qrcode');
-    Route::post('/admin/conexao/desconectar', [\App\Http\Controllers\Admin\ConexaoController::class, 'desconectar'])->name('admin.conexao.desconectar');
-    Route::post('/admin/conexao/teste', [\App\Http\Controllers\Admin\ConexaoController::class, 'teste'])->name('admin.conexao.teste');
+    Route::get('/admin/conexao', [ConexaoController::class, 'index'])->name('admin.conexao.index');
+    Route::get('/admin/conexao/status', [ConexaoController::class, 'status'])->name('admin.conexao.status');
+    Route::get('/admin/conexao/qrcode', [ConexaoController::class, 'qrcode'])->name('admin.conexao.qrcode');
+    Route::post('/admin/conexao/desconectar', [ConexaoController::class, 'desconectar'])->name('admin.conexao.desconectar');
+    Route::post('/admin/conexao/teste', [ConexaoController::class, 'teste'])->name('admin.conexao.teste');
 
     // Módulos adicionais do gerenciador
     Route::get('/admin/controladores', function () {

@@ -35,7 +35,7 @@
             </a>
             <div class="mt-3">
                 <span class="text-xs font-mono font-bold tracking-widest text-foco-yellow-400 uppercase">
-                    Acesso ao Gerenciador Central
+                    Acesso ao Sistema e Orçamentos
                 </span>
             </div>
         </div>
@@ -51,8 +51,5 @@
             </a>
         </div>
     </div>
-
-    <!-- Botão Flutuante do WhatsApp em Todas as Telas -->
-    <x-whatsapp-button />
 </body>
 </html>

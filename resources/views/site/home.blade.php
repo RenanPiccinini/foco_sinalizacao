@@ -261,7 +261,7 @@
                 </div>
 
                 <div class="pt-6 mt-6 border-t border-white/10 flex items-center justify-between">
-                    <a href="https://wa.me/5551992941111?text=Ol%C3%A1%2C+gostaria+de+um+or%C3%A7amento+sobre+Projetos+de+Sinaliza%C3%A7%C3%A3o+Semaf%C3%B3rica%2C+Vertical+e+Horizontal" target="_blank" rel="noopener noreferrer" class="text-xs font-mono font-bold text-foco-yellow-400 hover:text-white transition flex items-center gap-1.5">
+                    <a href="{{ route('site.orcamento') }}" class="text-xs font-mono font-bold text-foco-yellow-400 hover:text-white transition flex items-center gap-1.5">
                         <span>Solicitar Orçamento</span>
                         <span>→</span>
                     </a>
@@ -299,7 +299,7 @@
                 </div>
 
                 <div class="pt-6 mt-6 border-t border-white/10 flex items-center justify-between">
-                    <a href="https://wa.me/5551992941111?text=Ol%C3%A1%2C+gostaria+de+um+or%C3%A7amento+sobre+Projetos+de+Energia+Alternativa+Auto+Sustent%C3%A1vel" target="_blank" rel="noopener noreferrer" class="text-xs font-mono font-bold text-emerald-400 hover:text-white transition flex items-center gap-1.5">
+                    <a href="{{ route('site.orcamento') }}" class="text-xs font-mono font-bold text-emerald-400 hover:text-white transition flex items-center gap-1.5">
                         <span>Solicitar Orçamento</span>
                         <span>→</span>
                     </a>
@@ -337,7 +337,7 @@
                 </div>
 
                 <div class="pt-6 mt-6 border-t border-white/10 flex items-center justify-between">
-                    <a href="https://wa.me/5551992941111?text=Ol%C3%A1%2C+gostaria+de+um+or%C3%A7amento+sobre+Instala%C3%A7%C3%B5es+El%C3%A9tricas+de+Baixa+Tens%C3%A3o" target="_blank" rel="noopener noreferrer" class="text-xs font-mono font-bold text-cyan-400 hover:text-white transition flex items-center gap-1.5">
+                    <a href="{{ route('site.orcamento') }}" class="text-xs font-mono font-bold text-cyan-400 hover:text-white transition flex items-center gap-1.5">
                         <span>Solicitar Orçamento</span>
                         <span>→</span>
                     </a>
@@ -375,7 +375,7 @@
                 </div>
 
                 <div class="pt-6 mt-6 border-t border-white/10 flex items-center justify-between">
-                    <a href="https://wa.me/5551992941111?text=Ol%C3%A1%2C+gostaria+de+um+or%C3%A7amento+sobre+C%C3%A2meras+de+Monitoramento+e+Alarmes" target="_blank" rel="noopener noreferrer" class="text-xs font-mono font-bold text-blue-400 hover:text-white transition flex items-center gap-1.5">
+                    <a href="{{ route('site.orcamento') }}" class="text-xs font-mono font-bold text-blue-400 hover:text-white transition flex items-center gap-1.5">
                         <span>Solicitar Orçamento</span>
                         <span>→</span>
                     </a>
@@ -414,9 +414,9 @@
                 </div>
 
                 <div class="pt-6 mt-6 border-t border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <a href="https://wa.me/5551992941111?text=Ol%C3%A1%2C+gostaria+de+informa%C3%A7%C3%B5es+sobre+o+Aluguel+de+Caminh%C3%A3o+com+Cesto+A%C3%A9reo" target="_blank" rel="noopener noreferrer" class="px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-amber-500 hover:bg-amber-400 text-foco-navy-950 transition shadow-glow-yellow flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
-                        <span>Contratar com Operador via WhatsApp</span>
+                    <a href="{{ route('site.orcamento') }}" class="px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-amber-500 hover:bg-amber-400 text-foco-navy-950 transition shadow-glow-yellow flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                        <span>Solicitar Orçamento de Locação</span>
                     </a>
                     <a href="{{ route('site.solucoes') }}#cesto-aereo" class="text-xs text-slate-400 hover:text-white transition">Detalhes técnicos e especificações →</a>
                 </div>
@@ -748,28 +748,6 @@
                 <div class="p-3.5 rounded-xl bg-foco-navy-950/80 border border-white/10 text-xs text-slate-300 leading-relaxed">
                     <strong>Consultoria & Assessoria:</strong> Projetos semafóricos em obras temporárias de pontes, queda de barreiras ou bloqueios por eventos climatológicos.
                 </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- SEÇÃO: PARCEIROS E CLIENTES CORPORATIVOS -->
-<section class="py-20 bg-foco-navy-950 border-t border-white/10">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <p class="text-center text-xs font-mono font-bold tracking-widest text-slate-400 uppercase mb-10">
-            Parcerias em Serviços, Equipamentos e Engenharia Integrada
-        </p>
-
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-            @foreach($parceiros as $p)
-            <div class="p-4 rounded-2xl glass-card flex flex-col justify-center items-center text-center group">
-                <span class="text-sm font-bold text-white group-hover:text-foco-yellow-400 transition">{{ $p['nome'] }}</span>
-                <span class="text-[11px] text-slate-400 mt-0.5">{{ $p['tipo'] }}</span>
-            </div>
-            @endforeach
-            <div class="p-4 rounded-2xl glass-card flex flex-col justify-center items-center text-center group border border-dashed border-foco-yellow-500/30">
-                <span class="text-xs font-mono font-bold text-foco-yellow-400">Prefeituras & Concessões</span>
-                <span class="text-[11px] text-slate-400">+25 Contratos Ativos</span>
             </div>
         </div>
     </div>
