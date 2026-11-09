@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Chamado;
+use App\Services\EvolutionWhatsAppService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -25,17 +27,22 @@ class ChamadoController extends Controller
         }
 
         if ($tipo && $tipo !== 'todos') {
-            $query->where('tipo', $tipo);
+            $tipoBuscado = Chamado::formatarTipo($tipo);
+            $query->where(function ($q) use ($tipo, $tipoBuscado) {
+                $q->where('tipo', $tipo)
+                    ->orWhere('tipo', $tipoBuscado)
+                    ->orWhere('tipo', 'like', '%'.$tipo.'%');
+            });
         }
 
         if ($busca) {
-            $term = '%' . trim($busca) . '%';
+            $term = '%'.trim($busca).'%';
             $query->where(function ($q) use ($term) {
                 $q->where('protocolo', 'like', $term)
-                  ->orWhere('nome_solicitante', 'like', $term)
-                  ->orWhere('telefone_contato', 'like', $term)
-                  ->orWhere('local', 'like', $term)
-                  ->orWhere('defeito', 'like', $term);
+                    ->orWhere('nome_solicitante', 'like', $term)
+                    ->orWhere('telefone_contato', 'like', $term)
+                    ->orWhere('local', 'like', $term)
+                    ->orWhere('defeito', 'like', $term);
             });
         }
 
@@ -48,10 +55,10 @@ class ChamadoController extends Controller
             'abertos' => $allTickets->where('status', 'Aberto')->count(),
             'em_atendimento' => $allTickets->where('status', 'Em Atendimento')->count(),
             'finalizados' => $allTickets->where('status', 'Finalizado')->count(),
-            'ap' => $allTickets->where('tipo', 'AP')->count(),
-            'fa' => $allTickets->where('tipo', 'FA')->count(),
-            'acidentes' => $allTickets->where('tipo', 'Acidente')->count(),
-            'vermelho_queimado' => $allTickets->where('tipo', 'Vermelho Queimado')->count(),
+            'ap' => $allTickets->filter(fn ($c) => str_contains($c->tipo, '01') || str_contains($c->tipo, 'Amarelo Piscante') || $c->tipo === 'AP')->count(),
+            'fa' => $allTickets->filter(fn ($c) => str_contains($c->tipo, '02') || str_contains($c->tipo, '03') || str_contains($c->tipo, 'Fora de Ação') || $c->tipo === 'FA')->count(),
+            'acidentes' => $allTickets->filter(fn ($c) => str_contains($c->tipo, '04') || str_contains($c->tipo, '06') || str_contains($c->tipo, 'Acidente') || str_contains($c->tipo, 'abalroado'))->count(),
+            'outros' => $allTickets->filter(fn ($c) => ! str_contains($c->tipo, '01') && ! str_contains($c->tipo, '02') && ! str_contains($c->tipo, '03') && ! str_contains($c->tipo, '04') && ! str_contains($c->tipo, '06') && ! str_contains($c->tipo, 'Amarelo Piscante') && ! str_contains($c->tipo, 'Fora de Ação') && ! str_contains($c->tipo, 'Acidente') && ! str_contains($c->tipo, 'abalroado'))->count(),
         ];
 
         return view('admin.chamados.index', [
@@ -60,6 +67,7 @@ class ChamadoController extends Controller
             'status' => $status ?? 'todos',
             'tipo' => $tipo ?? 'todos',
             'busca' => $busca ?? '',
+            'tiposDefeitos' => Chamado::DEFEITOS_RECLAMADOS,
         ]);
     }
 
@@ -70,12 +78,12 @@ class ChamadoController extends Controller
     {
         $chamado = Chamado::find($id);
 
-        if (!$chamado) {
+        if (! $chamado) {
             // Tenta localizar por protocolo caso passe protocolo em vez de ID
             $chamado = Chamado::where('protocolo', $id)->first();
         }
 
-        if (!$chamado) {
+        if (! $chamado) {
             return redirect()->route('admin.chamados.index')->with('error', 'Chamado não encontrado.');
         }
 
@@ -88,32 +96,35 @@ class ChamadoController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'tipo' => 'required|string|in:AP,FA,Acidente,Vermelho Queimado',
+            'tipo' => 'required|string',
             'nome_solicitante' => 'required|string|max:120',
             'telefone_contato' => 'required|string|max:30',
             'local' => 'required|string|max:255',
-            'defeito' => 'required|string|max:2000',
+            'defeito' => 'nullable|string|max:2000',
             'observacao' => 'nullable|string|max:2000',
         ]);
+
+        $tipoNormalizado = Chamado::formatarTipo($validated['tipo']);
+        $defeitoFinal = ! empty($validated['defeito']) ? $validated['defeito'] : $tipoNormalizado;
 
         $protocolo = Chamado::gerarProtocolo();
 
         $chamado = Chamado::create([
             'protocolo' => $protocolo,
-            'tipo' => $validated['tipo'],
+            'tipo' => $tipoNormalizado,
             'nome_solicitante' => $validated['nome_solicitante'],
             'telefone_contato' => $validated['telefone_contato'],
             'local' => $validated['local'],
-            'defeito' => $validated['defeito'],
+            'defeito' => $defeitoFinal,
             'observacao' => $validated['observacao'] ?? null,
             'data_hora_abertura' => now(),
             'status' => 'Aberto',
             'historico' => [
                 [
                     'data' => now()->format('d/m/Y H:i'),
-                    'evento' => "Chamado interno registrado pela Central de Operações FOCO.",
+                    'evento' => 'Chamado interno registrado pela Central de Operações FOCO.',
                     'usuario' => auth()->user()?->name ?? 'Central FOCO',
-                ]
+                ],
             ],
         ]);
 
@@ -148,16 +159,16 @@ class ChamadoController extends Controller
 
         if ($novoStatus === 'Finalizado') {
             $chamado->conserto_executado = $validated['conserto_executado'] ?? $chamado->conserto_executado;
-            $chamado->data_hora_execucao = $validated['data_hora_execucao'] ? \Carbon\Carbon::parse($validated['data_hora_execucao']) : now();
+            $chamado->data_hora_execucao = $validated['data_hora_execucao'] ? Carbon::parse($validated['data_hora_execucao']) : now();
             $chamado->observacao_finalizacao = $validated['observacao_finalizacao'] ?? $chamado->observacao_finalizacao;
 
             $chamado->adicionarHistorico(
-                "Chamado FINALIZADO pela FOCO. Conserto Executado: " . ($chamado->conserto_executado ?: 'Serviço concluído com êxito.') . " às " . $chamado->data_hora_execucao->format('d/m/Y H:i'),
+                'Chamado FINALIZADO pela FOCO. Conserto Executado: '.($chamado->conserto_executado ?: 'Serviço concluído com êxito.').' às '.$chamado->data_hora_execucao->format('d/m/Y H:i'),
                 auth()->user()?->name ?? 'FOCO Engenharia'
             );
 
             // Dispara notificação no WhatsApp do solicitante via Evolution API
-            app(\App\Services\EvolutionWhatsAppService::class)->notificarChamadoConcluido($chamado);
+            app(EvolutionWhatsAppService::class)->notificarChamadoConcluido($chamado);
         } else {
             if ($statusAnterior !== $novoStatus) {
                 $chamado->adicionarHistorico(
@@ -190,7 +201,7 @@ class ChamadoController extends Controller
 
         $chamado->status = 'Finalizado';
         $chamado->conserto_executado = $validated['conserto_executado'];
-        $chamado->data_hora_execucao = $validated['data_hora_execucao'] ? \Carbon\Carbon::parse($validated['data_hora_execucao']) : now();
+        $chamado->data_hora_execucao = $validated['data_hora_execucao'] ? Carbon::parse($validated['data_hora_execucao']) : now();
         $chamado->observacao_finalizacao = $validated['observacao_finalizacao'] ?? null;
         $chamado->tecnico_responsavel = $validated['tecnico_responsavel'] ?? auth()->user()?->name ?? 'Técnico FOCO';
 
@@ -202,7 +213,7 @@ class ChamadoController extends Controller
         $chamado->save();
 
         // Dispara mensagem automática para o WhatsApp do solicitante via Evolution API
-        app(\App\Services\EvolutionWhatsAppService::class)->notificarChamadoConcluido($chamado);
+        app(EvolutionWhatsAppService::class)->notificarChamadoConcluido($chamado);
 
         return back()->with('success', "Chamado {$chamado->protocolo} concluído com sucesso e notificação automática enviada para o WhatsApp de {$chamado->nome_solicitante} ({$chamado->telefone_contato})!");
     }
@@ -223,7 +234,7 @@ class ChamadoController extends Controller
     public function exportarCsv(): StreamedResponse
     {
         $tickets = Chamado::latest('data_hora_abertura')->get();
-        $fileName = 'chamados-foco-sinalizacao-' . date('Y-m-d-His') . '.csv';
+        $fileName = 'chamados-foco-sinalizacao-'.date('Y-m-d-His').'.csv';
 
         $headers = [
             'Content-Type' => 'text/csv; charset=UTF-8',
@@ -235,7 +246,7 @@ class ChamadoController extends Controller
 
         return response()->stream(function () use ($tickets) {
             $handle = fopen('php://output', 'w');
-            fprintf($handle, chr(0xEF) . chr(0xBB) . chr(0xBF)); // BOM UTF-8
+            fprintf($handle, chr(0xEF).chr(0xBB).chr(0xBF)); // BOM UTF-8
 
             fputcsv($handle, [
                 'Protocolo',

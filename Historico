@@ -78,7 +78,7 @@ foco_sinalizacao/
 │   │   │   └── SiteController.php           (Rotas públicas do site institucional e chamados)
 │   │   └── Requests/                        (Form Requests validados)
 │   ├── Models/
-│   │   ├── Chamado.php                      (Model principal de chamados com protocolo e casts)
+│   │   ├── Chamado.php                      (Model principal de chamados, DEFEITOS_RECLAMADOS oficiais)
 │   │   └── User.php                         (Model do usuário administrativo)
 │   ├── Providers/
 │   │   └── AppServiceProvider.php           (Configurações de providers do Laravel 12)
@@ -143,7 +143,9 @@ foco_sinalizacao/
    - Barra superior de telemetria live simulada (uptime semafórico de 99.8%, status da Nuvem Digicon e link direto para WhatsApp).
    - Cabeçalho transparente com glassmorphism contendo a Logomarca oficial da FOCO e navegação principal.
    - **Hero Section:** Mensagem institucional, métricas em destaque (+25 Cidades/Rodovias, 100% Autonomia LiFePO4, 24/7 Telemetria) e widget 3D interativo com luzes semafóricas ativas (Onda Verde 55 km/h, Nobreak 100%).
-   - **Narrativa Corporativa:** Seções "Nossa História" (origem na infraestrutura crítica de nobreaks) e "Quem Somos" (expertise em engenharia de tráfego).
+   - **Narrativa Corporativa (Textos Oficiais):**
+     - **NOSSA HISTÓRIA:** "Mais do que entregar excelência técnica, esse grande projeto nos permitiu enxergar de perto uma carência latente no mercado por soluções inteligentes e integradas de engenharia de tráfego. Ao mostrarmos a programação semafórica e o estudo de fluxo de veículos, começamos a desenvolver soluções técnicas específicas, aliando os equipamentos instalados em cada cidade, diminuindo custos operacionais, sem perder eficiência e confiabilidade, otimizando a mobilidade urbana."
+     - **QUEM SOMOS:** "Expertise técnica em Projetos de Tecnologias Emergentes (Deep Tech), aliado a cases consolidados do mercado. Os desafios na área de atuação nos impulsionam em busca de soluções precisas, levando em consideração a solicitação técnica de cada cliente, cada projeto é desenvolvido tendo esse princípio. Foi nesse cenário que passamos a oferecer soluções completas em sinalização semafórica — da instalação física de postes, cabeamentos, semáforos, câmeras, nobreaks, controlador eletrônico de tráfego à inteligência de software e centralização de sistemas. Ao identificarmos uma carência no setor por serviços que aliassem robustez operacional e inteligência de tráfego, fomos impulsionados a expandir nossas fronteiras."
    - **SEÇÃO: SERVIÇOS PRESTADOS PELA FOCO:**
      - Apresentação em cards com efeito tilt e glassmorphism dos **5 serviços oficiais**:
        1. Projetos de Sinalização semafórica, vertical e horizontal (Planejamento, Elaboração, Assessoria, Execução).
@@ -164,7 +166,15 @@ foco_sinalizacao/
 
 3. **Portal de Chamados Técnicos (`/chamados` — `site.chamados`):**
    - **Aba "Abrir Novo Chamado":**
-     - Seleção do Tipo: **AP** (Amarelo Piscante), **FA** (Foco Apagado), **Acidente**, **Vermelho Queimado**.
+     - **Tabela Oficial dos 8 Tipos de Defeitos Reclamados (Padronizada conforme foto oficial):**
+       - **01:** `AP – Amarelo Piscante`
+       - **02:** `FA – Fora de Ação (todos semáforos desligados)`
+       - **03:** `FA – Fora de Ação (Semáforo desligado parcialmente)`
+       - **04:** `Semáforo - abalroado/pendurado/desalinhado/danificado`
+       - **05:** `Semáforo - com duas cores/travado`
+       - **06:** `Acidente – Poste abalroado/danificado/cabos na via`
+       - **07:** `Cruzamento sem sincronismo/ajuste de tempos`
+       - **08:** `Botoeira de pedestre com defeito/danificada/sem funcionamento`
      - Nome do Solicitante.
      - Número de Telefone / WhatsApp para contato.
      - Local exato do cruzamento / ocorrência.
@@ -173,7 +183,7 @@ foco_sinalizacao/
      - **Botão "Preencher com Dados de Teste":** Agiliza demonstrações preenchendo automaticamente o formulário com dados realistas.
      - **Horário de abertura capturado de forma automática** no backend no momento da submissão (`now()`).
      - Gera código de protocolo único no formato `FOC-AAAA-XXXX`.
-     - Exibe alerta festivo com confetes e número de protocolo em destaque.
+     - Exibe alerta com confetes e número de protocolo em destaque.
      - **Dispara notificação via WhatsApp (Evolution API)** para a central FOCO alertando da abertura do chamado.
    - **Aba "Consultar Protocolo":**
      - Busca por código de protocolo exato ou pesquisa livre.
@@ -183,12 +193,12 @@ foco_sinalizacao/
 
 4. **Demais Páginas Institucionais:**
    - `/cidades-e-rodovias` (`site.cidades`): Detalhes da presença geográfica e consultoria viária.
-   - `/sobre` (`site.sobre`): Missão, visão e valores com imagem oficial da marca.
-   - `/contato` (`site.contato`): Canal exclusivo via WhatsApp `(51) 99294-1111` com cards de triagem para emergência 24h, prefeituras e concessionárias.
+   - `/sobre` (`site.sobre`): Missão, visão e valores com imagem oficial da marca e os novos textos corporativos de "Nossa História" e "Quem Somos".
+   - `/contato` (`site.contato`): Canal exclusivo via WhatsApp `(51) 99294-1111` com cards de triagem para emergência 24h, órgãos de trânsito e concessionárias.
 
 ---
 
-### 4.2 Gerenciador Operacional (Admin / Painel Restrito)
+## 4.2 Gerenciador Operacional (Admin / Painel Restrito)
 
 Acesso restrito protegido pelo middleware `['auth', 'verified']`.
 - **Credenciais Padrão:** `admin@focosinalizacao.com.br` / `admin1234`
@@ -198,7 +208,7 @@ Acesso restrito protegido pelo middleware `['auth', 'verified']`.
   - Contador dinâmico de chamados com status "Aberto" destacado em amarelo.
 
 1. **Dashboard Geral (`/dashboard`):**
-   - Cartões de KPI: Total de chamados, Chamados Abertos, Em Atendimento, Finalizados, e divisão por tipo (AP, FA, Acidentes, Vermelho Queimado).
+   - Cartões de KPI: Total de chamados, Chamados Abertos, Em Atendimento, Finalizados, e divisão por tipo de defeito.
    - Indicadores de infraestrutura: Controladores online (348), Eficiência da onda verde (94.2%), Uptime de nobreaks (99.98%), Municípios ativos (25).
    - Lista rápida dos últimos chamados registrados.
    - Status dos controladores semafóricos em destaque (bateria LiFePO4, modo de operação e telemetria).
@@ -206,10 +216,10 @@ Acesso restrito protegido pelo middleware `['auth', 'verified']`.
 2. **Gestão de Chamados (`/admin/chamados` — `ChamadoController`):**
    - **Filtros e Busca:**
      - Filtro por Status: Todos, Aberto, Em Atendimento, Finalizado.
-     - Filtro por Tipo: Todos, AP, FA, Acidente, Vermelho Queimado.
+     - Filtro por Tipo de Defeito: Todos os Defeitos, e cada um dos 8 tipos oficiais (`01` a `08`).
      - Campo de busca livre por protocolo, solicitante, telefone, local ou defeito.
-   - **Modal de Criação Interna:** Permite que operadores da central FOCO registrem chamados manualmente recebidos por rádio ou telefone.
-   - **Tabela 100% Responsiva:** Sem quebras visuais ou cortes, com badges de status coloridos.
+   - **Modal de Criação Interna:** Permite que operadores da central FOCO registrem chamados selecionando um dos 8 defeitos oficiais da tabela.
+   - **Tabela 100% Responsiva:** Sem quebras visuais ou cortes, com badges de status coloridos e código do defeito.
    - **Exportação para CSV (`/admin/chamados/exportar/csv`):**
      - Gera arquivo CSV formatado com BOM UTF-8 e separador ponto-e-vírgula (`;`), abrindo perfeitamente no Microsoft Excel sem corromper acentos.
      - Contém todos os dados: protocolo, tipo, status, solicitante, telefone, local, defeito, data de abertura, conserto executado, data de execução, observação de finalização e técnico responsável.
@@ -237,9 +247,9 @@ Acesso restrito protegido pelo middleware `['auth', 'verified']`.
    - Gerencia a integração direta com a **Evolution API**.
    - Mostra em tempo real se a instância está `Conectado`, `Desconectado` ou `Conectando`.
    - Exibe o número do WhatsApp atualmente vinculado, o nome da instância (`foco_sinalizacao`) e a URL da API.
-   - **QR Code Dinâmico:** Gera o QR Code para pareamento. Um script com polling automático no endpoint `/admin/conexao/status` detecta a leitura do QR Code pelo celular e atualiza a página automaticamente assim que conectado.
+   - **QR Code Dinâmico:** Gera o QR Code para pareamento. Polling automático no endpoint `/admin/conexao/status` detecta a leitura do QR Code pelo celular e atualiza a página automaticamente assim que conectado.
    - **Botão de Desconexão:** Permite deslogar a sessão ativa do WhatsApp.
-   - **Envio de Mensagem de Teste:** Formulário para enviar uma mensagem de verificação imediata para qualquer número ou para o próprio número conectado, confirmando a saúde da integração.
+   - **Envio de Mensagem de Teste:** Formulário para enviar uma mensagem de verificação imediata para qualquer número ou para o próprio número conectado.
 
 6. **Módulos Complementares de Gestão:**
    - `/admin/controladores`: Visualização dos semáforos, IPs locais, planos de tráfego, temperatura de operação e status de câmeras de visão computacional.
@@ -269,7 +279,7 @@ Acesso restrito protegido pelo middleware `['auth', 'verified']`.
 |---|---|---|
 | `id` | BIGINT UNSIGNED | Chave primária auto-incremento |
 | `protocolo` | VARCHAR(255) | Código único gerado no padrão `FOC-AAAA-XXXX` |
-| `tipo` | VARCHAR(255) | Tipo do chamado (`AP`, `FA`, `Acidente`, `Vermelho Queimado`) |
+| `tipo` | VARCHAR(255) | Código e descrição oficial (`01` a `08` conforme `Chamado::DEFEITOS_RECLAMADOS`) |
 | `nome_solicitante` | VARCHAR(120) | Nome completo de quem abriu o chamado |
 | `telefone_contato` | VARCHAR(30) | Telefone / WhatsApp para contato e avisos |
 | `local` | VARCHAR(255) | Endereço ou cruzamento da ocorrência |
@@ -290,10 +300,12 @@ Acesso restrito protegido pelo middleware `['auth', 'verified']`.
 
 O sistema possui suíte completa de testes automatizados com PHPUnit / Laravel Test Runner:
 - **Execução:** `php artisan test`
-- **Total de Testes:** 30 testes automatizados, 125 asserções (100% aprovados sem falhas).
+- **Total de Testes:** 31 testes automatizados, 157 asserções (100% aprovados sem falhas).
 - **Cobertura:**
   - Acesso a todas as rotas públicas do site (`/`, `/chamados`, `/solucoes`, `/sobre`, `/cidades-e-rodovias`, `/contato`).
   - Verificação visual dos 5 serviços prestados pela FOCO no site e nas soluções.
+  - Verificação dos novos textos corporativos oficiais ("Nossa História" e "Quem Somos").
+  - Teste de aceitação e normalização de todos os 8 tipos de defeitos oficiais (`01` a `08`).
   - Abertura de chamados pelo site com captura de data/hora automática e geração de protocolo.
   - Autenticação e proteção de rotas administrativas.
   - Conclusão de chamados pelo gerenciador e emissão de mensagens.
@@ -325,7 +337,30 @@ php artisan route:list
 
 ## 9. CHANGELOG & HISTÓRICO DE MUDANÇAS
 
-### [2026-11-09]
+### [2026-11-09 - Atualização 2]
+- **Tipos Oficiais de Defeitos na Abertura de Chamados (Tabela Oficial da Foto):**
+  - Substituição integral dos 4 tipos antigos (`AP`, `FA`, `Acidente`, `Vermelho Queimado`) pelos 8 tipos oficiais fornecidos pelo cliente:
+    - `01`: `AP – Amarelo Piscante`
+    - `02`: `FA – Fora de Ação (todos semáforos desligados)`
+    - `03`: `FA – Fora de Ação (Semáforo desligado parcialmente)`
+    - `04`: `Semáforo - abalroado/pendurado/desalinhado/danificado`
+    - `05`: `Semáforo - com duas cores/travado`
+    - `06`: `Acidente – Poste abalroado/danificado/cabos na via`
+    - `07`: `Cruzamento sem sincronismo/ajuste de tempos`
+    - `08`: `Botoeira de pedestre com defeito/danificada/sem funcionamento`
+  - Implementação da constante `Chamado::DEFEITOS_RECLAMADOS` e do normalizador inteligente `Chamado::formatarTipo()`.
+  - Atualização do seletor em `resources/views/site/chamados.blade.php` com badges numerados `01` a `08` e grid responsivo.
+  - Atualização do filtro e modal interno em `resources/views/admin/chamados/index.blade.php`.
+  - Atualização dos Seeders em `database/seeders/ChamadoSeeder.php`.
+- **Novos Textos Institucionais ("Nossa História" e "Quem Somos"):**
+  - Atualização do texto de "Nossa História" em `resources/views/site/home.blade.php` e `resources/views/site/sobre.blade.php`.
+  - Atualização do texto de "Quem Somos" destacando expertise em Tecnologias Emergentes (Deep Tech), infraestrutura física e inteligência de software em ambas as páginas.
+- **Testes & Qualidade:**
+  - Adição de teste unitário/feature garantindo a aceitação dos 8 tipos de defeitos e verificação dos novos textos corporativos.
+  - Total de 31 testes e 157 asserções 100% aprovados.
+  - Formatação com `vendor/bin/pint --format agent` e build via `npm run build`.
+
+### [2026-11-09 - Atualização 1]
 - **Adição do Documento Histórico:** Criação do arquivo `Historico.md` na raiz do projeto contendo a documentação completa do site e do gerenciador para suporte contínuo entre sessões.
 - **Atualização dos SERVIÇOS PRESTADOS PELA FOCO:**
   1. *Projetos de Sinalização semafórica, vertical e horizontal* (Planejamento - Elaboração – Assessoria – Execução).
@@ -335,8 +370,5 @@ php artisan route:list
   5. *Aluguel de caminhão com cesto aéreo (com operador)* (Instalações de câmeras, cabeamento, podas e fachadas até 10 metros).
 - **Atualizações de Telas:**
   - `resources/views/site/home.blade.php`: Nova seção de serviços prestados com cards 3D tilt, escopos e badges operacionais.
-  - `resources/views/site/solucoes.blade.php`: Detalhamento técnico aprofundado dos 5 novos serviços, mantendo o simulador interativo de onda verde e consultoria de rodovias.
-  - `resources/views/site/layout.blade.php`: Menus desktop e mobile atualizados para "Serviços & Soluções" e links do rodapé atualizados para os 5 serviços.
-- **Testes & Formatação:**
-  - `tests/Feature/SiteAndAdminChamadosTest.php`: Atualizado e testado com 100% de sucesso (30 testes, 125 asserções).
-  - Execução de `npm run build` e `vendor/bin/pint`.
+  - `resources/views/site/solucoes.blade.php`: Detalhamento técnico aprofundado dos 5 novos serviços.
+  - `resources/views/site/layout.blade.php`: Menus desktop e mobile atualizados.

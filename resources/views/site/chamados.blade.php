@@ -5,7 +5,7 @@
 @section('content')
 <div class="py-12 bg-foco-navy-950 relative overflow-hidden" x-data="{
     tab: '{{ $chamadoBuscado || $protocoloBusca ? 'consultar' : 'abrir' }}',
-    tipoSelecionado: 'AP',
+    tipoSelecionado: '01 - AP – Amarelo Piscante',
     horaAtual: '',
     init() {
         const atualizarHora = () => {
@@ -16,8 +16,9 @@
         setInterval(atualizarHora, 1000);
     },
     preencherTeste() {
-        this.tipoSelecionado = 'AP';
-        document.getElementById('tipo').value = 'AP';
+        this.tipoSelecionado = '01 - AP – Amarelo Piscante';
+        const elSelect = document.getElementById('tipo_select');
+        if (elSelect) elSelect.value = '01 - AP – Amarelo Piscante';
         document.getElementById('nome_solicitante').value = 'Inspetor Gabriel Ramos (DTT)';
         document.getElementById('telefone_contato').value = '(51) 99294-1111';
         document.getElementById('local').value = 'Av. Brasil cruzamento com Av. Alvin Bauer';
@@ -113,54 +114,52 @@
                 <form action="{{ route('site.chamados.store') }}" method="POST" class="space-y-6">
                     @csrf
 
-                    <!-- 1. TIPO DE CHAMADO (SELETOR VISUAL + SELECT) -->
+                    <!-- 1. TIPO DE DEFEITO RECLAMADO (TABELA OFICIAL DE DEFEITOS) -->
                     <div class="space-y-2">
-                        <label for="tipo" class="block text-xs font-mono font-bold text-foco-yellow-400 uppercase tracking-wider">
-                            1. Tipo de Chamado *
-                        </label>
-                        <p class="text-xs text-slate-400">Selecione o tipo de ocorrência detectada no cruzamento:</p>
-
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
-                            <!-- Opção AP -->
-                            <label class="cursor-pointer relative p-3 rounded-2xl border text-center transition flex flex-col items-center justify-center gap-1"
-                                :class="tipoSelecionado === 'AP' ? 'bg-amber-500/20 border-foco-yellow-500 text-white shadow-glow-yellow' : 'bg-foco-navy-900 border-white/10 text-slate-400 hover:border-white/30'">
-                                <input type="radio" name="tipo" value="AP" class="sr-only" x-model="tipoSelecionado" required>
-                                <span class="font-mono font-black text-lg text-amber-400">AP</span>
-                                <span class="text-[11px] font-medium leading-tight">Amarelo Piscante</span>
+                        <div class="flex items-center justify-between">
+                            <label class="block text-xs font-mono font-bold text-foco-yellow-400 uppercase tracking-wider">
+                                1. Defeito Reclamado (Tabela Oficial) *
                             </label>
+                            <span class="text-[11px] font-mono text-slate-400">8 Tipos Oficiais</span>
+                        </div>
+                        <p class="text-xs text-slate-400">Selecione o defeito exato verificado no cruzamento semafórico:</p>
 
-                            <!-- Opção FA -->
-                            <label class="cursor-pointer relative p-3 rounded-2xl border text-center transition flex flex-col items-center justify-center gap-1"
-                                :class="tipoSelecionado === 'FA' ? 'bg-cyan-500/20 border-cyan-400 text-white shadow-glow-blue' : 'bg-foco-navy-900 border-white/10 text-slate-400 hover:border-white/30'">
-                                <input type="radio" name="tipo" value="FA" class="sr-only" x-model="tipoSelecionado" required>
-                                <span class="font-mono font-black text-lg text-cyan-400">FA</span>
-                                <span class="text-[11px] font-medium leading-tight">Foco Apagado</span>
-                            </label>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+                            @foreach($tiposDefeitos as $codigo => $descricao)
+                            @php
+                                $valorCompleto = "{$codigo} - {$descricao}";
+                            @endphp
+                            <label class="cursor-pointer relative p-3 sm:p-3.5 rounded-2xl border transition-all duration-200 flex items-start gap-3 text-left group"
+                                :class="tipoSelecionado === '{{ $valorCompleto }}' ? 'bg-foco-yellow-500/15 border-foco-yellow-500 text-white shadow-glow-yellow ring-1 ring-foco-yellow-500/50' : 'bg-foco-navy-900/90 border-white/10 text-slate-300 hover:border-white/30 hover:bg-white/5'">
+                                <input type="radio" name="tipo" value="{{ $valorCompleto }}" class="sr-only" x-model="tipoSelecionado" required>
+                                
+                                <span class="inline-flex items-center justify-center px-2 py-1 rounded-lg text-xs font-mono font-black shrink-0 transition"
+                                    :class="tipoSelecionado === '{{ $valorCompleto }}' ? 'bg-foco-yellow-500 text-foco-navy-950 shadow-sm' : 'bg-white/10 text-foco-yellow-400 group-hover:bg-white/20'">
+                                    {{ $codigo }}
+                                </span>
 
-                            <!-- Opção Acidente -->
-                            <label class="cursor-pointer relative p-3 rounded-2xl border text-center transition flex flex-col items-center justify-center gap-1"
-                                :class="tipoSelecionado === 'Acidente' ? 'bg-rose-500/20 border-rose-400 text-white shadow-lg' : 'bg-foco-navy-900 border-white/10 text-slate-400 hover:border-white/30'">
-                                <input type="radio" name="tipo" value="Acidente" class="sr-only" x-model="tipoSelecionado" required>
-                                <span class="font-mono font-black text-lg text-rose-400">Acidente</span>
-                                <span class="text-[11px] font-medium leading-tight">Colisão / Dano Físico</span>
-                            </label>
+                                <div class="flex-1 min-w-0">
+                                    <span class="text-xs sm:text-[13px] font-semibold leading-snug block text-slate-100 group-hover:text-white">
+                                        {{ $descricao }}
+                                    </span>
+                                </div>
 
-                            <!-- Opção Vermelho Queimado -->
-                            <label class="cursor-pointer relative p-3 rounded-2xl border text-center transition flex flex-col items-center justify-center gap-1"
-                                :class="tipoSelecionado === 'Vermelho Queimado' ? 'bg-red-500/20 border-red-500 text-white shadow-lg' : 'bg-foco-navy-900 border-white/10 text-slate-400 hover:border-white/30'">
-                                <input type="radio" name="tipo" value="Vermelho Queimado" class="sr-only" x-model="tipoSelecionado" required>
-                                <span class="font-mono font-black text-lg text-red-400">Vermelho</span>
-                                <span class="text-[11px] font-medium leading-tight">Vermelho Queimado</span>
+                                <div class="shrink-0 pt-0.5">
+                                    <span class="w-4 h-4 rounded-full border flex items-center justify-center transition"
+                                        :class="tipoSelecionado === '{{ $valorCompleto }}' ? 'border-foco-yellow-500 bg-foco-yellow-500' : 'border-slate-500 group-hover:border-slate-400'">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-foco-navy-950" x-show="tipoSelecionado === '{{ $valorCompleto }}'"></span>
+                                    </span>
+                                </div>
                             </label>
+                            @endforeach
                         </div>
 
-                        <!-- Fallback nativo para acessibilidade -->
+                        <!-- Fallback nativo para acessibilidade / formulário -->
                         <div class="mt-2 hidden">
-                            <select id="tipo" name="tipo_hidden" x-model="tipoSelecionado" class="w-full bg-foco-navy-900 border border-white/10 rounded-xl px-4 py-2 text-sm text-white">
-                                <option value="AP">AP (Amarelo Piscante)</option>
-                                <option value="FA">FA (Foco Apagado)</option>
-                                <option value="Acidente">Acidente (Colisão / Dano Físico)</option>
-                                <option value="Vermelho Queimado">Vermelho Queimado</option>
+                            <select id="tipo_select" name="tipo_hidden" x-model="tipoSelecionado" class="w-full bg-foco-navy-900 border border-white/10 rounded-xl px-4 py-2 text-sm text-white">
+                                @foreach($tiposDefeitos as $codigo => $descricao)
+                                    <option value="{{ $codigo }} - {{ $descricao }}">{{ $codigo }} - {{ $descricao }}</option>
+                                @endforeach
                             </select>
                         </div>
                         @error('tipo')

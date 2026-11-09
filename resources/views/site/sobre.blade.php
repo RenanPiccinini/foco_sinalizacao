@@ -33,13 +33,7 @@
                 <h2 class="text-2xl font-extrabold text-white">Nossa História</h2>
                 
                 <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
-                    Esse desafio inicial foi focado exclusivamente na <strong>infraestrutura crítica de tráfego</strong>, envolvendo a instalação de sistemas de nobreaks semafóricos e a instalação e programação de controladores eletrônicos de tráfego. O sucesso dessa operação consolidou nossa atividade-fim na sinalização semafórica, capacitando nossa equipe para realizar implantações completas de semáforos, postes, cabeamentos estruturados e nobreaks.
-                </p>
-                <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
-                    Mais do que entregar excelência técnica, esse grande projeto nos permitiu enxergar de perto uma <strong>carência latente no mercado por soluções inteligentes e integradas</strong> de engenharia de tráfego. Ao mostrarmos a programação semafórica e o estudo de fluxo de veículos, começamos a desenvolver sincronismos precisos para promover uma <strong>"onda verde"</strong> nas cidades, otimizando a mobilidade urbana.
-                </p>
-                <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
-                    O desafio percebido lá atrás se tornou o combustível que nos impulsiona até hoje. Essa busca constante por novas tecnologias e novos mercados transformou a antiga microempresa na atual <strong>Foco Sinalização e Sistemas Inteligentes LTDA</strong>, uma parceria sólida preparada para projetar e integrar as cidades do futuro.
+                    Mais do que entregar excelência técnica, esse grande projeto nos permitiu enxergar de perto uma carência latente no mercado por soluções inteligentes e integradas de engenharia de tráfego. Ao mostrarmos a programação semafórica e o estudo de fluxo de veículos, começamos a desenvolver soluções técnicas específicas, aliando os equipamentos instalados em cada cidade, diminuindo custos operacionais, sem perder eficiência e confiabilidade, otimizando a mobilidade urbana.
                 </p>
             </div>
 
@@ -47,17 +41,20 @@
                 <span class="text-xs font-mono font-bold text-foco-green-400 uppercase tracking-wider">Propósito & Vocação</span>
                 <h2 class="text-2xl font-extrabold text-white">Quem Somos</h2>
 
+                <div class="p-4 rounded-xl bg-foco-navy-950/80 border-l-4 border-foco-green-500 text-white font-medium text-sm sm:text-base">
+                    Expertise técnica em Projetos de Tecnologias Emergentes (Deep Tech), aliado a cases consolidados do mercado.
+                </div>
+
                 <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
-                    A entrega bem-sucedida desse projeto estruturou nossa atividade-fim. Passamos a oferecer soluções completas em sinalização semafórica — da <strong>instalação física de postes, cabeamentos e semáforos à inteligência de software</strong>.
+                    Os desafios na área de atuação nos impulsionam em busca de soluções precisas, levando em consideração a solicitação técnica de cada cliente, cada projeto é desenvolvido tendo esse princípio.
                 </p>
+
                 <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
-                    Foi nesse cenário de alta exigência que desenvolvemos nossa <strong>expertise em fluxo veicular e sincronismo</strong>, implementando uma necessidade de engenharia para a criação da "onda verde" nas vias urbanas.
+                    Foi nesse cenário que passamos a oferecer soluções completas em sinalização semafórica — da instalação física de postes, cabeamentos, semáforos, câmeras, nobreaks, controlador eletrônico de tráfego à inteligência de software e centralização de sistemas.
                 </p>
+
                 <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
-                    Ao identificarmos uma carência no setor por serviços que aliassem <strong>robustez operacional e inteligência de tráfego</strong>, fomos impulsionados a expandir nossas fronteiras.
-                </p>
-                <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
-                    Hoje, consolidados como <strong>Foco Sinalização e Sistemas Inteligentes LTDA</strong>, continuamos quebrando barreiras, explorando novos mercados e aplicando tecnologias de ponta para tornar o trânsito mais seguro, fluido e inteligente.
+                    Ao identificarmos uma carência no setor por serviços que aliassem robustez operacional e inteligência de tráfego, fomos impulsionados a expandir nossas fronteiras.
                 </p>
             </div>
 

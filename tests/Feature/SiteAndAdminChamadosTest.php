@@ -60,7 +60,7 @@ class SiteAndAdminChamadosTest extends TestCase
     public function test_can_open_chamado_from_site(): void
     {
         $payload = [
-            'tipo' => 'AP',
+            'tipo' => '01 - AP – Amarelo Piscante',
             'nome_solicitante' => 'Inspetor Gabriel Ramos',
             'telefone_contato' => '(51) 99294-1111',
             'local' => 'Av. Brasil cruzamento com Av. Alvin Bauer',
@@ -75,7 +75,7 @@ class SiteAndAdminChamadosTest extends TestCase
 
         // Verifica se foi gravado no banco de dados com horário de abertura automático
         $this->assertDatabaseHas('chamados', [
-            'tipo' => 'AP',
+            'tipo' => '01 - AP – Amarelo Piscante',
             'nome_solicitante' => 'Inspetor Gabriel Ramos',
             'telefone_contato' => '(51) 99294-1111',
             'local' => 'Av. Brasil cruzamento com Av. Alvin Bauer',
@@ -230,5 +230,47 @@ class SiteAndAdminChamadosTest extends TestCase
             'numero' => '',
         ]);
         $response->assertRedirect();
+    }
+
+    /**
+     * Testa se todos os 8 tipos de defeitos oficiais da foto são exibidos e aceitos
+     */
+    public function test_chamado_accepts_and_normalizes_all_eight_official_defect_types(): void
+    {
+        $this->assertCount(8, Chamado::DEFEITOS_RECLAMADOS);
+
+        $esperados = [
+            '01' => '01 - AP – Amarelo Piscante',
+            '02' => '02 - FA – Fora de Ação (todos semáforos desligados)',
+            '03' => '03 - FA – Fora de Ação (Semáforo desligado parcialmente)',
+            '04' => '04 - Semáforo - abalroado/pendurado/desalinhado/danificado',
+            '05' => '05 - Semáforo - com duas cores/travado',
+            '06' => '06 - Acidente – Poste abalroado/danificado/cabos na via',
+            '07' => '07 - Cruzamento sem sincronismo/ajuste de tempos',
+            '08' => '08 - Botoeira de pedestre com defeito/danificada/sem funcionamento',
+        ];
+
+        foreach ($esperados as $codigo => $descricaoCompleta) {
+            $this->assertEquals($descricaoCompleta, Chamado::formatarTipo($codigo));
+        }
+
+        // Testa renderização dos 8 defeitos na página pública de chamados
+        $response = $this->get('/chamados');
+        $response->assertStatus(200);
+        foreach (Chamado::DEFEITOS_RECLAMADOS as $codigo => $descricao) {
+            $response->assertSee($codigo);
+            $response->assertSee($descricao);
+        }
+
+        // Testa os novos textos institucionais
+        $responseHome = $this->get('/');
+        $responseHome->assertStatus(200);
+        $responseHome->assertSee('Mais do que entregar excelência técnica, esse grande projeto nos permitiu enxergar de perto uma carência latente no mercado por soluções inteligentes e integradas de engenharia de tráfego.');
+        $responseHome->assertSee('Expertise técnica em Projetos de Tecnologias Emergentes (Deep Tech), aliado a cases consolidados do mercado');
+
+        $responseSobre = $this->get('/sobre');
+        $responseSobre->assertStatus(200);
+        $responseSobre->assertSee('Mais do que entregar excelência técnica, esse grande projeto nos permitiu enxergar de perto uma carência latente no mercado por soluções inteligentes e integradas de engenharia de tráfego.');
+        $responseSobre->assertSee('Expertise técnica em Projetos de Tecnologias Emergentes (Deep Tech), aliado a cases consolidados do mercado');
     }
 }

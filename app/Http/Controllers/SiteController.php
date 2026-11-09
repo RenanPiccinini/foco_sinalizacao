@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Chamado;
+use App\Services\EvolutionWhatsAppService;
 use Illuminate\Http\Request;
 
 class SiteController
@@ -76,55 +77,61 @@ class SiteController
         }
 
         $todosChamados = Chamado::latest('data_hora_abertura')->get();
+        $tiposDefeitos = Chamado::DEFEITOS_RECLAMADOS;
 
-        return view('site.chamados', compact('chamadoBuscado', 'protocoloBusca', 'todosChamados'));
+        return view('site.chamados', compact('chamadoBuscado', 'protocoloBusca', 'todosChamados', 'tiposDefeitos'));
     }
 
     /**
      * Processa a abertura de um novo chamado no site.
-     * Conforme regra:
-     * Tipo de chamado selecionando: AP, FA, Acidente ou vermelho queimado
-     * Nome solicitante
-     * Número para contato
-     * Local
-     * Defeito
-     * Observação
+     * Conforme tabela oficial de defeitos reclamados:
+     * 01 - AP – Amarelo Piscante
+     * 02 - FA – Fora de Ação (todos semáforos desligados)
+     * 03 - FA – Fora de Ação (Semáforo desligado parcialmente)
+     * 04 - Semáforo - abalroado/pendurado/desalinhado/danificado
+     * 05 - Semáforo - com duas cores/travado
+     * 06 - Acidente – Poste abalroado/danificado/cabos na via
+     * 07 - Cruzamento sem sincronismo/ajuste de tempos
+     * 08 - Botoeira de pedestre com defeito/danificada/sem funcionamento
      * E já pega horário de abertura automaticamente
      */
     public function storeChamado(Request $request)
     {
         $validated = $request->validate([
-            'tipo' => 'required|string|in:AP,FA,Acidente,Vermelho Queimado',
+            'tipo' => 'required|string',
             'nome_solicitante' => 'required|string|max:120',
             'telefone_contato' => 'required|string|max:30',
             'local' => 'required|string|max:255',
-            'defeito' => 'required|string|max:2000',
+            'defeito' => 'nullable|string|max:2000',
             'observacao' => 'nullable|string|max:2000',
         ]);
+
+        $tipoNormalizado = Chamado::formatarTipo($validated['tipo']);
+        $defeitoFinal = ! empty($validated['defeito']) ? $validated['defeito'] : $tipoNormalizado;
 
         $protocolo = Chamado::gerarProtocolo();
 
         $chamado = Chamado::create([
             'protocolo' => $protocolo,
-            'tipo' => $validated['tipo'],
+            'tipo' => $tipoNormalizado,
             'nome_solicitante' => $validated['nome_solicitante'],
             'telefone_contato' => $validated['telefone_contato'],
             'local' => $validated['local'],
-            'defeito' => $validated['defeito'],
+            'defeito' => $defeitoFinal,
             'observacao' => $validated['observacao'] ?? null,
-            'data_hora_abertura' => now(), // E já pega horário de abertura automaticamente
+            'data_hora_abertura' => now(), // Pega horário de abertura automaticamente
             'status' => 'Aberto',
             'historico' => [
                 [
                     'data' => now()->format('d/m/Y H:i'),
-                    'evento' => "Chamado registrado no site pelo cliente (Tipo: {$validated['tipo']}).",
+                    'evento' => "Chamado registrado no site pelo cliente (Defeito: {$tipoNormalizado}).",
                     'usuario' => $validated['nome_solicitante'],
-                ]
+                ],
             ],
         ]);
 
         // Dispara notificação no WhatsApp do dono da FOCO via Evolution API
-        app(\App\Services\EvolutionWhatsAppService::class)->notificarNovoChamado($chamado);
+        app(EvolutionWhatsAppService::class)->notificarNovoChamado($chamado);
 
         return redirect()->route('site.chamados', ['protocolo' => $chamado->protocolo])
             ->with('success', "Chamado aberto com sucesso! Guarde o seu protocolo: {$chamado->protocolo}")
@@ -163,4 +170,3 @@ class SiteController
         return view('site.contato');
     }
 }
-

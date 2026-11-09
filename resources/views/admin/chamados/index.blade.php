@@ -55,24 +55,24 @@
                 <span class="text-lg sm:text-xl font-black font-mono text-foco-green-400 mt-0.5 block">{{ $stats['finalizados'] }}</span>
             </a>
 
-            <a href="{{ route('admin.chamados.index', ['tipo' => 'AP']) }}" class="p-3 rounded-2xl glass-panel hover:border-amber-400/50 transition {{ $tipo === 'AP' ? 'border-amber-400 bg-amber-500/10' : '' }}">
-                <span class="text-[10px] font-mono uppercase text-amber-300 block">Tipo AP</span>
+            <a href="{{ route('admin.chamados.index', ['tipo' => '01']) }}" class="p-3 rounded-2xl glass-panel hover:border-amber-400/50 transition {{ $tipo === '01' || str_contains($tipo, 'Amarelo Piscante') ? 'border-amber-400 bg-amber-500/10' : '' }}">
+                <span class="text-[10px] font-mono uppercase text-amber-300 block">Tipo 01 - AP</span>
                 <span class="text-lg sm:text-xl font-black font-mono text-amber-300 mt-0.5 block">{{ $stats['ap'] }}</span>
             </a>
 
-            <a href="{{ route('admin.chamados.index', ['tipo' => 'FA']) }}" class="p-3 rounded-2xl glass-panel hover:border-cyan-400/50 transition {{ $tipo === 'FA' ? 'border-cyan-400 bg-cyan-500/10' : '' }}">
-                <span class="text-[10px] font-mono uppercase text-cyan-300 block">Tipo FA</span>
+            <a href="{{ route('admin.chamados.index', ['tipo' => '02']) }}" class="p-3 rounded-2xl glass-panel hover:border-cyan-400/50 transition {{ $tipo === '02' || $tipo === '03' || str_contains($tipo, 'Fora de Ação') ? 'border-cyan-400 bg-cyan-500/10' : '' }}">
+                <span class="text-[10px] font-mono uppercase text-cyan-300 block">Tipos FA (02/03)</span>
                 <span class="text-lg sm:text-xl font-black font-mono text-cyan-300 mt-0.5 block">{{ $stats['fa'] }}</span>
             </a>
 
-            <a href="{{ route('admin.chamados.index', ['tipo' => 'Acidente']) }}" class="p-3 rounded-2xl glass-panel hover:border-rose-400/50 transition {{ $tipo === 'Acidente' ? 'border-rose-400 bg-rose-500/10' : '' }}">
-                <span class="text-[10px] font-mono uppercase text-rose-300 block">Acidentes</span>
+            <a href="{{ route('admin.chamados.index', ['tipo' => '06']) }}" class="p-3 rounded-2xl glass-panel hover:border-rose-400/50 transition {{ $tipo === '06' || $tipo === '04' || str_contains($tipo, 'Acidente') ? 'border-rose-400 bg-rose-500/10' : '' }}">
+                <span class="text-[10px] font-mono uppercase text-rose-300 block">Danos / Abalr.</span>
                 <span class="text-lg sm:text-xl font-black font-mono text-rose-300 mt-0.5 block">{{ $stats['acidentes'] }}</span>
             </a>
 
-            <a href="{{ route('admin.chamados.index', ['tipo' => 'Vermelho Queimado']) }}" class="p-3 rounded-2xl glass-panel hover:border-red-500/50 transition {{ $tipo === 'Vermelho Queimado' ? 'border-red-500 bg-red-500/10' : '' }}">
-                <span class="text-[10px] font-mono uppercase text-red-400 block">Verm. Queimado</span>
-                <span class="text-lg sm:text-xl font-black font-mono text-red-400 mt-0.5 block">{{ $stats['vermelho_queimado'] }}</span>
+            <a href="{{ route('admin.chamados.index') }}" class="p-3 rounded-2xl glass-panel hover:border-purple-400/50 transition">
+                <span class="text-[10px] font-mono uppercase text-purple-300 block">Outros Defeitos</span>
+                <span class="text-lg sm:text-xl font-black font-mono text-purple-300 mt-0.5 block">{{ $stats['outros'] }}</span>
             </a>
         </div>
 
@@ -98,11 +98,12 @@
                 <!-- Filtro Tipo -->
                 <div class="sm:col-span-2">
                     <select name="tipo" class="w-full bg-foco-navy-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-foco-yellow-500 focus:ring-1 focus:ring-foco-yellow-500">
-                        <option value="todos" {{ $tipo === 'todos' ? 'selected' : '' }}>Todos os Tipos</option>
-                        <option value="AP" {{ $tipo === 'AP' ? 'selected' : '' }}>AP (Amarelo Piscante)</option>
-                        <option value="FA" {{ $tipo === 'FA' ? 'selected' : '' }}>FA (Foco Apagado)</option>
-                        <option value="Acidente" {{ $tipo === 'Acidente' ? 'selected' : '' }}>Acidente</option>
-                        <option value="Vermelho Queimado" {{ $tipo === 'Vermelho Queimado' ? 'selected' : '' }}>Vermelho Queimado</option>
+                        <option value="todos" {{ $tipo === 'todos' ? 'selected' : '' }}>Todos os Defeitos</option>
+                        @foreach($tiposDefeitos as $cod => $desc)
+                            <option value="{{ $cod }}" {{ $tipo === $cod || $tipo === "{$cod} - {$desc}" || $tipo === $desc ? 'selected' : '' }}>
+                                {{ $cod }} - {{ $desc }}
+                            </option>
+                        @endforeach
                     </select>
                 </div>
 
@@ -305,12 +306,11 @@
 
                         <!-- Tipo de Chamado -->
                         <div>
-                            <label class="block text-xs font-mono text-slate-300 mb-1">Tipo de Chamado *</label>
+                            <label class="block text-xs font-mono text-slate-300 mb-1">Tipo de Defeito Reclamado (Tabela Oficial) *</label>
                             <select name="tipo" required class="w-full bg-foco-navy-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white">
-                                <option value="AP">AP (Amarelo Piscante)</option>
-                                <option value="FA">FA (Foco Apagado)</option>
-                                <option value="Acidente">Acidente (Colisão / Dano Físico)</option>
-                                <option value="Vermelho Queimado">Vermelho Queimado</option>
+                                @foreach($tiposDefeitos as $cod => $desc)
+                                    <option value="{{ $cod }} - {{ $desc }}">{{ $cod }} - {{ $desc }}</option>
+                                @endforeach
                             </select>
                         </div>
 
