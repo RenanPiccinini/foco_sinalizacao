@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Chamado;
 use App\Models\User;
+use App\Services\EvolutionWhatsAppService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -20,6 +21,7 @@ class SiteAndAdminChamadosTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('FOCO');
         $response->assertSee('Mobilidade Urbana');
+        $response->assertSee('SERVIÇOS PRESTADOS PELA FOCO');
 
         $response = $this->get('/chamados');
         $response->assertStatus(200);
@@ -27,7 +29,9 @@ class SiteAndAdminChamadosTest extends TestCase
 
         $response = $this->get('/solucoes');
         $response->assertStatus(200);
-        $response->assertSee('Engenharia e Infraestrutura Civil Viária');
+        $response->assertSee('SERVIÇOS PRESTADOS PELA FOCO');
+        $response->assertSee('Projetos de Sinalização semafórica, vertical e horizontal');
+        $response->assertSee('Aluguel de caminhão com cesto aéreo');
 
         $response = $this->get('/sobre');
         $response->assertStatus(200);
@@ -218,9 +222,9 @@ class SiteAndAdminChamadosTest extends TestCase
         $response->assertSessionHas('success');
 
         // 5. Teste de extração de número e disparo de teste
-        $this->assertEquals('5551992941111', \App\Services\EvolutionWhatsAppService::extractPhoneNumber('5551992941111:198@s.whatsapp.net'));
-        $this->assertNull(\App\Services\EvolutionWhatsAppService::extractPhoneNumber('198'));
-        $this->assertEquals('5551992941111', \App\Services\EvolutionWhatsAppService::formatPhoneNumber('(51) 99294-1111'));
+        $this->assertEquals('5551992941111', EvolutionWhatsAppService::extractPhoneNumber('5551992941111:198@s.whatsapp.net'));
+        $this->assertNull(EvolutionWhatsAppService::extractPhoneNumber('198'));
+        $this->assertEquals('5551992941111', EvolutionWhatsAppService::formatPhoneNumber('(51) 99294-1111'));
 
         $response = $this->actingAs($user)->post('/admin/conexao/teste', [
             'numero' => '',

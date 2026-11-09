@@ -47,9 +47,9 @@
                         <span>Abrir Chamado Técnico</span>
                     </a>
 
-                    <!-- CTA Secundário: Explorar Engenharia -->
+                    <!-- CTA Secundário: Explorar Serviços e Engenharia -->
                     <a href="{{ route('site.solucoes') }}" class="w-full sm:w-auto px-6 py-4 rounded-xl font-bold text-sm text-slate-200 glass-card hover:bg-white/10 hover:text-white transition flex items-center justify-center gap-2">
-                        <span>Conhecer Soluções</span>
+                        <span>Conhecer Nossos Serviços</span>
                         <svg class="w-4 h-4 text-foco-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </a>
 
@@ -212,82 +212,217 @@
     </div>
 </section>
 
-<!-- SEÇÃO: OS 5 PILARES DA SOLUÇÃO INTEGRADA FOCO -->
-<section id="pilares" class="py-24 bg-foco-navy-950 relative overflow-hidden">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<!-- SEÇÃO: SERVIÇOS PRESTADOS PELA FOCO -->
+<section id="servicos" class="py-24 bg-foco-navy-950 relative overflow-hidden">
+    <!-- Luzes de fundo decorativas -->
+    <div class="absolute top-1/4 left-0 w-96 h-96 bg-foco-yellow-500/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute bottom-10 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div class="text-center max-w-3xl mx-auto mb-16">
-            <span class="text-xs font-mono font-bold tracking-widest text-cyan-400 uppercase bg-cyan-500/10 px-3 py-1 rounded-full border border-cyan-500/30">
-                Engenharia Turnkey
+            <span class="text-xs font-mono font-bold tracking-widest text-foco-yellow-400 uppercase bg-foco-yellow-500/10 px-4 py-1.5 rounded-full border border-foco-yellow-500/30">
+                Portfólio Operacional & Engenharia
             </span>
             <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-white mt-4 tracking-tight">
-                Arquitetura em Cinco Pilares Fundamentais
+                SERVIÇOS PRESTADOS PELA FOCO
             </h2>
             <p class="text-slate-400 mt-3 text-base">
-                Do fornecimento de cabeamentos em PEAD e aço galvanizado à visão computacional adaptativa e nuvem segura.
+                Engenharia especializada, energia limpa autossustentável, infraestrutura elétrica, segurança eletrônica e suporte operacional com cesto aéreo.
             </p>
-            <div class="w-20 h-1 bg-cyan-500 mx-auto mt-4 rounded-full"></div>
+            <div class="w-24 h-1 bg-gradient-to-r from-foco-yellow-500 to-amber-500 mx-auto mt-4 rounded-full"></div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             
-            <!-- Pilar 1 -->
-            <div data-tilt class="glass-card p-8 rounded-3xl group border-t-2 border-t-blue-500">
-                <div class="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 mb-6 group-hover:scale-110 transition">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+            <!-- SERVIÇO 1: Projetos de Sinalização semafórica, vertical e horizontal -->
+            <div data-tilt class="glass-card p-8 rounded-3xl group border-t-4 border-t-foco-yellow-500 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-5">
+                        <div class="w-14 h-14 rounded-2xl bg-foco-yellow-500/10 border border-foco-yellow-500/30 flex items-center justify-center text-foco-yellow-400 group-hover:scale-110 transition">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                        </div>
+                        <span class="text-xs font-mono font-bold text-foco-yellow-400 bg-foco-yellow-500/10 px-2.5 py-1 rounded-full border border-foco-yellow-500/20">
+                            Serviço 01
+                        </span>
+                    </div>
+
+                    <h3 class="text-xl font-black text-white mb-2 leading-snug">
+                        Projetos de Sinalização semafórica, vertical e horizontal
+                    </h3>
+
+                    <!-- Badges do Ciclo: Planejamento - Elaboração – Assessoria – Execução -->
+                    <div class="flex flex-wrap gap-1.5 my-3">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-foco-yellow-500/20 text-foco-yellow-300 border border-foco-yellow-500/30">Planejamento</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-foco-yellow-500/20 text-foco-yellow-300 border border-foco-yellow-500/30">Elaboração</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-foco-yellow-500/20 text-foco-yellow-300 border border-foco-yellow-500/30">Assessoria</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-foco-yellow-500/20 text-foco-yellow-300 border border-foco-yellow-500/30">Execução</span>
+                    </div>
+
+                    <p class="text-sm text-slate-300 leading-relaxed mt-3">
+                        Estudos de tráfego, programação e sincronismo para <strong>"onda verde"</strong>, controladores inteligentes com laços virtuais e visão computacional. Implantação de sinalização horizontal viária (faixas de pedestres, ciclofaixas, pintura termoplástica e tachões) e sinalização vertical completa (placas e pórticos conforme normas Contran/DNIT).
+                    </p>
                 </div>
-                <span class="text-xs font-mono font-bold text-blue-400 uppercase tracking-wider">Pilar 01</span>
-                <h3 class="text-xl font-bold text-white mt-2 mb-3">Engenharia e Infraestrutura Civil Viária</h3>
-                <p class="text-sm text-slate-300 leading-relaxed">
-                    Instalação completa de leitos de cabos subterrâneos em PEAD de alta resistência, caixas de passagem e inspeção padronizadas, além de colunas e braços projetados em aço galvanizado. Grupos focais a LED de alta intensidade luminosa e baixíssimo consumo.
-                </p>
+
+                <div class="pt-6 mt-6 border-t border-white/10 flex items-center justify-between">
+                    <a href="https://wa.me/5551992941111?text=Ol%C3%A1%2C+gostaria+de+um+or%C3%A7amento+sobre+Projetos+de+Sinaliza%C3%A7%C3%A3o+Semaf%C3%B3rica%2C+Vertical+e+Horizontal" target="_blank" rel="noopener noreferrer" class="text-xs font-mono font-bold text-foco-yellow-400 hover:text-white transition flex items-center gap-1.5">
+                        <span>Solicitar Orçamento</span>
+                        <span>→</span>
+                    </a>
+                    <a href="{{ route('site.solucoes') }}#sinalizacao" class="text-xs text-slate-400 hover:text-white transition">Saiba mais</a>
+                </div>
             </div>
 
-            <!-- Pilar 2 -->
-            <div data-tilt class="glass-card p-8 rounded-3xl group border-t-2 border-t-foco-yellow-500">
-                <div class="w-12 h-12 rounded-xl bg-foco-yellow-500/10 border border-foco-yellow-500/30 flex items-center justify-center text-foco-yellow-400 mb-6 group-hover:scale-110 transition">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+            <!-- SERVIÇO 2: Projetos de energia alternativa auto sustentável (solar eólica) -->
+            <div data-tilt class="glass-card p-8 rounded-3xl group border-t-4 border-t-emerald-400 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-5">
+                        <div class="w-14 h-14 rounded-2xl bg-emerald-400/10 border border-emerald-400/30 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        </div>
+                        <span class="text-xs font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
+                            Serviço 02
+                        </span>
+                    </div>
+
+                    <h3 class="text-xl font-black text-white mb-2 leading-snug">
+                        Projetos de energia alternativa auto sustentável (solar eólica)
+                    </h3>
+
+                    <!-- Badges do Ciclo: Planejamento - Elaboração – Assessoria – Execução -->
+                    <div class="flex flex-wrap gap-1.5 my-3">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Planejamento</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Elaboração</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Assessoria</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Execução</span>
+                    </div>
+
+                    <p class="text-sm text-slate-300 leading-relaxed mt-3">
+                        Engenharia e instalação de matrizes energéticas limpas para cruzamentos semafóricos e instalações comerciais/públicas. Painéis fotovoltaicos com controladores digitais MPPT, microgeradores eólicos urbanos de alto rendimento, Nobreaks (UPS) senoidais e bancos de baterias <strong>LiFePO4</strong> (Lítio Ferro Fosfato). <strong>Autonomia 24/7 e zero apagões.</strong>
+                    </p>
                 </div>
-                <span class="text-xs font-mono font-bold text-foco-yellow-400 uppercase tracking-wider">Pilar 02</span>
-                <h3 class="text-xl font-bold text-white mt-2 mb-3">Inteligência de Tráfego Adaptativo (ITS)</h3>
-                <p class="text-sm text-slate-300 leading-relaxed">
-                    Substituição de laços destrutivos por câmeras de visão computacional HD com laços virtuais e contagem volumétrica. Algoritmos ajustam tempos de verde, ciclos e a onda verde dinamicamente conforme a demanda em tempo real.
-                </p>
+
+                <div class="pt-6 mt-6 border-t border-white/10 flex items-center justify-between">
+                    <a href="https://wa.me/5551992941111?text=Ol%C3%A1%2C+gostaria+de+um+or%C3%A7amento+sobre+Projetos+de+Energia+Alternativa+Auto+Sustent%C3%A1vel" target="_blank" rel="noopener noreferrer" class="text-xs font-mono font-bold text-emerald-400 hover:text-white transition flex items-center gap-1.5">
+                        <span>Solicitar Orçamento</span>
+                        <span>→</span>
+                    </a>
+                    <a href="{{ route('site.solucoes') }}#energia" class="text-xs text-slate-400 hover:text-white transition">Saiba mais</a>
+                </div>
             </div>
 
-            <!-- Pilar 3 -->
-            <div data-tilt class="glass-card p-8 rounded-3xl group border-t-2 border-t-cyan-400">
-                <div class="w-12 h-12 rounded-xl bg-cyan-400/10 border border-cyan-400/30 flex items-center justify-center text-cyan-400 mb-6 group-hover:scale-110 transition">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/></svg>
+            <!-- SERVIÇO 3: Instalações e manutenções elétricas residenciais e comerciais de Baixa Tensão -->
+            <div data-tilt class="glass-card p-8 rounded-3xl group border-t-4 border-t-cyan-400 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-5">
+                        <div class="w-14 h-14 rounded-2xl bg-cyan-400/10 border border-cyan-400/30 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                        </div>
+                        <span class="text-xs font-mono font-bold text-cyan-400 bg-cyan-500/10 px-2.5 py-1 rounded-full border border-cyan-500/20">
+                            Serviço 03
+                        </span>
+                    </div>
+
+                    <h3 class="text-xl font-black text-white mb-2 leading-snug">
+                        Instalações e manutenções elétricas residenciais e comerciais de Baixa Tensão
+                    </h3>
+
+                    <!-- Badges do Ciclo: Planejamento - Elaboração – Assessoria – Execução -->
+                    <div class="flex flex-wrap gap-1.5 my-3">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">Planejamento</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">Elaboração</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">Assessoria</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">Execução</span>
+                    </div>
+
+                    <p class="text-sm text-slate-300 leading-relaxed mt-3">
+                        Execução de projetos elétricos prediais e viários rigorosamente alinhados à NR-10 e NBR 5410. Montagem e retrofit de quadros de distribuição (QDC), proteção contra surtos (DPS), sistemas de aterramento de precisão, cabeamento subterrâneo estruturado e planos de manutenção corretiva e preventiva.
+                    </p>
                 </div>
-                <span class="text-xs font-mono font-bold text-cyan-400 uppercase tracking-wider">Pilar 03</span>
-                <h3 class="text-xl font-bold text-white mt-2 mb-3">Central Semafórica WEB DIGICON em Nuvem</h3>
-                <p class="text-sm text-slate-300 leading-relaxed">
-                    Plataforma segura acessível via navegador com controle RBAC baseado em perfis, trilha de auditoria digital inviolável (Audit Trail), telemetria 4G/GPS com firewalls de aplicação (WAF) e proteção ativa contra ataques cibernéticos.
-                </p>
+
+                <div class="pt-6 mt-6 border-t border-white/10 flex items-center justify-between">
+                    <a href="https://wa.me/5551992941111?text=Ol%C3%A1%2C+gostaria+de+um+or%C3%A7amento+sobre+Instala%C3%A7%C3%B5es+El%C3%A9tricas+de+Baixa+Tens%C3%A3o" target="_blank" rel="noopener noreferrer" class="text-xs font-mono font-bold text-cyan-400 hover:text-white transition flex items-center gap-1.5">
+                        <span>Solicitar Orçamento</span>
+                        <span>→</span>
+                    </a>
+                    <a href="{{ route('site.solucoes') }}#eletrica" class="text-xs text-slate-400 hover:text-white transition">Saiba mais</a>
+                </div>
             </div>
 
-            <!-- Pilar 4 -->
-            <div data-tilt class="glass-card p-8 rounded-3xl group border-t-2 border-t-foco-green-500">
-                <div class="w-12 h-12 rounded-xl bg-foco-green-500/10 border border-foco-green-500/30 flex items-center justify-center text-foco-green-400 mb-6 group-hover:scale-110 transition">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+            <!-- SERVIÇO 4: Instalações e manutenções de câmeras de monitoramento e sistemas de alarme -->
+            <div data-tilt class="glass-card p-8 rounded-3xl group border-t-4 border-t-blue-500 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-5">
+                        <div class="w-14 h-14 rounded-2xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 group-hover:scale-110 transition">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                        </div>
+                        <span class="text-xs font-mono font-bold text-blue-400 bg-blue-500/10 px-2.5 py-1 rounded-full border border-blue-500/20">
+                            Serviço 04
+                        </span>
+                    </div>
+
+                    <h3 class="text-xl font-black text-white mb-2 leading-snug">
+                        Instalações e manutenções de câmeras de monitoramento e sistemas de alarme
+                    </h3>
+
+                    <!-- Badges do Ciclo: Planejamento - Elaboração – Assessoria – Execução -->
+                    <div class="flex flex-wrap gap-1.5 my-3">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">Planejamento</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">Elaboração</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">Assessoria</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">Execução</span>
+                    </div>
+
+                    <p class="text-sm text-slate-300 leading-relaxed mt-3">
+                        Sistemas de CFTV IP e analógico HD de alta definição com visão noturna, contagem de fluxo e laços virtuais inteligentes. Centrais de alarme monitoradas, sensores infravermelhos perimetrais, barreiras ativas e gerenciamento remoto em tempo real via nuvem ou smartphone.
+                    </p>
                 </div>
-                <span class="text-xs font-mono font-bold text-foco-green-400 uppercase tracking-wider">Pilar 04</span>
-                <h3 class="text-xl font-bold text-white mt-2 mb-3">Ecossistema Mobile para Equipes de Campo</h3>
-                <p class="text-sm text-slate-300 leading-relaxed">
-                    Aplicativo integrado aos agentes de trânsito para intervenções imediatas (intermitente amarelo, planos de emergência) diretamente pelo smartphone. Telemetria gera ordens de serviço automatizadas com coordenadas GPS exatas.
-                </p>
+
+                <div class="pt-6 mt-6 border-t border-white/10 flex items-center justify-between">
+                    <a href="https://wa.me/5551992941111?text=Ol%C3%A1%2C+gostaria+de+um+or%C3%A7amento+sobre+C%C3%A2meras+de+Monitoramento+e+Alarmes" target="_blank" rel="noopener noreferrer" class="text-xs font-mono font-bold text-blue-400 hover:text-white transition flex items-center gap-1.5">
+                        <span>Solicitar Orçamento</span>
+                        <span>→</span>
+                    </a>
+                    <a href="{{ route('site.solucoes') }}#seguranca" class="text-xs text-slate-400 hover:text-white transition">Saiba mais</a>
+                </div>
             </div>
 
-            <!-- Pilar 5 -->
-            <div data-tilt class="glass-card p-8 rounded-3xl group border-t-2 border-t-emerald-400 lg:col-span-2">
-                <div class="w-12 h-12 rounded-xl bg-emerald-400/10 border border-emerald-400/30 flex items-center justify-center text-emerald-400 mb-6 group-hover:scale-110 transition">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            <!-- SERVIÇO 5: Aluguel de caminhão com cesto aéreo (com operador) -->
+            <div data-tilt class="glass-card p-8 rounded-3xl group border-t-4 border-t-amber-500 md:col-span-2 lg:col-span-2 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-5">
+                        <div class="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 group-hover:scale-110 transition">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                        </div>
+                        <span class="text-xs font-mono font-bold text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/20">
+                            Serviço 05 • Operação em Altura
+                        </span>
+                    </div>
+
+                    <h3 class="text-xl font-black text-white mb-2 leading-snug">
+                        Aluguel de caminhão com cesto aéreo (com operador)
+                    </h3>
+
+                    <!-- Badges do Escopo Específico -->
+                    <div class="flex flex-wrap gap-1.5 my-3">
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">Instalações de câmeras</span>
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">Cabeamento</span>
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">Podas</span>
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">Fachadas até 10 metros</span>
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Com Operador Capacitado (NR-35 / NR-10)</span>
+                    </div>
+
+                    <p class="text-sm text-slate-300 leading-relaxed mt-3">
+                        Disponibilização de caminhão especializado equipado com cesto aéreo hidráulico articulado para trabalhos seguros em alturas de <strong>até 10 metros</strong>. A locação inclui operador técnico treinado e homologado nas normas NR-35 (trabalho em altura) e NR-10 (segurança elétrica). Atendimento perfeito para fixação e manutenção de câmeras em postes, lançamento e ancoragem de cabeamento estruturado e fibra, podas desobstrutivas de galhos junto a redes e manutenção/instalação de fachadas comerciais e luminosos.
+                    </p>
                 </div>
-                <span class="text-xs font-mono font-bold text-emerald-400 uppercase tracking-wider">Pilar 05</span>
-                <h3 class="text-xl font-bold text-white mt-2 mb-3">Autonomia Energética Auto Sustentável Híbrida</h3>
-                <p class="text-sm text-slate-300 leading-relaxed">
-                    Nobreak (UPS) Senoidal Puro com bypass estático automático integrado a bancos de baterias de Lítio (LiFePO4) de última geração e captação híbrida por painéis fotovoltaicos MPPT e microgeradores eólicos urbanos de partida rápida. <strong>Zero apagões na malha viária crítica.</strong>
-                </p>
+
+                <div class="pt-6 mt-6 border-t border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <a href="https://wa.me/5551992941111?text=Ol%C3%A1%2C+gostaria+de+informa%C3%A7%C3%B5es+sobre+o+Aluguel+de+Caminh%C3%A3o+com+Cesto+A%C3%A9reo" target="_blank" rel="noopener noreferrer" class="px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-amber-500 hover:bg-amber-400 text-foco-navy-950 transition shadow-glow-yellow flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                        <span>Contratar com Operador via WhatsApp</span>
+                    </a>
+                    <a href="{{ route('site.solucoes') }}#cesto-aereo" class="text-xs text-slate-400 hover:text-white transition">Detalhes técnicos e especificações →</a>
+                </div>
             </div>
 
         </div>

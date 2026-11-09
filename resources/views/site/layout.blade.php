@@ -79,7 +79,7 @@
                         Início
                     </a>
                     <a href="{{ route('site.solucoes') }}" class="px-3.5 py-2 rounded-lg transition {{ request()->routeIs('site.solucoes') ? 'text-foco-yellow-400 bg-white/5 font-semibold' : 'text-slate-300 hover:text-white hover:bg-white/5' }}">
-                        Soluções & ITS
+                        Serviços & Soluções
                     </a>
                     <a href="{{ route('site.cidades') }}" class="px-3.5 py-2 rounded-lg transition {{ request()->routeIs('site.cidades') ? 'text-foco-yellow-400 bg-white/5 font-semibold' : 'text-slate-300 hover:text-white hover:bg-white/5' }}">
                         Cidades & Rodovias
@@ -119,7 +119,7 @@
                             <span class="text-xs text-slate-500">→</span>
                         </a>
                         <a href="{{ route('site.solucoes') }}" class="py-2.5 px-3 rounded-xl text-slate-200 hover:bg-white/5 flex items-center justify-between">
-                            <span>Soluções & ITS</span>
+                            <span>Serviços & Soluções</span>
                             <span class="text-xs text-slate-500">→</span>
                         </a>
                         <a href="{{ route('site.cidades') }}" class="py-2.5 px-3 rounded-xl text-slate-200 hover:bg-white/5 flex items-center justify-between">
@@ -205,15 +205,15 @@
                     </div>
                 </div>
 
-                <!-- Coluna 3: Soluções -->
+                <!-- Coluna 3: Serviços Prestados -->
                 <div>
-                    <h4 class="text-sm font-bold text-white uppercase tracking-wider mb-4 border-l-2 border-foco-yellow-500 pl-2">Soluções</h4>
+                    <h4 class="text-sm font-bold text-white uppercase tracking-wider mb-4 border-l-2 border-foco-yellow-500 pl-2">Serviços Prestados</h4>
                     <ul class="space-y-2 text-sm text-slate-400">
-                        <li><a href="{{ route('site.solucoes') }}#infraestrutura" class="hover:text-foco-yellow-400 transition">Infraestrutura Civil Viária</a></li>
-                        <li><a href="{{ route('site.solucoes') }}#its" class="hover:text-foco-yellow-400 transition">Sinalização Adaptativa (ITS)</a></li>
-                        <li><a href="{{ route('site.solucoes') }}#digicon" class="hover:text-foco-yellow-400 transition">Central em Nuvem DIGICON</a></li>
-                        <li><a href="{{ route('site.solucoes') }}#mobile" class="hover:text-foco-yellow-400 transition">Ecossistema Mobile Agentes</a></li>
-                        <li><a href="{{ route('site.solucoes') }}#nobreak" class="hover:text-foco-yellow-400 transition">Nobreaks & Baterias LiFePO4</a></li>
+                        <li><a href="{{ route('site.solucoes') }}#sinalizacao" class="hover:text-foco-yellow-400 transition">Sinalização Semafórica, Vertical e Horizontal</a></li>
+                        <li><a href="{{ route('site.solucoes') }}#energia" class="hover:text-foco-yellow-400 transition">Energia Alternativa (Solar e Eólica)</a></li>
+                        <li><a href="{{ route('site.solucoes') }}#eletrica" class="hover:text-foco-yellow-400 transition">Elétrica de Baixa Tensão</a></li>
+                        <li><a href="{{ route('site.solucoes') }}#seguranca" class="hover:text-foco-yellow-400 transition">Câmeras & Sistemas de Alarme</a></li>
+                        <li><a href="{{ route('site.solucoes') }}#cesto-aereo" class="hover:text-foco-yellow-400 transition">Aluguel Caminhão Cesto Aéreo (10m)</a></li>
                         <li><a href="{{ route('site.solucoes') }}#consultoria" class="hover:text-foco-yellow-400 transition">Consultoria & Obras em Rodovias</a></li>
                     </ul>
                 </div>

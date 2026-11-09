@@ -1,6 +1,6 @@
 @extends('site.layout')
 
-@section('title', 'Soluções e Engenharia de Tráfego ITS | Foco Sinalização')
+@section('title', 'Serviços Prestados e Soluções em Engenharia | Foco Sinalização')
 
 @section('content')
 <div class="py-16 bg-foco-navy-950 relative overflow-hidden">
@@ -12,14 +12,14 @@
         
         <!-- Cabeçalho -->
         <div class="text-center max-w-3xl mx-auto mb-16">
-            <span class="text-xs font-mono font-bold tracking-widest text-cyan-400 uppercase bg-cyan-500/10 px-3 py-1 rounded-full border border-cyan-500/30">
-                Solução Turnkey Viária
+            <span class="text-xs font-mono font-bold tracking-widest text-foco-yellow-400 uppercase bg-foco-yellow-500/10 px-4 py-1.5 rounded-full border border-foco-yellow-500/30">
+                Portfólio Operacional & Engenharia
             </span>
             <h1 class="text-3xl sm:text-5xl font-black text-white mt-4 tracking-tight">
-                Engenharia de Tráfego e Tecnologias de Ponta
+                SERVIÇOS PRESTADOS PELA FOCO
             </h1>
             <p class="text-slate-400 mt-4 text-base leading-relaxed">
-                A Foco Sinalização integra hardware robusto, inteligência artificial preditiva, segurança cibernética em nuvem e autonomia energética híbrida em uma malha viária conectada.
+                Engenharia de tráfego integrada, fontes de energia alternativa limpa, instalações elétricas em baixa tensão, segurança patrimonial eletrônica e suporte em altura com cesto aéreo.
             </p>
             <div class="w-24 h-1 bg-gradient-to-r from-cyan-500 to-foco-yellow-500 mx-auto mt-6 rounded-full"></div>
         </div>
@@ -209,123 +209,259 @@
             </div>
         </div>
 
-        <!-- Detalhamento dos 5 Pilares Fundamentais -->
+        <!-- DETALHAMENTO: SERVIÇOS PRESTADOS PELA FOCO -->
         <div class="space-y-12">
             
-            <!-- Pilar 1: Infraestrutura Civil -->
-            <div id="infraestrutura" class="glass-card p-8 sm:p-10 rounded-3xl border-l-4 border-l-blue-500">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+            <!-- SERVIÇO 1: Projetos de Sinalização semafórica, vertical e horizontal -->
+            <div id="sinalizacao" class="glass-card p-8 sm:p-10 rounded-3xl border-l-4 border-l-foco-yellow-500 space-y-6">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-white/10">
                     <div>
-                        <span class="text-xs font-mono font-bold text-blue-400 uppercase tracking-wider">Seção 2.1</span>
-                        <h3 class="text-2xl font-bold text-white mt-1">Engenharia e Infraestrutura Civil Viária</h3>
+                        <span class="text-xs font-mono font-bold text-foco-yellow-400 uppercase tracking-wider">Serviço 01 • Engenharia de Tráfego</span>
+                        <h3 class="text-2xl sm:text-3xl font-black text-white mt-1">Projetos de Sinalização semafórica, vertical e horizontal</h3>
                     </div>
-                    <span class="px-3 py-1 rounded-full text-xs font-mono bg-blue-500/10 text-blue-400 border border-blue-500/30 self-start">
-                        Hardware & Construção Pesada
-                    </span>
+                    <div class="flex flex-wrap gap-1.5 self-start md:self-auto">
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-foco-yellow-500/20 text-foco-yellow-300 border border-foco-yellow-500/30">Planejamento</span>
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-foco-yellow-500/20 text-foco-yellow-300 border border-foco-yellow-500/30">Elaboração</span>
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-foco-yellow-500/20 text-foco-yellow-300 border border-foco-yellow-500/30">Assessoria</span>
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-foco-yellow-500/20 text-foco-yellow-300 border border-foco-yellow-500/30">Execução</span>
+                    </div>
                 </div>
-                <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-4">
-                    Fornecimento e instalação completa dos leitos de cabos subterrâneos utilizando <strong>eletrodutos de PEAD</strong> de alta resistência química e mecânica, caixas de passagem e de inspeção subterrâneas padronizadas conforme normas do Contran/DNIT, além de <strong>colunas e braços projetados em aço galvanizado</strong> a fogo com durabilidade comprovada sob intempéries e maresia litorânea.
-                </p>
+
                 <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
-                    Os cruzamentos recebem <strong>grupos focais veiculares e de pedestres</strong> dotados de iluminadores a LED de altíssima intensidade luminosa (visibilidade perfeita mesmo sob incidência solar direta) e consumo energético reduzido em até 80% comparado às lâmpadas halógenas antigas.
+                    A Foco Sinalização atua em todas as etapas — do diagnóstico preliminar de engenharia à implantação física e comissionamento de sistemas integrados de tráfego:
                 </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <div class="p-5 rounded-2xl bg-foco-navy-900 border border-white/5 space-y-2">
+                        <strong class="text-foco-yellow-400 block text-sm font-bold">🚦 Sinalização Semafórica Inteligente:</strong>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Controladores adaptativos, laços virtuais de visão computacional, sincronismo de onda verde, central WEB DIGICON em nuvem e telemetria 4G/GPS com monitoramento em tempo real.
+                        </p>
+                    </div>
+
+                    <div class="p-5 rounded-2xl bg-foco-navy-900 border border-white/5 space-y-2">
+                        <strong class="text-foco-yellow-400 block text-sm font-bold">🛣️ Sinalização Horizontal Viária:</strong>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Pinturas com tintas acrílicas e termoplásticas retrorrefletivas de alta durabilidade, demarcação de faixas de pedestres, ciclovias, linhas de canalização, setas e aplicação de tachas e tachões viários bidirecionais.
+                        </p>
+                    </div>
+
+                    <div class="p-5 rounded-2xl bg-foco-navy-900 border border-white/5 space-y-2">
+                        <strong class="text-foco-yellow-400 block text-sm font-bold">🛑 Sinalização Vertical Regulamentar:</strong>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Fabricação, fornecimento e instalação de placas regulamentares, de advertência e indicativas com películas refletivas prismáticas, postes, semi-pórticos e pórticos em aço galvanizado a fogo conformes Contran/DNIT.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-3 pt-2">
+                    <a href="https://wa.me/5551992941111?text=Ol%C3%A1%2C+gostaria+de+solicitar+uma+proposta+sobre+Projetos+de+Sinaliza%C3%A7%C3%A3o+Semaf%C3%B3rica%2C+Vertical+e+Horizontal" target="_blank" rel="noopener noreferrer" class="px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-foco-yellow-500 text-foco-navy-950 hover:bg-foco-yellow-400 transition shadow-glow-yellow">
+                        Solicitar Proposta de Sinalização
+                    </a>
+                </div>
             </div>
 
-            <!-- Pilar 2: ITS e Visão Computacional -->
-            <div id="its" class="glass-card p-8 sm:p-10 rounded-3xl border-l-4 border-l-foco-yellow-500">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+            <!-- SERVIÇO 2: Projetos de energia alternativa auto sustentável (solar eólica) -->
+            <div id="energia" class="glass-card p-8 sm:p-10 rounded-3xl border-l-4 border-l-emerald-400 space-y-6">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-white/10">
                     <div>
-                        <span class="text-xs font-mono font-bold text-foco-yellow-400 uppercase tracking-wider">Seção 2.2</span>
-                        <h3 class="text-2xl font-bold text-white mt-1">Inteligência de Tráfego Adaptativo (ITS)</h3>
+                        <span class="text-xs font-mono font-bold text-emerald-400 uppercase tracking-wider">Serviço 02 • Matriz Limpa & Autonomia</span>
+                        <h3 class="text-2xl sm:text-3xl font-black text-white mt-1">Projetos de energia alternativa auto sustentável (solar eólica)</h3>
                     </div>
-                    <span class="px-3 py-1 rounded-full text-xs font-mono bg-foco-yellow-500/10 text-foco-yellow-400 border border-foco-yellow-500/30 self-start">
-                        Visão Computacional & IA
-                    </span>
+                    <div class="flex flex-wrap gap-1.5 self-start md:self-auto">
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Planejamento</span>
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Elaboração</span>
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Assessoria</span>
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Execução</span>
+                    </div>
                 </div>
-                <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-4">
-                    Substituição completa de laços indutivos magnéticos tradicionais (que exigem cortes destrutivos no pavimento e quebram com o tráfego pesado) por <strong>câmeras sensoriais de visão computacional de alta definição</strong>.
-                </p>
+
                 <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
-                    O sistema realiza o sensoriamento viário através de <strong>laços virtuais</strong> com contagem volumétrica contínua e classificação de veículos (leves, pesados, transporte coletivo). Esses dados alimentam em tempo real os algoritmos de otimização dinâmica do controlador semafórico inteligente, ajustando instantaneamente os tempos de verde, ciclos e a sincronização precisa das <strong>"ondas verdes"</strong> nas principais avenidas.
+                    Desenvolvimento e implantação de ecossistemas energéticos autônomos e limpos para erradicar a vulnerabilidade viária e comercial diante de apagões ou picos da rede elétrica:
                 </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <div class="p-5 rounded-2xl bg-foco-navy-900 border border-white/5 space-y-2">
+                        <strong class="text-emerald-400 block text-sm font-bold">☀️ Geração Solar Fotovoltaica MPPT:</strong>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Módulos solares de alto rendimento combinados com controladores de carga digitais com rastreamento MPPT, otimizando o aproveitamento da irradiação mesmo sob céu encoberto.
+                        </p>
+                    </div>
+
+                    <div class="p-5 rounded-2xl bg-foco-navy-900 border border-white/5 space-y-2">
+                        <strong class="text-emerald-400 block text-sm font-bold">💨 Microgeração Eólica Urbana:</strong>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Turbinas eólicas compactas de partida ultrarrápida sob brisas leves para complementação energética híbrida contínua 24h, ideal para litorais e áreas com corredores de vento.
+                        </p>
+                    </div>
+
+                    <div class="p-5 rounded-2xl bg-foco-navy-900 border border-white/5 space-y-2">
+                        <strong class="text-emerald-400 block text-sm font-bold">🔋 Nobreaks & Baterias LiFePO4:</strong>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Nobreaks senoidais puros com bypass automático estático e bancos de Lítio Ferro Fosfato (LiFePO4) com milhares de ciclos úteis. Autonomia total ininterrupta.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-3 pt-2">
+                    <a href="https://wa.me/5551992941111?text=Ol%C3%A1%2C+gostaria+de+solicitar+uma+proposta+sobre+Projetos+de+Energia+Alternativa+Auto+Sustent%C3%A1vel" target="_blank" rel="noopener noreferrer" class="px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-emerald-500 hover:bg-emerald-400 text-foco-navy-950 transition shadow-glow-green">
+                        Solicitar Proposta de Energia Limpa
+                    </a>
+                </div>
             </div>
 
-            <!-- Pilar 3: Central Semafórica WEB DIGICON em Nuvem Segura -->
-            <div id="digicon" class="glass-card p-8 sm:p-10 rounded-3xl border-l-4 border-l-cyan-400">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+            <!-- SERVIÇO 3: Instalações e manutenções elétricas residenciais e comerciais de Baixa Tensão -->
+            <div id="eletrica" class="glass-card p-8 sm:p-10 rounded-3xl border-l-4 border-l-cyan-400 space-y-6">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-white/10">
                     <div>
-                        <span class="text-xs font-mono font-bold text-cyan-400 uppercase tracking-wider">Seção 2.3</span>
-                        <h3 class="text-2xl font-bold text-white mt-1">Central Semafórica WEB DIGICON em Nuvem Segura</h3>
+                        <span class="text-xs font-mono font-bold text-cyan-400 uppercase tracking-wider">Serviço 03 • Elétrica Predial & Comercial</span>
+                        <h3 class="text-2xl sm:text-3xl font-black text-white mt-1">Instalações e manutenções elétricas residenciais e comerciais de Baixa Tensão</h3>
                     </div>
-                    <span class="px-3 py-1 rounded-full text-xs font-mono bg-cyan-400/10 text-cyan-400 border border-cyan-400/30 self-start">
-                        Cybersecurity & Cloud
-                    </span>
-                </div>
-                <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-4">
-                    Centralização digital de todos os ativos semafóricos através de uma plataforma baseada em nuvem segura, acessível via navegador WEB por qualquer dispositivo autorizado de secretarias de trânsito. A comunicação entre os controladores (equipados com módulos 4G e GPS) opera sob rígidos protocolos:
-                </p>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
-                    <div class="p-4 rounded-2xl bg-foco-navy-900 border border-white/5">
-                        <strong class="text-white block mb-1">Controle de Acesso RBAC:</strong>
-                        <p class="text-xs text-slate-400">Restrição estrita de privilégios. Apenas engenheiros e operadores credenciados alteram matrizes de tempo.</p>
-                    </div>
-                    <div class="p-4 rounded-2xl bg-foco-navy-900 border border-white/5">
-                        <strong class="text-white block mb-1">Trilha de Auditoria (Audit Trail):</strong>
-                        <p class="text-xs text-slate-400">Registro digital inviolável com carimbo de data, hora e identificação de cada operador.</p>
-                    </div>
-                    <div class="p-4 rounded-2xl bg-foco-navy-900 border border-white/5">
-                        <strong class="text-white block mb-1">Proteção Ativa WAF/DDoS:</strong>
-                        <p class="text-xs text-slate-400">Firewalls de aplicação em nuvem e mitigação ativa contra negação de serviço.</p>
+                    <div class="flex flex-wrap gap-1.5 self-start md:self-auto">
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">Planejamento</span>
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">Elaboração</span>
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">Assessoria</span>
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">Execução</span>
                     </div>
                 </div>
-            </div>
 
-            <!-- Pilar 4: Ecossistema Mobile para Equipes de Campo -->
-            <div id="mobile" class="glass-card p-8 sm:p-10 rounded-3xl border-l-4 border-l-foco-green-500">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-                    <div>
-                        <span class="text-xs font-mono font-bold text-foco-green-400 uppercase tracking-wider">Seção 2.4</span>
-                        <h3 class="text-2xl font-bold text-white mt-1">Ecossistema Mobile para Equipes de Campo</h3>
-                    </div>
-                    <span class="px-3 py-1 rounded-full text-xs font-mono bg-foco-green-500/10 text-foco-green-400 border border-foco-green-500/30 self-start">
-                        App Nativo Agentes & DTT
-                    </span>
-                </div>
-                <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-4">
-                    Disponibilização de aplicativo móvel nativo e integrado para os agentes de trânsito em campo. A ferramenta permite que as equipes realizem intervenções imediatas e autorizadas no cruzamento (como acionamento manual de planos de emergência, desvios ou modo intermitente amarelo) diretamente pelo smartphone.
-                </p>
                 <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
-                    Além disso, a telemetria do controlador gera <strong>ordens de serviço automatizadas com a geolocalização exata da ocorrência</strong>, agilizando as rotas da equipe técnica de manutenção em caso de avarias físicas ou elétricas.
+                    Execução de infraestrutura elétrica predial e comercial com rigor técnico absoluto em consonância com as normas <strong>NR-10</strong> e <strong>NBR 5410</strong>:
                 </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <div class="p-5 rounded-2xl bg-foco-navy-900 border border-white/5 space-y-2">
+                        <strong class="text-cyan-400 block text-sm font-bold">⚡ Quadros de Distribuição (QDC):</strong>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Montagem, balanceamento de fases, adequação e reforma de quadros elétricos de comando e distribuição, com disjuntores, dispositivos DR e proteção contra sobretensões (DPS).
+                        </p>
+                    </div>
+
+                    <div class="p-5 rounded-2xl bg-foco-navy-900 border border-white/5 space-y-2">
+                        <strong class="text-cyan-400 block text-sm font-bold">🔌 Cabeamento & Infraestrutura Subterrânea:</strong>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Lançamento de circuitos em eletrodutos de PEAD e perfilados metálicos, caixas de passagem e aterramento elétrico com medição de resistividade de baixa impedância.
+                        </p>
+                    </div>
+
+                    <div class="p-5 rounded-2xl bg-foco-navy-900 border border-white/5 space-y-2">
+                        <strong class="text-cyan-400 block text-sm font-bold">🛠️ Manutenção Preventiva e Corretiva:</strong>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Inspeções termográficas para detecção precoce de pontos quentes, laudos técnicos de conformidade, correção de curto-circuitos e modernização de luminárias LED.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-3 pt-2">
+                    <a href="https://wa.me/5551992941111?text=Ol%C3%A1%2C+gostaria+de+solicitar+uma+proposta+sobre+Instala%C3%A7%C3%B5es+El%C3%A9tricas+de+Baixa+Tens%C3%A3o" target="_blank" rel="noopener noreferrer" class="px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-cyan-500 hover:bg-cyan-400 text-foco-navy-950 transition">
+                        Solicitar Proposta Elétrica
+                    </a>
+                </div>
             </div>
 
-            <!-- Pilar 5: Autonomia Energética Híbrida (Nobreak & LiFePO4) -->
-            <div id="nobreak" class="glass-card p-8 sm:p-10 rounded-3xl border-l-4 border-l-emerald-400">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+            <!-- SERVIÇO 4: Instalações e manutenções de câmeras de monitoramento e sistemas de alarme -->
+            <div id="seguranca" class="glass-card p-8 sm:p-10 rounded-3xl border-l-4 border-l-blue-500 space-y-6">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-white/10">
                     <div>
-                        <span class="text-xs font-mono font-bold text-emerald-400 uppercase tracking-wider">Seção 2.5</span>
-                        <h3 class="text-2xl font-bold text-white mt-1">Autonomia Energética Auto Sustentável Híbrida</h3>
+                        <span class="text-xs font-mono font-bold text-blue-400 uppercase tracking-wider">Serviço 04 • Segurança Patrimonial & Eletrônica</span>
+                        <h3 class="text-2xl sm:text-3xl font-black text-white mt-1">Instalações e manutenções de câmeras de monitoramento e sistemas de alarme</h3>
                     </div>
-                    <span class="px-3 py-1 rounded-full text-xs font-mono bg-emerald-400/10 text-emerald-400 border border-emerald-400/30 self-start">
-                        Baterias LiFePO4 • Solar MPPT • Eólica Urbana
-                    </span>
+                    <div class="flex flex-wrap gap-1.5 self-start md:self-auto">
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">Planejamento</span>
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">Elaboração</span>
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">Assessoria</span>
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">Execução</span>
+                    </div>
                 </div>
-                <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-4">
-                    Desenvolvimento de um sistema de energia resiliente outdoor acoplado ao controlador semafórico:
+
+                <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                    Segurança de alta confiabilidade para órgãos públicos, empresas e residências com tecnologias de monitoramento visual inteligente e controle perimetral ativo:
                 </p>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
-                    <div class="p-4 rounded-2xl bg-foco-navy-900 border border-white/5">
-                        <strong class="text-white block mb-1">Nobreak (UPS) Senoidal Puro:</strong>
-                        <p class="text-xs text-slate-400">Inversores de alta eficiência e bypass estático/manual automático, permitindo manutenção técnica sem desativar a sinalização da via.</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <div class="p-5 rounded-2xl bg-foco-navy-900 border border-white/5 space-y-2">
+                        <strong class="text-blue-400 block text-sm font-bold">📹 CFTV IP e Analógico de Alta Resolução:</strong>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Câmeras Full HD e 4K com visão noturna infravermelha, tecnologia ColorVu com iluminação noturna colorida, lentes varifocais e gravadores NVR/DVR seguros.
+                        </p>
                     </div>
-                    <div class="p-4 rounded-2xl bg-foco-navy-900 border border-white/5">
-                        <strong class="text-white block mb-1">Baterias LiFePO4:</strong>
-                        <p class="text-xs text-slate-400">Bancos de Lítio Ferro Fosfato com estabilidade térmica extrema, milhares de ciclos e suporte a descargas profundas.</p>
+
+                    <div class="p-5 rounded-2xl bg-foco-navy-900 border border-white/5 space-y-2">
+                        <strong class="text-blue-400 block text-sm font-bold">🧠 Inteligência Artificial & Laços Virtuais:</strong>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Detecção de movimento inteligente, cerca virtual perimetral, contagem e classificação de pessoas e veículos, com notificações instantâneas no smartphone.
+                        </p>
                     </div>
-                    <div class="p-4 rounded-2xl bg-foco-navy-900 border border-white/5">
-                        <strong class="text-white block mb-1">Captação Solar & Eólica:</strong>
-                        <p class="text-xs text-slate-400">Painéis fotovoltaicos com controladores digitais MPPT e microgeradores eólicos urbanos de partida ultrarrápida.</p>
+
+                    <div class="p-5 rounded-2xl bg-foco-navy-900 border border-white/5 space-y-2">
+                        <strong class="text-blue-400 block text-sm font-bold">🚨 Centrais de Alarme & Sensores Ativos:</strong>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Centrais de alarme conectadas via Wi-Fi/4G, sensores infravermelhos perimetrais com imunidade a pequenos animais e barreiras infravermelhas de longo alcance.
+                        </p>
                     </div>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-3 pt-2">
+                    <a href="https://wa.me/5551992941111?text=Ol%C3%A1%2C+gostaria+de+solicitar+uma+proposta+sobre+C%C3%A2meras+de+Monitoramento+e+Alarmes" target="_blank" rel="noopener noreferrer" class="px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-blue-500 hover:bg-blue-400 text-white transition">
+                        Solicitar Proposta de Monitoramento
+                    </a>
+                </div>
+            </div>
+
+            <!-- SERVIÇO 5: Aluguel de caminhão com cesto aéreo (com operador) -->
+            <div id="cesto-aereo" class="glass-card p-8 sm:p-10 rounded-3xl border-l-4 border-l-amber-500 space-y-6">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-white/10">
+                    <div>
+                        <span class="text-xs font-mono font-bold text-amber-400 uppercase tracking-wider">Serviço 05 • Operações Críticas em Altura</span>
+                        <h3 class="text-2xl sm:text-3xl font-black text-white mt-1">Aluguel de caminhão com cesto aéreo (com operador)</h3>
+                    </div>
+                    <div class="flex flex-wrap gap-1.5 self-start md:self-auto">
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">Instalações de câmeras</span>
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">Cabeamento</span>
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">Podas</span>
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">Fachadas até 10 metros</span>
+                    </div>
+                </div>
+
+                <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                    Solução profissional e homologada para trabalhos aéreos de até <strong>10 metros de altura</strong>, com caminhão especializado e operador técnico credenciado:
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="p-4 rounded-2xl bg-foco-navy-900 border border-white/5 space-y-1.5">
+                        <span class="text-amber-400 font-mono text-xs font-bold block">📹 Instalação de Câmeras</span>
+                        <p class="text-xs text-slate-300 leading-relaxed">Montagem e ajuste de câmeras de segurança, domos e sensores em postes e pontos elevados com máxima precisão.</p>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-foco-navy-900 border border-white/5 space-y-1.5">
+                        <span class="text-amber-400 font-mono text-xs font-bold block">🌐 Passagem de Cabeamento</span>
+                        <p class="text-xs text-slate-300 leading-relaxed">Lançamento, amarração e ancoragem aérea de cabeamentos elétricos, de telecomunicação e fibra óptica.</p>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-foco-navy-900 border border-white/5 space-y-1.5">
+                        <span class="text-amber-400 font-mono text-xs font-bold block">🌳 Podas Desobstrutivas</span>
+                        <p class="text-xs text-slate-300 leading-relaxed">Corte seguro de galhos e copas que ameaçam fiações ou bloqueiam a visibilidade da sinalização semafórica.</p>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-foco-navy-900 border border-white/5 space-y-1.5">
+                        <span class="text-amber-400 font-mono text-xs font-bold block">🏢 Fachadas até 10 Metros</span>
+                        <p class="text-xs text-slate-300 leading-relaxed">Instalação e reparo de letreiros comerciais, luminosos, pintura e manutenção de fachadas prediais com total segurança.</p>
+                    </div>
+                </div>
+
+                <div class="p-4 rounded-2xl bg-foco-navy-950 border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                        </div>
+                        <div class="text-xs text-slate-300">
+                            <strong class="text-white block">Equipe 100% Capacitada e Certificada:</strong>
+                            Operador habilitado com certificações ativas de segurança nas normas <strong>NR-35</strong> (Trabalho em Altura) e <strong>NR-10</strong> (Segurança em Instalações Elétricas).
+                        </div>
+                    </div>
+                    <a href="https://wa.me/5551992941111?text=Ol%C3%A1%2C+gostaria+de+or%C3%A7ar+o+Aluguel+de+Caminh%C3%A3o+com+Cesto+A%C3%A9reo" target="_blank" rel="noopener noreferrer" class="px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-amber-500 hover:bg-amber-400 text-foco-navy-950 transition shadow-glow-yellow shrink-0 text-center">
+                        Contratar Cesto Aéreo
+                    </a>
                 </div>
             </div>
 
