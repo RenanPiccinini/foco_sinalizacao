@@ -87,6 +87,9 @@ class SiteAndAdminChamadosTest extends TestCase
         $responseHome->assertDontSee('Digicon');
         $responseHome->assertDontSee('wa.me');
         $responseHome->assertDontSee('99294-1111');
+        $responseHome->assertSee('Desenvolvido por');
+        $responseHome->assertSee('images/pds-logo.png');
+        $responseHome->assertSee('https://piccininidigitalsolutions.com.br/');
     }
 
     /**

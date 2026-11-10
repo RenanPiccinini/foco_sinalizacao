@@ -310,7 +310,7 @@ Acesso restrito protegido pelo middleware `['auth', 'verified', 'admin']`.
 
 O sistema possui suíte completa de testes automatizados com PHPUnit / Laravel Test Runner:
 - **Execução:** `php artisan test`
-- **Total de Testes:** 46 testes automatizados, 267 asserções (100% aprovados sem falhas).
+- **Total de Testes:** 46 testes automatizados, 270 asserções (100% aprovados sem falhas).
 - **Cobertura:**
   - Acesso a todas as rotas públicas do site (`/`, `/chamados`, `/solucoes`, `/sobre`, `/cidades-e-rodovias`, `/contato`).
   - Verificação visual dos 5 serviços prestados pela FOCO no site e nas soluções.
@@ -354,6 +354,12 @@ php artisan route:list
 ---
 
 ## 9. CHANGELOG & HISTÓRICO DE MUDANÇAS
+
+### [2026-11-10 - Atualização 9]
+- **Crédito e Logo no Rodapé (`resources/views/site/layout.blade.php`):**
+  - Inclusão da imagem oficial `public/images/pds-logo.png` (Piccinini Digital Solutions - PDS) em destaque legível sobre badge claro (`bg-white/95 rounded-2xl p-1.5`) no rodapé escuro do site.
+  - Adição do rótulo *"Desenvolvido por"* ao lado da logomarca clicável, redirecionando em nova aba (`target="_blank" rel="noopener noreferrer"`) para `https://piccininidigitalsolutions.com.br/`.
+  - Validação em `SiteAndAdminChamadosTest` (46 testes, 270 asserções aprovadas) e compilação Vite via `npm run build`.
 
 ### [2026-11-10 - Atualização 8]
 - **Loader na Tela ao Enviar Formulário (`resources/views/site/contato.blade.php`):**

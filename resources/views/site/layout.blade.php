@@ -279,15 +279,35 @@
                 </div>
             </div>
 
-            <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-                <p>© {{ date('Y') }} Foco Sinalização e Sistemas Inteligentes LTDA. Todos os direitos reservados.</p>
-                <p class="flex items-center gap-2">
-                    <span>Soluções Integradas em Mobilidade Urbana</span>
-                    @if(!auth()->check() || auth()->user()->isAdmin())
-                        <span>•</span>
-                        <a href="{{ route('login') }}" class="text-slate-400 hover:text-foco-yellow-400 transition">Painel Administrativo</a>
-                    @endif
-                </p>
+            <div class="pt-8 flex flex-col lg:flex-row items-center justify-between gap-6 text-xs text-slate-500">
+                <div class="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-center sm:text-left">
+                    <p>© {{ date('Y') }} Foco Sinalização e Sistemas Inteligentes LTDA. Todos os direitos reservados.</p>
+                    <p class="flex items-center gap-2">
+                        <span class="hidden sm:inline">•</span>
+                        <span>Soluções Integradas em Mobilidade Urbana</span>
+                        @if(!auth()->check() || auth()->user()->isAdmin())
+                            <span>•</span>
+                            <a href="{{ route('login') }}" class="text-slate-400 hover:text-foco-yellow-400 transition">Painel Administrativo</a>
+                        @endif
+                    </p>
+                </div>
+
+                <div class="flex items-center gap-3 shrink-0">
+                    <span class="text-[11px] font-mono text-slate-400 tracking-wide">Desenvolvido por</span>
+                    <a
+                        href="https://piccininidigitalsolutions.com.br/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="Piccinini Digital Solutions"
+                        class="inline-flex items-center justify-center rounded-2xl bg-white/95 hover:bg-white p-1.5 shadow-lg border border-white/20 hover:border-cyan-400/60 hover:scale-105 transition"
+                    >
+                        <img
+                            src="{{ asset('images/pds-logo.png') }}"
+                            alt="Piccinini Digital Solutions"
+                            class="h-14 sm:h-16 w-auto object-contain"
+                        >
+                    </a>
+                </div>
             </div>
         </div>
     </footer>
