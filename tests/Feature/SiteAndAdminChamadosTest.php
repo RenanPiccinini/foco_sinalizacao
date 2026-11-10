@@ -682,4 +682,74 @@ class SiteAndAdminChamadosTest extends TestCase
                 && str_contains($rendered, 'Montagem de processo para 10 cruzamentos com nobreak.');
         });
     }
+
+    /**
+     * Testa upload de PDF e planilha XLSX mesmo com MIME genérico (octet-stream) e feedback visual na tela
+     */
+    public function test_orcamento_accepts_pdf_and_xlsx_even_with_generic_mime_and_renders_upload_feedback(): void
+    {
+        Storage::fake('public');
+        Mail::fake();
+
+        $formResponse = $this->get('/orcamento');
+        $formResponse->assertStatus(200);
+        $formResponse->assertSee('selecionarArquivo');
+        $formResponse->assertSee('arquivoNome');
+
+        $pdfFile = UploadedFile::fake()->create('memorial_descritivo.pdf', 250, 'application/octet-stream');
+
+        $responsePdf = $this->post('/contato', [
+            '_origin' => 'orcamento',
+            'empresa' => 'Prefeitura PDF',
+            'responsavel' => 'Ana Engenheira',
+            'fone' => '(51) 98888-1111',
+            'email' => 'ana@prefeitura.rs.gov.br',
+            'endereco' => 'Av. Central, 100',
+            'cnpj' => '11.222.333/0001-44',
+            'arquivo' => $pdfFile,
+            'assunto' => Contato::ASSUNTO_ORCAMENTO_COMPRA_DIRETA,
+            'descricao' => 'Projeto em PDF com quantitativos.',
+        ]);
+
+        $responsePdf->assertRedirect('/orcamento');
+        $responsePdf->assertSessionHas('novo_protocolo_contato');
+
+        $contatoPdf = Contato::where('empresa', 'Prefeitura PDF')->firstOrFail();
+        $this->assertEquals('memorial_descritivo.pdf', $contatoPdf->arquivo_nome);
+        Storage::disk('public')->assertExists($contatoPdf->arquivo_path);
+        Mail::assertSent(NovaSolicitacaoContatoMail::class, fn (NovaSolicitacaoContatoMail $mail): bool => count($mail->attachments()) === 1);
+    }
+
+    /**
+     * Testa painel de diagnóstico e disparo de e-mail de teste no gerenciador admin
+     */
+    public function test_admin_can_diagnose_and_test_email_dispatch(): void
+    {
+        Mail::fake();
+
+        $admin = User::factory()->admin()->create();
+        $cliente = User::factory()->create(['role' => 'cliente']);
+
+        $this->actingAs($cliente)->post('/admin/contatos/testar-email')->assertStatus(403);
+        $this->actingAs($cliente)->post('/admin/contatos/limpar-cache')->assertStatus(403);
+
+        $indexResponse = $this->actingAs($admin)->get('/admin/contatos');
+        $indexResponse->assertStatus(200);
+        $indexResponse->assertSee('Envio Automático por E-mail:');
+        $indexResponse->assertSee('Testar Envio de E-mail');
+
+        config(['mail.default' => 'log']);
+        $logResponse = $this->actingAs($admin)->post('/admin/contatos/testar-email');
+        $logResponse->assertRedirect();
+        $logResponse->assertSessionHas('error');
+
+        config(['mail.default' => 'smtp', 'mail.demandas_address' => 'demandas@focosinal.com.br']);
+        $smtpResponse = $this->actingAs($admin)->post('/admin/contatos/testar-email');
+        $smtpResponse->assertRedirect();
+        $smtpResponse->assertSessionHas('success');
+
+        $cacheResponse = $this->actingAs($admin)->post('/admin/contatos/limpar-cache');
+        $cacheResponse->assertRedirect();
+        $cacheResponse->assertSessionHas('success');
+    }
 }

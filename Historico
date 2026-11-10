@@ -309,7 +309,7 @@ Acesso restrito protegido pelo middleware `['auth', 'verified', 'admin']`.
 
 O sistema possui suíte completa de testes automatizados com PHPUnit / Laravel Test Runner:
 - **Execução:** `php artisan test`
-- **Total de Testes:** 44 testes automatizados, 244 asserções (100% aprovados sem falhas).
+- **Total de Testes:** 46 testes automatizados, 264 asserções (100% aprovados sem falhas).
 - **Cobertura:**
   - Acesso a todas as rotas públicas do site (`/`, `/chamados`, `/solucoes`, `/sobre`, `/cidades-e-rodovias`, `/contato`).
   - Verificação visual dos 5 serviços prestados pela FOCO no site e nas soluções.
@@ -353,6 +353,19 @@ php artisan route:list
 ---
 
 ## 9. CHANGELOG & HISTÓRICO DE MUDANÇAS
+
+### [2026-11-10 - Atualização 7]
+- **Correção Completa do Upload Visual de Anexos (PDF/Planilhas) no Formulário (`contato.blade.php` + `SiteController.php`):**
+  - Implementação de feedback visual reativo em Alpine.js (`arquivoNome`, `arquivoTamanho`, `arquivoExtensao`, `selecionarArquivo`, `soltarArquivo`, `removerArquivo`) na área de upload de `resources/views/site/contato.blade.php` + suporte a `[x-cloak]` em `resources/css/app.css`.
+  - Ao selecionar ou arrastar um arquivo (PDF, XLSX, XLS, CSV, DOCX, etc.), a caixa exibe imediatamente destaque verde com nome do arquivo, extensão, tamanho formatado em KB/MB e botões "Trocar" e "Remover".
+  - Adição de alerta global `@if($errors->any())` no topo do formulário e campo `_origin` para retornar corretamente para `/orcamento` ou `/contato`.
+  - Troca da regra `mimes:` por `extensions:pdf,xls,xlsx,xlsm,ods,csv,doc,docx,odt,txt,png,jpg,jpeg,webp,zip,rar` em `SiteController::storeContato()` para impedir rejeição falsa de PDFs/planilhas cujo cabeçalho reporte `application/octet-stream`.
+- **Resiliência e Diagnóstico SMTP Hostinger (`config/mail.php` + Painel Admin `/admin/contatos`):**
+  - Normalização automática de `MAIL_SCHEME` / `MAIL_ENCRYPTION` em `config/mail.php` (`ssl` -> `smtps`, `tls` -> `smtp`), adicionando `timeout` (15s) e `verify_peer` configurável via `MAIL_VERIFY_PEER` no `.env`.
+  - Adição do painel de status e diagnóstico SMTP em `resources/views/admin/contatos/index.blade.php` com rotas protegidas `POST /admin/contatos/testar-email` e `POST /admin/contatos/limpar-cache` no `Admin\ContatoController`, permitindo testar o disparo real para `demandas@focosinal.com.br` e recarregar o `.env` sem SSH.
+- **Testes & Qualidade:**
+  - Suíte ampliada para 46 testes (264 asserções aprovadas via `php artisan test`), cobrindo upload de PDF com MIME genérico `application/octet-stream` e diagnóstico/teste de e-mail no admin.
+  - Compilação de assets via `npm run build` e formatação com `vendor/bin/pint --dirty --format agent`.
 
 ### [2026-11-10 - Atualização 6]
 - **Envio Automático por E-mail de Orçamentos e Contatos (Hostinger SMTP — `demandas@focosinal.com.br`):**

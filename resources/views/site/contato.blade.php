@@ -4,7 +4,67 @@
 
 @section('content')
 <div class="py-14 bg-foco-navy-950 relative overflow-hidden" x-data="{
-    assuntoSelecionado: '{{ old('assunto', $assuntoPredefinido ?: 'ORÇAMENTO COMPRA DIRETA') }}'
+    assuntoSelecionado: '{{ old('assunto', $assuntoPredefinido ?: 'ORÇAMENTO COMPRA DIRETA') }}',
+    arquivoNome: '',
+    arquivoTamanho: '',
+    arquivoExtensao: '',
+    arquivoErro: '',
+    arrastando: false,
+    formatarTamanho(bytes) {
+        if (!bytes) return '';
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+        return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+    },
+    processarArquivo(file) {
+        this.arquivoErro = '';
+        if (!file) {
+            this.removerArquivo();
+            return;
+        }
+        const extensoesPermitidas = ['pdf', 'xls', 'xlsx', 'xlsm', 'ods', 'csv', 'doc', 'docx', 'odt', 'txt', 'png', 'jpg', 'jpeg', 'webp', 'zip', 'rar'];
+        const ext = (file.name.split('.').pop() || '').toLowerCase();
+        if (!ext || !extensoesPermitidas.includes(ext)) {
+            this.arquivoErro = 'Formato não suportado (' + (ext || 'desconhecido') + '). Use PDF, XLSX, XLS, CSV, DOC, DOCX, TXT, imagens, ZIP ou RAR.';
+            this.removerArquivo(false);
+            return;
+        }
+        if (file.size > 20 * 1024 * 1024) {
+            this.arquivoErro = 'O arquivo excede o limite máximo de 20MB.';
+            this.removerArquivo(false);
+            return;
+        }
+        this.arquivoNome = file.name;
+        this.arquivoTamanho = this.formatarTamanho(file.size);
+        this.arquivoExtensao = ext.toUpperCase();
+    },
+    selecionarArquivo(event) {
+        const file = event.target.files && event.target.files[0] ? event.target.files[0] : null;
+        this.processarArquivo(file);
+    },
+    soltarArquivo(event) {
+        this.arrastando = false;
+        const files = event.dataTransfer && event.dataTransfer.files;
+        if (!files || !files.length) return;
+        const file = files[0];
+        this.processarArquivo(file);
+        if (!this.arquivoErro && this.$refs.inputArquivo) {
+            const dt = new DataTransfer();
+            dt.items.add(file);
+            this.$refs.inputArquivo.files = dt.files;
+        }
+    },
+    removerArquivo(limparErro = true) {
+        this.arquivoNome = '';
+        this.arquivoTamanho = '';
+        this.arquivoExtensao = '';
+        if (limparErro) {
+            this.arquivoErro = '';
+        }
+        if (this.$refs.inputArquivo) {
+            this.$refs.inputArquivo.value = '';
+        }
+    }
 }">
 
     <!-- Efeitos de iluminação de fundo -->
@@ -47,6 +107,17 @@
         </div>
         @endif
 
+        @if($errors->any())
+        <div class="mb-8 p-5 rounded-2xl bg-rose-500/15 border border-rose-500/40 text-rose-200 text-xs sm:text-sm space-y-1.5">
+            <strong class="block font-mono uppercase tracking-wider text-rose-400">Não foi possível enviar o formulário — verifique os campos abaixo:</strong>
+            <ul class="list-disc list-inside space-y-0.5 text-xs">
+                @foreach($errors->all() as $erro)
+                    <li>{{ $erro }}</li>
+                @endforeach
+            </ul>
+        </div>
+        @endif
+
         <!-- Card do Formulário Oficial (Fiel à Imagem Fornecida) -->
         <div class="glass-panel p-6 sm:p-10 rounded-3xl border border-white/10 shadow-2xl relative">
 
@@ -79,6 +150,7 @@
 
             <form action="{{ route('site.contato.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                 @csrf
+                <input type="hidden" name="_origin" value="{{ ! empty($isOrcamento) ? 'orcamento' : 'contato' }}">
 
                 <!-- 1. EMPRESA -->
                 <div>
@@ -152,18 +224,62 @@
                     <label for="arquivo" class="block text-xs font-mono font-bold text-slate-200 uppercase tracking-wider mb-1.5">
                         ANEXAR PLANILHA / ARQUIVO –
                     </label>
-                    <div class="relative flex items-center justify-center w-full">
-                        <label for="arquivo" class="flex flex-col items-center justify-center w-full h-28 border-2 border-white/10 border-dashed rounded-2xl cursor-pointer bg-foco-navy-900/60 hover:bg-foco-navy-900 hover:border-foco-yellow-500/50 transition group">
-                            <div class="flex flex-col items-center justify-center pt-3 pb-3">
-                                <svg class="w-7 h-7 mb-1.5 text-slate-400 group-hover:text-foco-yellow-400 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
-                                <p class="text-xs text-slate-300"><span class="font-bold text-foco-yellow-400">Clique para anexar</span> planilha, projeto ou documento</p>
-                                <p class="text-[11px] text-slate-500 mt-0.5">Formatos: XLSX, XLS, CSV, PDF, DOC, DOCX ou Imagens (máx. 20MB)</p>
+                    <input
+                        x-ref="inputArquivo"
+                        id="arquivo"
+                        name="arquivo"
+                        type="file"
+                        accept=".pdf,.xls,.xlsx,.xlsm,.ods,.csv,.doc,.docx,.odt,.txt,.png,.jpg,.jpeg,.webp,.zip,.rar"
+                        class="sr-only"
+                        @change="selecionarArquivo($event)"
+                    />
+
+                    <div
+                        @click="$refs.inputArquivo.click()"
+                        @dragover.prevent="arrastando = true"
+                        @dragleave.prevent="arrastando = false"
+                        @drop.prevent="soltarArquivo($event)"
+                        :class="{
+                            'border-emerald-400/70 bg-emerald-500/10': arquivoNome,
+                            'border-foco-yellow-400 bg-foco-navy-900': arrastando && !arquivoNome,
+                            'border-white/10 bg-foco-navy-900/60 hover:bg-foco-navy-900 hover:border-foco-yellow-500/50': !arquivoNome && !arrastando
+                        }"
+                        class="relative flex items-center justify-center w-full min-h-[7.5rem] px-4 py-4 border-2 border-dashed rounded-2xl cursor-pointer transition group"
+                    >
+                        <div x-show="!arquivoNome" class="flex flex-col items-center justify-center text-center">
+                            <svg class="w-7 h-7 mb-1.5 text-slate-400 group-hover:text-foco-yellow-400 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                            <p class="text-xs text-slate-300"><span class="font-bold text-foco-yellow-400">Clique para anexar</span> ou arraste aqui sua planilha, PDF ou documento</p>
+                            <p class="text-[11px] text-slate-500 mt-0.5">Formatos: PDF, XLSX, XLS, CSV, DOC, DOCX, TXT, Imagens, ZIP ou RAR (máx. 20MB)</p>
+                        </div>
+
+                        <div x-show="arquivoNome" x-cloak style="display: none;" class="w-full flex flex-col sm:flex-row items-center justify-between gap-3">
+                            <div class="flex items-center gap-3 min-w-0 w-full sm:w-auto">
+                                <div class="w-11 h-11 rounded-xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 flex flex-col items-center justify-center shrink-0">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                    <span class="text-[9px] font-mono font-black leading-none mt-0.5" x-text="arquivoExtensao"></span>
+                                </div>
+                                <div class="min-w-0 text-left">
+                                    <p class="text-xs sm:text-sm font-bold text-white truncate" x-text="arquivoNome"></p>
+                                    <p class="text-[11px] font-mono text-emerald-400 mt-0.5">
+                                        Arquivo anexado (<span x-text="arquivoTamanho"></span>) • Pronto para envio
+                                    </p>
+                                </div>
                             </div>
-                            <input id="arquivo" name="arquivo" type="file" class="hidden" />
-                        </label>
+
+                            <div class="flex items-center gap-2 shrink-0">
+                                <button type="button" @click.stop="$refs.inputArquivo.click()" class="px-3 py-1.5 rounded-lg text-[11px] font-mono font-bold bg-white/10 hover:bg-white/20 text-slate-200 transition">
+                                    Trocar
+                                </button>
+                                <button type="button" @click.stop="removerArquivo()" class="px-3 py-1.5 rounded-lg text-[11px] font-mono font-bold bg-rose-500/15 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 transition">
+                                    Remover
+                                </button>
+                            </div>
+                        </div>
                     </div>
+
+                    <p x-show="arquivoErro" x-cloak style="display: none;" x-text="arquivoErro" class="text-rose-400 text-xs font-mono mt-1.5"></p>
                     @error('arquivo')
-                        <p class="text-rose-400 text-xs font-mono mt-1">{{ $message }}</p>
+                        <p class="text-rose-400 text-xs font-mono mt-1.5">{{ $message }}</p>
                     @enderror
                 </div>
 

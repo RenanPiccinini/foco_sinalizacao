@@ -54,6 +54,8 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
 
     // Menu Solicitações & Orçamentos Recebidos
     Route::get('/admin/contatos', [AdminContatoController::class, 'index'])->name('admin.contatos.index');
+    Route::post('/admin/contatos/testar-email', [AdminContatoController::class, 'testarEmail'])->name('admin.contatos.testar-email');
+    Route::post('/admin/contatos/limpar-cache', [AdminContatoController::class, 'limparCacheConfig'])->name('admin.contatos.limpar-cache');
     Route::get('/admin/contatos/{contato}', [AdminContatoController::class, 'show'])->name('admin.contatos.show');
     Route::patch('/admin/contatos/{contato}/status', [AdminContatoController::class, 'updateStatus'])->name('admin.contatos.status');
     Route::get('/admin/contatos/{contato}/download', [AdminContatoController::class, 'downloadArquivo'])->name('admin.contatos.download');

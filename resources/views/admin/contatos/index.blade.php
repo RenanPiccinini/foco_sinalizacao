@@ -16,11 +16,64 @@
         </div>
 
         @if(session('success'))
-        <div class="p-4 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 text-xs font-mono flex items-center justify-between">
+        <div class="p-4 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 text-xs font-mono flex items-center justify-between gap-3">
             <span>{{ session('success') }}</span>
-            <button type="button" @click="$el.parentElement.remove()" class="text-emerald-400 hover:text-white">✕</button>
+            <button type="button" @click="$el.parentElement.remove()" class="text-emerald-400 hover:text-white shrink-0">✕</button>
         </div>
         @endif
+
+        @if(session('error'))
+        <div class="p-4 rounded-2xl bg-rose-500/15 border border-rose-500/40 text-rose-200 text-xs font-mono flex items-center justify-between gap-3">
+            <span>{{ session('error') }}</span>
+            <button type="button" @click="$el.parentElement.remove()" class="text-rose-400 hover:text-white shrink-0">✕</button>
+        </div>
+        @endif
+
+        <!-- Painel Compacto: Status e Teste de E-mail Hostinger -->
+        <div class="p-4 sm:p-5 rounded-2xl glass-panel border {{ $mailStatus['mailer'] === 'smtp' && $mailStatus['password_configured'] ? 'border-emerald-500/30' : 'border-amber-500/40' }} flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div class="space-y-1 text-xs">
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="font-mono font-bold uppercase tracking-wider text-slate-200">Envio Automático por E-mail:</span>
+                    @if($mailStatus['mailer'] === 'smtp' && $mailStatus['password_configured'])
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                            SMTP Ativo
+                        </span>
+                    @elseif($mailStatus['mailer'] === 'log')
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                            Modo Simulação (MAIL_MAILER=log)
+                        </span>
+                    @else
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                            Senha SMTP não configurada no .env
+                        </span>
+                    @endif
+                </div>
+                <p class="text-[11px] font-mono text-slate-400">
+                    Destino: <strong class="text-foco-yellow-400">{{ $mailStatus['demandas_address'] }}</strong>
+                    • Servidor: <span class="text-slate-300">{{ $mailStatus['host'] }}:{{ $mailStatus['port'] }} ({{ $mailStatus['scheme'] }})</span>
+                    • Usuário: <span class="text-slate-300">{{ $mailStatus['username'] ?: 'não definido' }}</span>
+                    • Senha: <strong class="{{ $mailStatus['password_configured'] ? 'text-emerald-400' : 'text-rose-400' }}">{{ $mailStatus['password_configured'] ? 'Configurada' : 'Vazia no .env' }}</strong>
+                    @if($mailStatus['config_cached'])
+                        • <span class="text-amber-400 font-bold">Cache .env ativo</span>
+                    @endif
+                </p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2 shrink-0">
+                <form action="{{ route('admin.contatos.testar-email') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="px-4 py-2 rounded-xl text-xs font-mono font-bold bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 transition">
+                        Testar Envio de E-mail
+                    </button>
+                </form>
+                <form action="{{ route('admin.contatos.limpar-cache') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="px-3 py-2 rounded-xl text-xs font-mono bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 transition">
+                        Recarregar .env
+                    </button>
+                </form>
+            </div>
+        </div>
 
         <!-- Métricas -->
         <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
