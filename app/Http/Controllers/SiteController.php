@@ -247,6 +247,7 @@ class SiteController
     private function getClientesParceiros(): array
     {
         return [
+            ['nome' => 'AMELFIS COMERCIO DE SINALIZACAO E PLACAS LTDA', 'tipo' => ''],
             ['nome' => 'Chiorri Informática', 'tipo' => 'Consultoria em Tráfego'],
             ['nome' => 'Contransin', 'tipo' => 'Indústria e Comércio'],
             ['nome' => 'LCM Construtora', 'tipo' => 'Obras & Infraestrutura'],
@@ -254,6 +255,7 @@ class SiteController
             ['nome' => 'Signasul', 'tipo' => 'Engenharia de Sinalização'],
             ['nome' => 'Sinaltran', 'tipo' => 'Sinalizações Viárias'],
             ['nome' => 'Sinaway', 'tipo' => 'Comércio de Sinalização'],
+            ['nome' => 'Tecnass', 'tipo' => 'Semáforos a LED'],
             ['nome' => 'TR Sul Engenharia', 'tipo' => 'Projetos de Mobilidade'],
         ];
     }

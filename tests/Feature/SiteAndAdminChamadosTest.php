@@ -46,11 +46,8 @@ class SiteAndAdminChamadosTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Nossa História');
 
-        $response = $this->get('/cidades-e-rodovias');
-        $response->assertStatus(200);
-        $response->assertSee('Balneário Camboriú');
-        $response->assertSee('Clientes e Parceiros');
-        $response->assertSeeInOrder([
+        $expectedParceirosOrder = [
+            'AMELFIS COMERCIO DE SINALIZACAO E PLACAS LTDA',
             'Chiorri Informática',
             'Contransin',
             'LCM Construtora',
@@ -58,8 +55,16 @@ class SiteAndAdminChamadosTest extends TestCase
             'Signasul',
             'Sinaltran',
             'Sinaway',
+            'Tecnass',
+            'Semáforos a LED',
             'TR Sul Engenharia',
-        ]);
+        ];
+
+        $response = $this->get('/cidades-e-rodovias');
+        $response->assertStatus(200);
+        $response->assertSee('Balneário Camboriú');
+        $response->assertSee('Clientes e Parceiros');
+        $response->assertSeeInOrder($expectedParceirosOrder);
         $response->assertDontSee('Digicon');
 
         $response = $this->get('/contato');
@@ -74,16 +79,7 @@ class SiteAndAdminChamadosTest extends TestCase
         // Garante que a lista discreta e ordenada de Clientes e Parceiros aparece na home sem Digicon nem WhatsApp
         $responseHome = $this->get('/');
         $responseHome->assertSee('Clientes e Parceiros');
-        $responseHome->assertSeeInOrder([
-            'Chiorri Informática',
-            'Contransin',
-            'LCM Construtora',
-            'Pavicon',
-            'Signasul',
-            'Sinaltran',
-            'Sinaway',
-            'TR Sul Engenharia',
-        ]);
+        $responseHome->assertSeeInOrder($expectedParceirosOrder);
         $responseHome->assertDontSee('Digicon');
         $responseHome->assertDontSee('wa.me');
         $responseHome->assertDontSee('99294-1111');

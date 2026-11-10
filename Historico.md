@@ -355,6 +355,14 @@ php artisan route:list
 
 ## 9. CHANGELOG & HISTÓRICO DE MUDANÇAS
 
+### [2026-11-10 - Atualização 10]
+- **Novos Clientes e Parceiros Adicionados em Ordem Alfabética (`SiteController.php` + `clientes-parceiros-lista.blade.php`):**
+  - Inclusão das duas novas empresas em `SiteController::getClientesParceiros()` respeitando a ordem alfabética (A–Z):
+    - `01.` `AMELFIS COMERCIO DE SINALIZACAO E PLACAS LTDA`
+    - `09.` `Tecnass — Semáforos a LED`
+  - Ajuste responsivo no componente `resources/views/components/clientes-parceiros-lista.blade.php` (`min-w-0` e exibição condicional do sufixo `— tipo`) para evitar quebra/overflow em nomes extensos no mobile e desktop.
+  - Atualização da suíte `SiteAndAdminChamadosTest` verificando a nova ordenação (`assertSeeInOrder`) na Home e em `/cidades-e-rodovias` (46 testes, 270 asserções aprovadas).
+
 ### [2026-11-10 - Atualização 9]
 - **Crédito e Logo no Rodapé (`resources/views/site/layout.blade.php`):**
   - Inclusão da imagem oficial `public/images/pds-logo.png` (Piccinini Digital Solutions - PDS) em destaque legível sobre badge claro (`bg-white/95 rounded-2xl p-1.5`) no rodapé escuro do site.
