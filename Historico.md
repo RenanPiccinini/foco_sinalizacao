@@ -79,6 +79,8 @@ foco_sinalizacao/
 │   │   │   ├── ProfileController.php        (Gestão do perfil do usuário logado)
 │   │   │   └── SiteController.php           (Rotas públicas do site, orçamento restrito e envio de formulário)
 │   │   └── Requests/                        (Form Requests com bloqueio de usuários inativos)
+│   ├── Mail/
+│   │   └── NovaSolicitacaoContatoMail.php   (Mailable para envio de orçamentos/contatos com anexo)
 │   ├── Models/
 │   │   ├── Chamado.php                      (Model principal de chamados, 8 defeitos oficiais)
 │   │   ├── Contato.php                      (Model de orçamentos/contatos, protocolo SOL-AAAA-XXXX, anexos)
@@ -108,6 +110,8 @@ foco_sinalizacao/
 │       │   └── controladores.blade.php      (Módulo Controladores & Hardware)
 │       ├── auth/                            (login.blade.php estilizado com logo e cores FOCO)
 │       ├── components/                      (application-logo, clientes-parceiros-lista, modal, whatsapp-button desativado)
+│       ├── emails/
+│       │   └── nova-solicitacao-contato.blade.php (Template HTML responsivo dos e-mails de orçamento/contato)
 │       ├── layouts/
 │       │   ├── app.blade.php                (Layout administrativo com Sidebar, menu Usuários e Orçamentos)
 │       │   └── guest.blade.php              (Layout de login limpo e responsivo)
@@ -305,7 +309,7 @@ Acesso restrito protegido pelo middleware `['auth', 'verified', 'admin']`.
 
 O sistema possui suíte completa de testes automatizados com PHPUnit / Laravel Test Runner:
 - **Execução:** `php artisan test`
-- **Total de Testes:** 40 testes automatizados, 207 asserções (100% aprovados sem falhas).
+- **Total de Testes:** 44 testes automatizados, 244 asserções (100% aprovados sem falhas).
 - **Cobertura:**
   - Acesso a todas as rotas públicas do site (`/`, `/chamados`, `/solucoes`, `/sobre`, `/cidades-e-rodovias`, `/contato`).
   - Verificação visual dos 5 serviços prestados pela FOCO no site e nas soluções.
@@ -349,6 +353,14 @@ php artisan route:list
 ---
 
 ## 9. CHANGELOG & HISTÓRICO DE MUDANÇAS
+
+### [2026-11-10 - Atualização 6]
+- **Envio Automático por E-mail de Orçamentos e Contatos (Hostinger SMTP — `demandas@focosinal.com.br`):**
+  - Criação da classe Mailable `App\Mail\NovaSolicitacaoContatoMail` contendo assunto estruturado (`[PROTOCOLO] ASSUNTO - EMPRESA`), `replyTo` apontando para o e-mail e nome do responsável solicitante, e anexo automático do arquivo/planilha salvo no disco `public`.
+  - Criação do template HTML responsivo `resources/views/emails/nova-solicitacao-contato.blade.php` com todos os campos oficiais (protocolo, assunto, empresa, CNPJ, responsável, telefone, e-mail, endereço, descrição e link direto para o Painel Gestor).
+  - Atualização de `config/mail.php` (`demandas_address` via `MAIL_DEMANDAS_ADDRESS`, padrão `demandas@focosinal.com.br`) e `.env.example` documentando as variáveis SMTP da Hostinger (`MAIL_MAILER=smtp`, `MAIL_SCHEME=smtps`, `MAIL_HOST=smtp.hostinger.com`, `MAIL_PORT=465`).
+  - Atualização de `SiteController::storeContato()` para disparar o e-mail de forma síncrona e resiliente (com `try/catch` e `Log::error` para não interromper o salvamento do protocolo no banco em eventual falha SMTP).
+  - Adição de asserções com `Mail::fake()` em `SiteAndAdminChamadosTest` (44 testes, 244 asserções aprovadas).
 
 ### [2026-11-10 - Atualização 5]
 - **Inclusão Discreta e Ordenada de Clientes e Parceiros (`home.blade.php` e `cidades.blade.php`):**

@@ -111,8 +111,16 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
+        'address' => env('MAIL_FROM_ADDRESS', 'demandas@focosinal.com.br'),
         'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Caixa de Entrada para Recebimento de Orçamentos e Contatos do Site
+    |--------------------------------------------------------------------------
+    */
+
+    'demandas_address' => env('MAIL_DEMANDAS_ADDRESS', 'demandas@focosinal.com.br'),
 
 ];

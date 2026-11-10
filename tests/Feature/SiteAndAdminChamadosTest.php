@@ -2,12 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Mail\NovaSolicitacaoContatoMail;
 use App\Models\Chamado;
 use App\Models\Contato;
 use App\Models\User;
 use App\Services\EvolutionWhatsAppService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -454,6 +456,7 @@ class SiteAndAdminChamadosTest extends TestCase
     public function test_contact_form_submission_with_attachment(): void
     {
         Storage::fake('public');
+        Mail::fake();
 
         $user = User::factory()->create([
             'role' => 'cliente',
@@ -488,6 +491,13 @@ class SiteAndAdminChamadosTest extends TestCase
         $this->assertNotNull($contato);
         $this->assertNotNull($contato->arquivo_path);
         Storage::disk('public')->assertExists($contato->arquivo_path);
+
+        Mail::assertSent(NovaSolicitacaoContatoMail::class, function (NovaSolicitacaoContatoMail $mail) use ($contato): bool {
+            return $mail->hasTo(config('mail.demandas_address'))
+                && $mail->hasReplyTo('roberto@consorcio.com.br')
+                && $mail->contato->id === $contato->id
+                && count($mail->attachments()) === 1;
+        });
     }
 
     /**
@@ -496,6 +506,7 @@ class SiteAndAdminChamadosTest extends TestCase
     public function test_guest_can_submit_orcamento_directly_without_login(): void
     {
         Storage::fake('public');
+        Mail::fake();
 
         $file = UploadedFile::fake()->create('planilha_quantitativos.xlsx', 100);
 
@@ -519,6 +530,11 @@ class SiteAndAdminChamadosTest extends TestCase
             'empresa' => 'Empresa Externa Solicitante',
             'assunto' => Contato::ASSUNTO_ORCAMENTO_COMPRA_DIRETA,
         ]);
+
+        Mail::assertSent(NovaSolicitacaoContatoMail::class, function (NovaSolicitacaoContatoMail $mail): bool {
+            return $mail->hasTo('demandas@focosinal.com.br')
+                && $mail->hasReplyTo('externo@empresa.com');
+        });
     }
 
     /**
@@ -628,5 +644,42 @@ class SiteAndAdminChamadosTest extends TestCase
         $responseSolucoes->assertDontSee('Digicon');
         $responseSolucoes->assertSee('Simulador Comparativo de Onda Verde');
         $responseSolucoes->assertSee('getCor(1)');
+    }
+
+    /**
+     * Testa renderização do e-mail de orçamento, destinatário configurável e resiliência a falha SMTP
+     */
+    public function test_orcamento_email_rendering_custom_recipient_and_smtp_failure_resilience(): void
+    {
+        Storage::fake('public');
+        Mail::fake();
+
+        config(['mail.demandas_address' => 'outro@focosinal.com.br']);
+
+        $response = $this->post('/contato', [
+            'empresa' => 'Prefeitura de Canoas',
+            'responsavel' => 'Secretário Marcos',
+            'fone' => '(51) 99999-0000',
+            'email' => 'marcos@canoas.rs.gov.br',
+            'endereco' => 'Rua 15 de Janeiro, 11',
+            'cnpj' => '88.577.416/0001-18',
+            'assunto' => Contato::ASSUNTO_MONTAR_PROCESSO,
+            'descricao' => 'Montagem de processo para 10 cruzamentos com nobreak.',
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('novo_protocolo_contato');
+
+        $contato = Contato::where('empresa', 'Prefeitura de Canoas')->firstOrFail();
+
+        Mail::assertSent(NovaSolicitacaoContatoMail::class, function (NovaSolicitacaoContatoMail $mail) use ($contato): bool {
+            $rendered = $mail->render();
+
+            return $mail->hasTo('outro@focosinal.com.br')
+                && str_contains($rendered, $contato->protocolo)
+                && str_contains($rendered, 'Prefeitura de Canoas')
+                && str_contains($rendered, '88.577.416/0001-18')
+                && str_contains($rendered, 'Montagem de processo para 10 cruzamentos com nobreak.');
+        });
     }
 }

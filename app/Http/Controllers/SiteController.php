@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NovaSolicitacaoContatoMail;
 use App\Models\Chamado;
 use App\Models\Contato;
 use App\Services\EvolutionWhatsAppService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class SiteController
 {
@@ -227,6 +230,20 @@ class SiteController
             'status' => 'Novo',
             'ip' => $request->ip(),
         ]);
+
+        $destinatario = config('mail.demandas_address') ?: config('mail.from.address');
+
+        if ($destinatario) {
+            try {
+                Mail::to($destinatario)->send(new NovaSolicitacaoContatoMail($contato));
+            } catch (\Throwable $e) {
+                Log::error('Falha ao enviar e-mail da solicitação/orçamento.', [
+                    'protocolo' => $contato->protocolo,
+                    'destinatario' => $destinatario,
+                    'erro' => $e->getMessage(),
+                ]);
+            }
+        }
 
         return redirect()->route('site.contato')
             ->with('success', "Solicitação registrada com sucesso! Protocolo gerado: {$contato->protocolo}")
