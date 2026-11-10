@@ -3,8 +3,9 @@
 @section('title', 'Formulário Oficial de Contato & Orçamentos | Foco Sinalização')
 
 @section('content')
-<div class="py-14 bg-foco-navy-950 relative overflow-hidden" x-data="{
+<div class="py-14 bg-foco-navy-950 relative overflow-hidden" @pageshow.window="enviando = false" x-data="{
     assuntoSelecionado: '{{ old('assunto', $assuntoPredefinido ?: 'ORÇAMENTO COMPRA DIRETA') }}',
+    enviando: false,
     arquivoNome: '',
     arquivoTamanho: '',
     arquivoExtensao: '',
@@ -66,6 +67,31 @@
         }
     }
 }">
+
+    <!-- Overlay Loader Full-Screen ao Enviar Formulário -->
+    <div
+        x-show="enviando"
+        x-cloak
+        style="display: none;"
+        x-transition.opacity.duration.200ms
+        class="fixed inset-0 z-50 bg-foco-navy-950/90 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center"
+        role="status"
+        aria-live="polite"
+    >
+        <div class="glass-panel-glow p-8 rounded-3xl border border-foco-yellow-500/40 shadow-2xl max-w-sm w-full flex flex-col items-center space-y-4">
+            <div class="relative w-16 h-16 flex items-center justify-center">
+                <div class="absolute inset-0 rounded-full border-4 border-foco-yellow-500/20"></div>
+                <div class="absolute inset-0 rounded-full border-4 border-t-foco-yellow-400 border-r-transparent border-b-transparent border-l-transparent animate-spin"></div>
+                <span class="font-black text-xs text-foco-yellow-400 tracking-wider">FOCO</span>
+            </div>
+            <div class="space-y-1.5">
+                <h3 class="text-base font-bold text-white">Enviando Formulário...</h3>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    Aguarde enquanto registramos sua solicitação, anexos e encaminhamos para nossa equipe técnica.
+                </p>
+            </div>
+        </div>
+    </div>
 
     <!-- Efeitos de iluminação de fundo -->
     <div class="absolute top-10 right-10 w-96 h-96 bg-foco-yellow-500/10 rounded-full blur-3xl pointer-events-none"></div>
@@ -148,7 +174,13 @@
                 @endif
             </div>
 
-            <form action="{{ route('site.contato.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+            <form
+                action="{{ route('site.contato.store') }}"
+                method="POST"
+                enctype="multipart/form-data"
+                class="space-y-6"
+                @submit="if (enviando) { $event.preventDefault(); return; } enviando = true;"
+            >
                 @csrf
                 <input type="hidden" name="_origin" value="{{ ! empty($isOrcamento) ? 'orcamento' : 'contato' }}">
 
@@ -346,9 +378,18 @@
                         Seus dados serão encaminhados para a equipe técnica da FOCO.
                     </span>
 
-                    <button type="submit" class="w-full sm:w-auto px-8 py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-foco-yellow-500 hover:bg-foco-yellow-400 text-foco-navy-950 transition shadow-glow-yellow flex items-center justify-center gap-2">
-                        <svg class="w-4 h-4 text-foco-navy-950" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
-                        <span>Enviar Formulário</span>
+                    <button
+                        type="submit"
+                        :disabled="enviando"
+                        :class="enviando ? 'opacity-70 cursor-not-allowed' : 'hover:bg-foco-yellow-400'"
+                        class="w-full sm:w-auto px-8 py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-foco-yellow-500 text-foco-navy-950 transition shadow-glow-yellow flex items-center justify-center gap-2"
+                    >
+                        <svg x-show="!enviando" class="w-4 h-4 text-foco-navy-950" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                        <svg x-show="enviando" x-cloak style="display: none;" class="w-4 h-4 text-foco-navy-950 animate-spin" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span x-text="enviando ? 'Enviando...' : 'Enviar Formulário'"></span>
                     </button>
                 </div>
 

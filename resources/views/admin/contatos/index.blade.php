@@ -57,6 +57,11 @@
                         • <span class="text-amber-400 font-bold">Cache .env ativo</span>
                     @endif
                 </p>
+                @if(! empty($ultimoDiagnostico))
+                <p class="text-[11px] font-mono pt-1 {{ $ultimoDiagnostico['status'] === 'sucesso' ? 'text-emerald-400' : ($ultimoDiagnostico['status'] === 'aviso' ? 'text-amber-300' : 'text-rose-400') }}">
+                    Último registro ({{ $ultimoDiagnostico['registrado_em'] }}@if(! empty($ultimoDiagnostico['protocolo'])) • {{ $ultimoDiagnostico['protocolo'] }}@endif): {{ $ultimoDiagnostico['mensagem'] }}
+                </p>
+                @endif
             </div>
 
             <div class="flex flex-wrap items-center gap-2 shrink-0">

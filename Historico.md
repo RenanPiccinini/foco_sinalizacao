@@ -88,7 +88,8 @@ foco_sinalizacao/
 │   ├── Providers/
 │   │   └── AppServiceProvider.php           (Configurações de providers do Laravel 12)
 │   └── Services/
-│       └── EvolutionWhatsAppService.php     (Integração completa com a Evolution API v2)
+│       ├── EvolutionWhatsAppService.php     (Integração completa com a Evolution API v2)
+│       └── OrcamentoMailerService.php       (Disparo SMTP com fallback de porta 465/587 e diagnóstico)
 ├── database/
 │   ├── migrations/                          (Migrações: users com role/is_active, contatos, chamados)
 │   └── seeders/
@@ -309,7 +310,7 @@ Acesso restrito protegido pelo middleware `['auth', 'verified', 'admin']`.
 
 O sistema possui suíte completa de testes automatizados com PHPUnit / Laravel Test Runner:
 - **Execução:** `php artisan test`
-- **Total de Testes:** 46 testes automatizados, 264 asserções (100% aprovados sem falhas).
+- **Total de Testes:** 46 testes automatizados, 267 asserções (100% aprovados sem falhas).
 - **Cobertura:**
   - Acesso a todas as rotas públicas do site (`/`, `/chamados`, `/solucoes`, `/sobre`, `/cidades-e-rodovias`, `/contato`).
   - Verificação visual dos 5 serviços prestados pela FOCO no site e nas soluções.
@@ -353,6 +354,18 @@ php artisan route:list
 ---
 
 ## 9. CHANGELOG & HISTÓRICO DE MUDANÇAS
+
+### [2026-11-10 - Atualização 8]
+- **Loader na Tela ao Enviar Formulário (`resources/views/site/contato.blade.php`):**
+  - Adicionado estado `enviando` no componente Alpine.js acionado no `@submit` do formulário (garantindo validação HTML5 antes de exibir o loader e bloqueando múltiplos cliques).
+  - Adicionado overlay loader full-screen com backdrop blur, spinner animado e mensagem *"Enviando Formulário..."*, além de spinner no botão `"Enviar Formulário"` $\rightarrow$ `"Enviando..."`, com reset automático em `@pageshow.window` para navegação via botão Voltar do navegador.
+- **Fallback Automático Hostinger (`465 <-> 587`) e Histórico de Diagnóstico SMTP (`OrcamentoMailerService.php`):**
+  - Extração de `App\Services\OrcamentoMailerService` centralizando o envio de orçamentos e e-mails de teste.
+  - Se a conexão SMTP na porta configurada (`465` smtps ou `587` smtp) falhar na Hostinger por bloqueio/TLS/timeout de porta, tenta automaticamente a porta alternativa via `Mail::build()`.
+  - Registro do último status de envio em arquivo de diagnóstico exibido diretamente no card de e-mails de `/admin/contatos`, incluindo dicas práticas caso ocorram erros de autenticação (`535` por `$` em aspas duplas no `.env`).
+  - Fallback seguro de MIME type em `NovaSolicitacaoContatoMail` (`?: 'application/octet-stream'`) e cast `(int)` em `config/mail.php` (`port`).
+- **Testes & Build:**
+  - `npm run build` compilou o CSS/JS atualizado; `vendor/bin/pint --dirty --format agent` passou; `php artisan test` aprovou **46 testes (267 asserções)**.
 
 ### [2026-11-10 - Atualização 7]
 - **Correção Completa do Upload Visual de Anexos (PDF/Planilhas) no Formulário (`contato.blade.php` + `SiteController.php`):**

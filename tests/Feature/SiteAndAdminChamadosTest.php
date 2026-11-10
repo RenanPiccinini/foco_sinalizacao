@@ -695,6 +695,8 @@ class SiteAndAdminChamadosTest extends TestCase
         $formResponse->assertStatus(200);
         $formResponse->assertSee('selecionarArquivo');
         $formResponse->assertSee('arquivoNome');
+        $formResponse->assertSee('Enviando Formulário...');
+        $formResponse->assertSee('enviando = true');
 
         $pdfFile = UploadedFile::fake()->create('memorial_descritivo.pdf', 250, 'application/octet-stream');
 
@@ -748,8 +750,13 @@ class SiteAndAdminChamadosTest extends TestCase
         $smtpResponse->assertRedirect();
         $smtpResponse->assertSessionHas('success');
 
+        $afterTestIndex = $this->actingAs($admin)->get('/admin/contatos');
+        $afterTestIndex->assertSee('Último registro');
+
         $cacheResponse = $this->actingAs($admin)->post('/admin/contatos/limpar-cache');
         $cacheResponse->assertRedirect();
         $cacheResponse->assertSessionHas('success');
+
+        @unlink(storage_path('app/mail_diagnostico_testing.json'));
     }
 }

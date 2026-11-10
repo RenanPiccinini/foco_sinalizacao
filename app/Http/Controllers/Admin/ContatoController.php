@@ -4,13 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Contato;
+use App\Services\OrcamentoMailerService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
-use Throwable;
 
 class ContatoController extends Controller
 {
@@ -68,48 +66,23 @@ class ContatoController extends Controller
             'config_cached' => app()->configurationIsCached(),
         ];
 
-        return view('admin.contatos.index', compact('contatos', 'stats', 'status', 'assunto', 'busca', 'mailStatus'));
+        $ultimoDiagnostico = app(OrcamentoMailerService::class)->obterUltimoDiagnostico();
+
+        return view('admin.contatos.index', compact('contatos', 'stats', 'status', 'assunto', 'busca', 'mailStatus', 'ultimoDiagnostico'));
     }
 
     /**
      * Dispara um e-mail de teste para validar a configuração SMTP Hostinger.
      */
-    public function testarEmail(): RedirectResponse
+    public function testarEmail(OrcamentoMailerService $mailerService): RedirectResponse
     {
-        $mailer = config('mail.default');
-        $destinatario = config('mail.demandas_address') ?: config('mail.from.address');
+        $resultado = $mailerService->enviarTeste();
 
-        if ($mailer === 'log') {
-            return redirect()->back()->with('error', 'O sistema ainda está com MAIL_MAILER=log no .env (modo simulação). Altere para MAIL_MAILER=smtp, informe MAIL_PASSWORD no arquivo .env e clique em "Recarregar .env".');
+        if ($resultado['success']) {
+            return redirect()->back()->with('success', $resultado['message']);
         }
 
-        if (! $destinatario) {
-            return redirect()->back()->with('error', 'Nenhum destinatário configurado em MAIL_DEMANDAS_ADDRESS ou MAIL_FROM_ADDRESS.');
-        }
-
-        try {
-            Mail::raw(
-                "Teste de conexão SMTP Hostinger — FOCO Sinalização.\n\nSe você recebeu este e-mail em {$destinatario}, o envio automático dos orçamentos e contatos do site está funcionando corretamente.\n\nData/Hora: ".now()->format('d/m/Y H:i:s'),
-                function ($message) use ($destinatario): void {
-                    $message->to($destinatario)
-                        ->subject('[TESTE SMTP] FOCO Sinalização - E-mail Configurado');
-                }
-            );
-
-            return redirect()->back()->with('success', "E-mail de teste enviado para {$destinatario}! Verifique a Caixa de Entrada (ou Spam) do Webmail da Hostinger.");
-        } catch (Throwable $e) {
-            $host = config('mail.mailers.smtp.host');
-            $port = config('mail.mailers.smtp.port');
-
-            Log::error('Falha no envio de e-mail de teste SMTP.', [
-                'destinatario' => $destinatario,
-                'host' => $host,
-                'port' => $port,
-                'erro' => $e->getMessage(),
-            ]);
-
-            return redirect()->back()->with('error', "Falha ao enviar via SMTP ({$host}:{$port}): {$e->getMessage()}");
-        }
+        return redirect()->back()->with('error', $resultado['message']);
     }
 
     /**

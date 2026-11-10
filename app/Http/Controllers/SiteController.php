@@ -2,14 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\NovaSolicitacaoContatoMail;
 use App\Models\Chamado;
 use App\Models\Contato;
 use App\Services\EvolutionWhatsAppService;
+use App\Services\OrcamentoMailerService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
-use Throwable;
 
 class SiteController
 {
@@ -232,29 +229,7 @@ class SiteController
             'ip' => $request->ip(),
         ]);
 
-        $destinatario = config('mail.demandas_address') ?: config('mail.from.address');
-
-        if ($destinatario) {
-            if (config('mail.default') === 'log') {
-                Log::warning('MAIL_MAILER está em modo log: o e-mail de solicitação foi salvo apenas no arquivo de log e não enviado via SMTP.', [
-                    'protocolo' => $contato->protocolo,
-                    'destinatario' => $destinatario,
-                ]);
-            }
-
-            try {
-                Mail::to($destinatario)->send(new NovaSolicitacaoContatoMail($contato));
-            } catch (Throwable $e) {
-                Log::error('Falha ao enviar e-mail da solicitação/orçamento.', [
-                    'protocolo' => $contato->protocolo,
-                    'destinatario' => $destinatario,
-                    'mailer' => config('mail.default'),
-                    'host' => config('mail.mailers.smtp.host'),
-                    'port' => config('mail.mailers.smtp.port'),
-                    'erro' => $e->getMessage(),
-                ]);
-            }
-        }
+        app(OrcamentoMailerService::class)->enviarSolicitacao($contato);
 
         $rotaRetorno = $request->input('_origin') === 'orcamento' ? 'site.orcamento' : 'site.contato';
 

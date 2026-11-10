@@ -55,7 +55,10 @@ class NovaSolicitacaoContatoMail extends Mailable
             return [];
         }
 
-        $attachment = Attachment::fromStorageDisk('public', $this->contato->arquivo_path);
+        $mime = Storage::disk('public')->mimeType($this->contato->arquivo_path) ?: 'application/octet-stream';
+
+        $attachment = Attachment::fromStorageDisk('public', $this->contato->arquivo_path)
+            ->withMime($mime);
 
         if ($this->contato->arquivo_nome) {
             $attachment->as($this->contato->arquivo_nome);
