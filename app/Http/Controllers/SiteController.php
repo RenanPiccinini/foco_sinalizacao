@@ -48,9 +48,10 @@ class SiteController
             'Rodovia BR 290',
         ];
 
+        $parceiros = $this->getClientesParceiros();
         $ultimosChamados = Chamado::latest('data_hora_abertura')->take(3)->get();
 
-        return view('site.home', compact('municipiosSC', 'municipiosRS', 'rodovias', 'ultimosChamados'));
+        return view('site.home', compact('municipiosSC', 'municipiosRS', 'rodovias', 'parceiros', 'ultimosChamados'));
     }
 
     /**
@@ -144,11 +145,13 @@ class SiteController
     }
 
     /**
-     * Página de Cidades Atendidas.
+     * Página de Cidades Atendidas e Clientes/Parceiros.
      */
     public function cidades()
     {
-        return view('site.cidades');
+        $parceiros = $this->getClientesParceiros();
+
+        return view('site.cidades', compact('parceiros'));
     }
 
     /**
@@ -229,5 +232,24 @@ class SiteController
             ->with('success', "Solicitação registrada com sucesso! Protocolo gerado: {$contato->protocolo}")
             ->with('protocolo_contato', $contato->protocolo)
             ->with('novo_protocolo_contato', $contato->protocolo);
+    }
+
+    /**
+     * Lista ordenada alfabeticamente (A–Z) de clientes corporativos e parceiros.
+     *
+     * @return list<array{nome: string, tipo: string}>
+     */
+    private function getClientesParceiros(): array
+    {
+        return [
+            ['nome' => 'Chiorri Informática', 'tipo' => 'Consultoria em Tráfego'],
+            ['nome' => 'Contransin', 'tipo' => 'Indústria e Comércio'],
+            ['nome' => 'LCM Construtora', 'tipo' => 'Obras & Infraestrutura'],
+            ['nome' => 'Pavicon', 'tipo' => 'Pavimentações Ltda'],
+            ['nome' => 'Signasul', 'tipo' => 'Engenharia de Sinalização'],
+            ['nome' => 'Sinaltran', 'tipo' => 'Sinalizações Viárias'],
+            ['nome' => 'Sinaway', 'tipo' => 'Comércio de Sinalização'],
+            ['nome' => 'TR Sul Engenharia', 'tipo' => 'Projetos de Mobilidade'],
+        ];
     }
 }

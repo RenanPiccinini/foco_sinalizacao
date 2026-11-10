@@ -107,15 +107,15 @@ foco_sinalizacao/
 │       │   ├── cidades.blade.php            (Módulo Municípios e Concessões)
 │       │   └── controladores.blade.php      (Módulo Controladores & Hardware)
 │       ├── auth/                            (login.blade.php estilizado com logo e cores FOCO)
-│       ├── components/                      (application-logo, modal, whatsapp-button desativado)
+│       ├── components/                      (application-logo, clientes-parceiros-lista, modal, whatsapp-button desativado)
 │       ├── layouts/
 │       │   ├── app.blade.php                (Layout administrativo com Sidebar, menu Usuários e Orçamentos)
 │       │   └── guest.blade.php              (Layout de login limpo e responsivo)
 │       ├── site/                            (Telas públicas do portal sem links externos de WhatsApp)
-│       │   ├── home.blade.php               (Landing page sem seção de parceiros e links wa.me)
+│       │   ├── home.blade.php               (Landing page com lista discreta e ordenada A–Z de Clientes e Parceiros e sem links wa.me)
 │       │   ├── solucoes.blade.php           (Detalhamento dos 5 serviços com solicitação de orçamento)
 │       │   ├── chamados.blade.php           (Portal com abertura, consulta e monitoramento)
-│       │   ├── cidades.blade.php            (Cobertura geográfica SC, RS e Rodovias)
+│       │   ├── cidades.blade.php            (Cobertura geográfica SC, RS, Rodovias + aba/bloco discreto Clientes e Parceiros)
 │       │   ├── sobre.blade.php              (História da empresa e Quem Somos Deep Tech)
 │       │   └── contato.blade.php            (Formulário oficial: Empresa, Responsável, Fone, Anexo, Assuntos)
 │       │   └── layout.blade.php             (Header glassmorphic, telemetria e footer completo)
@@ -349,6 +349,25 @@ php artisan route:list
 ---
 
 ## 9. CHANGELOG & HISTÓRICO DE MUDANÇAS
+
+### [2026-11-10 - Atualização 5]
+- **Inclusão Discreta e Ordenada de Clientes e Parceiros (`home.blade.php` e `cidades.blade.php`):**
+  - Criação da fonte centralizada `SiteController::getClientesParceiros()` contendo as 8 empresas parceiras em ordem alfabética (A–Z), mantendo a remoção anterior de qualquer menção à Digicon:
+    - `01.` Chiorri Informática — Consultoria em Tráfego
+    - `02.` Contransin — Indústria e Comércio
+    - `03.` LCM Construtora — Obras & Infraestrutura
+    - `04.` Pavicon — Pavimentações Ltda
+    - `05.` Signasul — Engenharia de Sinalização
+    - `06.` Sinaltran — Sinalizações Viárias
+    - `07.` Sinaway — Comércio de Sinalização
+    - `08.` TR Sul Engenharia — Projetos de Mobilidade
+    - `09.` Prefeituras & Concessões — +25 Contratos Ativos
+  - Criação do componente compartilhado `resources/views/components/clientes-parceiros-lista.blade.php` exibindo a lista ordenada (`<ol>`) de forma discreta, limpa e sem cards chamativos.
+  - **Na Home (`resources/views/site/home.blade.php`):** Reintrodução da seção `#clientes-parceiros` no mesmo posicionamento original (logo abaixo de "Municípios e Rodovias Conectadas"), sob o título "Clientes e Parceiros" e subtítulo discreto "Parcerias em serviços, equipamentos e engenharia integrada".
+  - **Na Página Cidades & Rodovias (`resources/views/site/cidades.blade.php`):** Adição de uma 4ª aba de filtro discreta **"Clientes e Parceiros"** ao lado de SC, RS e Rodovias Federais, com bloco dedicado listando as empresas em ordem alfabética (`#clientes-parceiros`).
+- **Testes & Qualidade:**
+  - Atualização de `SiteAndAdminChamadosTest` verificando ordenação alfabética (`assertSeeInOrder`) na Home e em `/cidades-e-rodovias` e ausência de menções a Digicon (43 testes, 239 asserções aprovadas).
+  - Formatação validada com Laravel Pint (`vendor/bin/pint --dirty --format agent`) e assets compilados com `npm run build`.
 
 ### [2026-11-09 - Atualização 4]
 - **Remoção Total de Referências à Palavra/Marca "DIGICON":**

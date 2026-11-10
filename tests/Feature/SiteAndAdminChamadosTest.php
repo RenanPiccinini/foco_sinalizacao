@@ -47,6 +47,18 @@ class SiteAndAdminChamadosTest extends TestCase
         $response = $this->get('/cidades-e-rodovias');
         $response->assertStatus(200);
         $response->assertSee('Balneário Camboriú');
+        $response->assertSee('Clientes e Parceiros');
+        $response->assertSeeInOrder([
+            'Chiorri Informática',
+            'Contransin',
+            'LCM Construtora',
+            'Pavicon',
+            'Signasul',
+            'Sinaltran',
+            'Sinaway',
+            'TR Sul Engenharia',
+        ]);
+        $response->assertDontSee('Digicon');
 
         $response = $this->get('/contato');
         $response->assertStatus(200);
@@ -57,10 +69,20 @@ class SiteAndAdminChamadosTest extends TestCase
         $response->assertDontSee('99294-1111');
         $response->assertDontSee('wa.me');
 
-        // Garante que a seção de parcerias foi removida da home
+        // Garante que a lista discreta e ordenada de Clientes e Parceiros aparece na home sem Digicon nem WhatsApp
         $responseHome = $this->get('/');
-        $responseHome->assertDontSee('PARCERIAS EM SERVIÇOS, EQUIPAMENTOS E ENGENHARIA INTEGRADA');
-        $responseHome->assertDontSee('Digicon S/A');
+        $responseHome->assertSee('Clientes e Parceiros');
+        $responseHome->assertSeeInOrder([
+            'Chiorri Informática',
+            'Contransin',
+            'LCM Construtora',
+            'Pavicon',
+            'Signasul',
+            'Sinaltran',
+            'Sinaway',
+            'TR Sul Engenharia',
+        ]);
+        $responseHome->assertDontSee('Digicon');
         $responseHome->assertDontSee('wa.me');
         $responseHome->assertDontSee('99294-1111');
     }

@@ -752,5 +752,21 @@
         </div>
     </div>
 </section>
+
+<!-- SEÇÃO DISCRETA: CLIENTES E PARCEIROS -->
+<section id="clientes-parceiros" class="py-12 bg-foco-navy-950 border-t border-white/5">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-6">
+            <h3 class="text-xs font-mono font-semibold tracking-widest text-slate-500 uppercase">
+                Clientes e Parceiros
+            </h3>
+            <p class="text-[11px] text-slate-600 mt-1">
+                Parcerias em serviços, equipamentos e engenharia integrada
+            </p>
+        </div>
+
+        <x-clientes-parceiros-lista :parceiros="$parceiros" />
+    </div>
+</section>
 @endsection
 

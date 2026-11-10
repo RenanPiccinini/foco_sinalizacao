@@ -3,7 +3,7 @@
 @section('title', 'Cidades Atendidas e Rodovias | Foco Sinalização')
 
 @section('content')
-<div class="py-16 bg-foco-navy-950 relative overflow-hidden" x-data="{ filtro: 'todos' }">
+<div class="py-16 bg-foco-navy-950 relative overflow-hidden" x-data="{ filtro: window.location.hash === '#clientes-parceiros' ? 'parceiros' : 'todos' }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         <!-- Cabeçalho -->
@@ -35,11 +35,14 @@
                 <button type="button" @click="filtro = 'rodovias'" :class="filtro === 'rodovias' ? 'bg-amber-400 text-foco-navy-950 font-bold' : 'text-slate-300 hover:text-white'" class="px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition">
                     Rodovias Federais
                 </button>
+                <button type="button" @click="filtro = 'parceiros'" :class="filtro === 'parceiros' ? 'bg-slate-700 text-white font-bold' : 'text-slate-400 hover:text-slate-200'" class="px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition">
+                    Clientes e Parceiros
+                </button>
             </div>
         </div>
 
         <!-- Grid de Cidades e Trechos -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+        <div x-show="filtro !== 'parceiros'" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-14">
             
             <!-- Santa Catarina -->
             <div x-show="filtro === 'todos' || filtro === 'sc'" x-transition class="glass-card p-6 rounded-3xl border-t-2 border-t-cyan-400">
@@ -133,6 +136,17 @@
             </div>
             @endforeach
 
+        </div>
+
+        <!-- Bloco Discreto: Clientes e Parceiros -->
+        <div id="clientes-parceiros" x-show="filtro === 'todos' || filtro === 'parceiros'" x-transition class="mb-14 pt-6 border-t border-white/10">
+            <div class="mb-5">
+                <span class="text-[11px] font-mono uppercase tracking-widest text-slate-500">Atuação Corporativa &amp; Institucional</span>
+                <h2 class="text-lg font-bold text-slate-200 mt-0.5">Clientes e Parceiros</h2>
+                <p class="text-xs text-slate-400 mt-1">Empresas e parcerias técnicas listadas em ordem alfabética:</p>
+            </div>
+
+            <x-clientes-parceiros-lista :parceiros="$parceiros" />
         </div>
 
         <!-- Seção de Consultoria e Obras Temporárias -->
