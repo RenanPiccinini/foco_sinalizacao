@@ -254,7 +254,7 @@ class SiteAndAdminChamadosTest extends TestCase
         // 1. Acesso à página de conexão
         $response = $this->actingAs($user)->get('/admin/conexao');
         $response->assertStatus(200);
-        $response->assertSee('Conexão WhatsApp (Evolution API)');
+        $response->assertSee('Conexão WhatsApp');
         $response->assertSee('foco_sinalizacao');
 
         // 2. Endpoint de verificação de status JSON

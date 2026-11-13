@@ -77,7 +77,7 @@
                     <span class="w-2.5 h-2.5 rounded-full" :class="conectado ? 'bg-foco-green-400 animate-pulse' : 'bg-amber-400 animate-ping'"></span>
                     <span class="text-xs font-mono uppercase tracking-widest font-bold" :class="conectado ? 'text-foco-green-400' : 'text-amber-400'" x-text="conectado ? 'WHATSAPP CONECTADO' : 'CONEXÃO PENDENTE'"></span>
                 </div>
-                <h1 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">Conexão WhatsApp (Evolution API)</h1>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">Conexão WhatsApp</h1>
                 <p class="text-xs text-slate-400 mt-1">
                     Conecte o WhatsApp oficial da FOCO para enviar alertas automáticos de novos chamados e laudos aos solicitantes.
                 </p>
@@ -88,36 +88,6 @@
                 <span class="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-slate-300">
                     Instância: <strong class="text-foco-yellow-400">{{ $instance }}</strong>
                 </span>
-                <span class="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-slate-300">
-                    Host: <strong class="text-cyan-400">Hostinger VPS</strong>
-                </span>
-            </div>
-        </div>
-
-        <!-- Alerta com Instruções Claras da Evolution API na Hostinger VPS -->
-        <div class="p-5 rounded-2xl bg-foco-navy-900 border border-white/10 text-xs space-y-3">
-            <div class="flex items-center gap-2">
-                <svg class="w-5 h-5 text-foco-yellow-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                <h3 class="text-sm font-bold text-white">Como Funciona a Notificação de Chamados via WhatsApp (Evolution API na VPS Hostinger):</h3>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 font-mono text-[11px] text-slate-300">
-                <div class="p-3 rounded-xl bg-black/40 border border-white/5 space-y-1">
-                    <strong class="text-emerald-400 block font-bold">1. Chave da API no .env:</strong>
-                    <span>Insira a sua chave global da Evolution em <code class="text-foco-yellow-300 bg-white/5 px-1 py-0.5 rounded">EVOLUTION_API_KEY=sua_chave</code>.</span>
-                    @if(!$hasApiKey)
-                        <span class="block text-amber-400 font-bold mt-1">⚠️ Chave ainda não preenchida no .env</span>
-                    @else
-                        <span class="block text-emerald-400 font-bold mt-1">✅ Chave de API configurada</span>
-                    @endif
-                </div>
-                <div class="p-3 rounded-xl bg-black/40 border border-white/5 space-y-1">
-                    <strong class="text-cyan-400 block font-bold">2. Instância Emissora:</strong>
-                    <span>Instância atual: <code class="text-cyan-300 bg-white/5 px-1 py-0.5 rounded">{{ $instance }}</code>. Você pode ler o QR Code abaixo com o WhatsApp da FOCO ou apontar para uma instância já conectada na sua VPS (ex: <code class="text-white">PDS</code>).</span>
-                </div>
-                <div class="p-3 rounded-xl bg-black/40 border border-white/5 space-y-1">
-                    <strong class="text-foco-yellow-400 block font-bold">3. Quem Recebe os Chamados:</strong>
-                    <span>Número do Dono: <strong class="text-white">{{ !empty($adminRecipients) ? implode(', ', $adminRecipients) : 'Fallback automático' }}</strong>. Configure em <code class="text-foco-yellow-300 bg-white/5 px-1 py-0.5 rounded">WHATSAPP_ADMIN_NUMBER</code>.</span>
-                </div>
             </div>
         </div>
 
