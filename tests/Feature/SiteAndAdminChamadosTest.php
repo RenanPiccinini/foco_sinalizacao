@@ -272,11 +272,15 @@ class SiteAndAdminChamadosTest extends TestCase
         $response->assertRedirect();
         $response->assertSessionHas('success');
 
-        // 5. Teste de menu visível no Dashboard e na Barra Lateral
+        // 5. Teste de menu visível no Dashboard e na Barra Lateral exclusivamente para admin
         $responseDashboard = $this->actingAs($user)->get('/dashboard');
         $responseDashboard->assertStatus(200);
         $responseDashboard->assertSee('Conexão WhatsApp');
         $responseDashboard->assertSee(route('admin.conexao.index'));
+
+        $nonAdmin = User::factory()->create(['role' => 'tecnico', 'is_active' => true]);
+        $responseNonAdmin = $this->actingAs($nonAdmin)->get('/admin/conexao');
+        $responseNonAdmin->assertStatus(403);
 
         // 6. Teste de extração de número, formatação e destinatários do admin
         $this->assertEquals('5551992941111', EvolutionWhatsAppService::extractPhoneNumber('5551992941111:198@s.whatsapp.net'));
@@ -285,6 +289,26 @@ class SiteAndAdminChamadosTest extends TestCase
 
         $service = app(EvolutionWhatsAppService::class);
         $this->assertIsArray($service->getAdminRecipients());
+
+        // 7. Teste de prevenção contra repetição de mensagem (anti-duplicidade)
+        $chamadoTeste = Chamado::create([
+            'protocolo' => 'FOC-2026-9999',
+            'tipo' => 'Vermelho Queimado',
+            'nome_solicitante' => 'Fiscal Teste',
+            'telefone_contato' => '(51) 99294-1111',
+            'local' => 'Rua das Flores x Central',
+            'defeito' => 'Lâmpada vermelha apagada',
+            'data_hora_abertura' => now(),
+            'status' => 'Aberto',
+        ]);
+
+        $resAbertura1 = $service->notificarNovoChamado($chamadoTeste);
+        $resAbertura2 = $service->notificarNovoChamado($chamadoTeste);
+        $this->assertTrue($resAbertura2['already_sent'] ?? false);
+
+        $resConclusao1 = $service->notificarChamadoConcluido($chamadoTeste);
+        $resConclusao2 = $service->notificarChamadoConcluido($chamadoTeste);
+        $this->assertTrue($resConclusao2['already_sent'] ?? false);
 
         $response = $this->actingAs($user)->post('/admin/conexao/teste', [
             'numero' => '',

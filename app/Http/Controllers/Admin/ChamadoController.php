@@ -170,8 +170,10 @@ class ChamadoController extends Controller
                 auth()->user()?->name ?? 'FOCO Engenharia'
             );
 
-            // Dispara notificação no WhatsApp do solicitante via Evolution API
-            app(EvolutionWhatsAppService::class)->notificarChamadoConcluido($chamado);
+            // Dispara notificação no WhatsApp do solicitante apenas se mudou de status (evita repetição)
+            if ($statusAnterior !== 'Finalizado') {
+                app(EvolutionWhatsAppService::class)->notificarChamadoConcluido($chamado);
+            }
         } else {
             if ($statusAnterior !== $novoStatus) {
                 $chamado->adicionarHistorico(
@@ -194,6 +196,7 @@ class ChamadoController extends Controller
     public function concluir(Request $request, string $id)
     {
         $chamado = Chamado::findOrFail($id);
+        $statusAnterior = $chamado->status;
 
         $validated = $request->validate([
             'conserto_executado' => 'required|string|max:2500',
@@ -215,8 +218,10 @@ class ChamadoController extends Controller
 
         $chamado->save();
 
-        // Dispara mensagem automática para o WhatsApp do solicitante via Evolution API
-        app(EvolutionWhatsAppService::class)->notificarChamadoConcluido($chamado);
+        // Dispara mensagem automática apenas se ainda não estava finalizado (evita repetição)
+        if ($statusAnterior !== 'Finalizado') {
+            app(EvolutionWhatsAppService::class)->notificarChamadoConcluido($chamado);
+        }
 
         return back()->with('success', "Chamado {$chamado->protocolo} concluído com sucesso e notificação automática enviada para o WhatsApp de {$chamado->nome_solicitante} ({$chamado->telefone_contato})!");
     }

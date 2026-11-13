@@ -102,9 +102,15 @@ class EvolutionWhatsAppService
         }
 
         // Fallback seguro para o número oficial da FOCO caso ainda não tenha sido detectado dinamicamente
-        $fallback = config('services.evolution.admin_number') ?: env('WHATSAPP_ADMIN_NUMBER', '5551992941111');
+        $fallback = config('services.evolution.admin_number');
+        if (empty($fallback)) {
+            $fallback = env('WHATSAPP_ADMIN_NUMBER');
+        }
+        if (empty($fallback)) {
+            $fallback = '5551992941111';
+        }
 
-        return self::formatPhoneNumber($fallback);
+        return self::formatPhoneNumber((string) $fallback);
     }
 
     /**
@@ -508,6 +514,17 @@ class EvolutionWhatsAppService
      */
     public function notificarNovoChamado(Chamado $chamado): array
     {
+        $dedupKey = "whatsapp_sent_novo_chamado_{$chamado->protocolo}";
+        if (cache()->has($dedupKey)) {
+            Log::info("Evolution API: Notificação de abertura do chamado {$chamado->protocolo} já enviada. Prevenindo repetição de mensagem.");
+
+            return [
+                'success' => true,
+                'already_sent' => true,
+                'message' => 'Notificação de novo chamado já enviada anteriormente.',
+            ];
+        }
+
         $recipients = $this->getAdminRecipients();
 
         if (empty($recipients)) {
@@ -542,8 +559,16 @@ class EvolutionWhatsAppService
             .'_Central Operacional Automática - FOCO Sinalização_';
 
         $lastResult = ['success' => false];
+        $sentCount = 0;
         foreach ($recipients as $recipient) {
             $lastResult = $this->sendMessage($recipient, $mensagem);
+            if (! empty($lastResult['success']) || ! empty($lastResult['simulated'])) {
+                $sentCount++;
+            }
+        }
+
+        if ($sentCount > 0) {
+            cache()->put($dedupKey, true, now()->addDays(7));
         }
 
         return $lastResult;
@@ -555,6 +580,17 @@ class EvolutionWhatsAppService
      */
     public function notificarChamadoConcluido(Chamado $chamado): array
     {
+        $dedupKey = "whatsapp_sent_concluido_{$chamado->protocolo}";
+        if (cache()->has($dedupKey)) {
+            Log::info("Evolution API: Notificação de conclusão do chamado {$chamado->protocolo} já enviada para {$chamado->telefone_contato}. Prevenindo repetição de mensagem.");
+
+            return [
+                'success' => true,
+                'already_sent' => true,
+                'message' => 'Notificação de conclusão já enviada anteriormente.',
+            ];
+        }
+
         $numeroSolicitante = $chamado->telefone_contato;
         $horaConclusao = $chamado->data_hora_execucao
             ? $chamado->data_hora_execucao->format('d/m/Y H:i')
@@ -582,6 +618,12 @@ class EvolutionWhatsAppService
             ."Agradecemos pela colaboração com a segurança viária da nossa cidade!\n"
             .'🟢 *FOCO Sinalização e Sistemas Inteligentes LTDA*';
 
-        return $this->sendMessage($numeroSolicitante, $mensagem);
+        $result = $this->sendMessage($numeroSolicitante, $mensagem);
+
+        if (! empty($result['success']) || ! empty($result['simulated'])) {
+            cache()->put($dedupKey, true, now()->addDays(7));
+        }
+
+        return $result;
     }
 }
