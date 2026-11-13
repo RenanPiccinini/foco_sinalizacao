@@ -128,6 +128,9 @@ class ChamadoController extends Controller
             ],
         ]);
 
+        // Dispara notificação no WhatsApp do dono da FOCO via Evolution API
+        app(EvolutionWhatsAppService::class)->notificarNovoChamado($chamado);
+
         return redirect()->route('admin.chamados.show', $chamado->id)
             ->with('success', "Chamado interno {$chamado->protocolo} registrado com sucesso!");
     }

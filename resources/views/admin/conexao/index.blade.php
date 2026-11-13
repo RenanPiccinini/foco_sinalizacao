@@ -94,16 +94,32 @@
             </div>
         </div>
 
-        <!-- Alerta se chave de API estiver ausente -->
-        @if(!$hasApiKey)
-        <div class="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-200 flex items-start gap-3">
-            <svg class="w-5 h-5 text-amber-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            <div>
-                <strong class="text-white block font-bold">Configuração Necessária no arquivo .env</strong>
-                <span>Para conectar em tempo real com a Evolution API na sua VPS, adicione a sua chave global na variável <code class="bg-black/40 px-1.5 py-0.5 rounded text-amber-300">EVOLUTION_API_KEY</code>.</span>
+        <!-- Alerta com Instruções Claras da Evolution API na Hostinger VPS -->
+        <div class="p-5 rounded-2xl bg-foco-navy-900 border border-white/10 text-xs space-y-3">
+            <div class="flex items-center gap-2">
+                <svg class="w-5 h-5 text-foco-yellow-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <h3 class="text-sm font-bold text-white">Como Funciona a Notificação de Chamados via WhatsApp (Evolution API na VPS Hostinger):</h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 font-mono text-[11px] text-slate-300">
+                <div class="p-3 rounded-xl bg-black/40 border border-white/5 space-y-1">
+                    <strong class="text-emerald-400 block font-bold">1. Chave da API no .env:</strong>
+                    <span>Insira a sua chave global da Evolution em <code class="text-foco-yellow-300 bg-white/5 px-1 py-0.5 rounded">EVOLUTION_API_KEY=sua_chave</code>.</span>
+                    @if(!$hasApiKey)
+                        <span class="block text-amber-400 font-bold mt-1">⚠️ Chave ainda não preenchida no .env</span>
+                    @else
+                        <span class="block text-emerald-400 font-bold mt-1">✅ Chave de API configurada</span>
+                    @endif
+                </div>
+                <div class="p-3 rounded-xl bg-black/40 border border-white/5 space-y-1">
+                    <strong class="text-cyan-400 block font-bold">2. Instância Emissora:</strong>
+                    <span>Instância atual: <code class="text-cyan-300 bg-white/5 px-1 py-0.5 rounded">{{ $instance }}</code>. Você pode ler o QR Code abaixo com o WhatsApp da FOCO ou apontar para uma instância já conectada na sua VPS (ex: <code class="text-white">PDS</code>).</span>
+                </div>
+                <div class="p-3 rounded-xl bg-black/40 border border-white/5 space-y-1">
+                    <strong class="text-foco-yellow-400 block font-bold">3. Quem Recebe os Chamados:</strong>
+                    <span>Número do Dono: <strong class="text-white">{{ !empty($adminRecipients) ? implode(', ', $adminRecipients) : 'Fallback automático' }}</strong>. Configure em <code class="text-foco-yellow-300 bg-white/5 px-1 py-0.5 rounded">WHATSAPP_ADMIN_NUMBER</code>.</span>
+                </div>
             </div>
         </div>
-        @endif
 
         <!-- ============================================================= -->
         <!-- ESTADO 1: WHATSAPP CONECTADO COM SUCESSO                      -->
@@ -138,7 +154,7 @@
                 </div>
 
                 <!-- Detalhes da Conexão -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 text-xs font-mono">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-6 text-xs font-mono">
                     <div class="p-4 rounded-2xl bg-black/40 border border-white/5 space-y-1">
                         <span class="text-slate-400 block uppercase font-bold text-[10px]">Status da Sessão:</span>
                         <strong class="text-emerald-400 text-sm block">🟢 Online / Conectado</strong>
@@ -148,13 +164,19 @@
                     <div class="p-4 rounded-2xl bg-black/40 border border-white/5 space-y-1">
                         <span class="text-slate-400 block uppercase font-bold text-[10px]">Instância Ativa:</span>
                         <strong class="text-white text-sm block">{{ $instance }}</strong>
-                        <span class="text-[11px] text-slate-500">Evolution API v2</span>
+                        <span class="text-[11px] text-slate-500">Evolution API v2 (VPS Hostinger)</span>
                     </div>
 
                     <div class="p-4 rounded-2xl bg-black/40 border border-white/5 space-y-1">
-                        <span class="text-slate-400 block uppercase font-bold text-[10px]">Número Conectado:</span>
-                        <strong class="text-foco-yellow-400 text-sm block">{{ !empty($stateInfo['ownerNumber']) ? $stateInfo['ownerNumber'] : '5551992941111 (Aparelho Conectado)' }}</strong>
-                        <span class="text-[11px] text-slate-500">Origem de todos os disparos</span>
+                        <span class="text-slate-400 block uppercase font-bold text-[10px]">Aparelho Emissor (Conectado):</span>
+                        <strong class="text-foco-yellow-400 text-sm block">{{ !empty($stateInfo['ownerNumber']) ? $stateInfo['ownerNumber'] : 'Conectado via QR Code' }}</strong>
+                        <span class="text-[11px] text-slate-500">Remetente dos disparos</span>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-black/40 border border-white/5 space-y-1">
+                        <span class="text-slate-400 block uppercase font-bold text-[10px]">Destinatário do Dono:</span>
+                        <strong class="text-cyan-400 text-sm block">{{ !empty($adminRecipients) ? implode(', ', $adminRecipients) : 'Aparelho conectado' }}</strong>
+                        <span class="text-[11px] text-slate-500">Recebe alertas de novos chamados</span>
                     </div>
                 </div>
             </div>

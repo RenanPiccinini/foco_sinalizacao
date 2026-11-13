@@ -25,8 +25,9 @@ class ConexaoController extends Controller
         $instance = config('services.evolution.instance', 'foco_sinalizacao');
         $apiUrl = config('services.evolution.url', 'https://evolution.piccininidigitalsolutions.com.br');
         $hasApiKey = ! empty(config('services.evolution.api_key'));
+        $adminRecipients = $this->whatsAppService->getAdminRecipients();
 
-        return view('admin.conexao.index', compact('stateInfo', 'instance', 'apiUrl', 'hasApiKey'));
+        return view('admin.conexao.index', compact('stateInfo', 'instance', 'apiUrl', 'hasApiKey', 'adminRecipients'));
     }
 
     /**
@@ -75,34 +76,50 @@ class ConexaoController extends Controller
         $numeroInput = trim((string) $request->input('numero'));
         $digitsOnly = preg_replace('/\D/', '', $numeroInput);
 
-        // Se digitou um número com DDD válido (pelo menos 10 dígitos), usa o digitado
         if (! empty($digitsOnly) && strlen($digitsOnly) >= 10) {
-            $numero = $digitsOnly;
+            $destinatarios = [$digitsOnly];
         } else {
-            // Caso contrário, usa o próprio número conectado na instância (com fallback oficial)
-            $numero = $this->whatsAppService->getConnectedNumber();
+            $destinatarios = $this->whatsAppService->getAdminRecipients();
+        }
+
+        if (empty($destinatarios)) {
+            return back()->with('error', 'Nenhum número informado e nenhum número conectado ou configurado no .env.');
         }
 
         $hora = now()->format('d/m/Y H:i:s');
+        $instance = config('services.evolution.instance', 'foco_sinalizacao');
 
         $mensagem = "🟢 *TESTE DE CONEXÃO WHATSAPP - FOCO SINALIZAÇÃO*\n\n"
             ."Parabéns! O seu WhatsApp está conectado com sucesso ao sistema da FOCO Sinalização via Evolution API.\n\n"
             ."⏰ *Data/Hora do Teste:* {$hora}\n"
-            .'🚀 *Instância:* '.config('services.evolution.instance', 'foco_sinalizacao')."\n\n"
-            .'As notificações de novos chamados e avisos automáticos de conclusão já estão operacionais e serão enviadas por este número conectado!';
+            ."🚀 *Instância:* {$instance}\n\n"
+            .'As notificações de novos chamados e avisos automáticos de conclusão já estão operacionais e serão enviadas por este canal!';
 
-        $resultado = $this->whatsAppService->sendMessage($numero, $mensagem);
+        $sucessos = [];
+        $erros = [];
 
-        if (! empty($resultado['success'])) {
-            $destinatarioFormatado = EvolutionWhatsAppService::formatPhoneNumber($numero);
+        foreach ($destinatarios as $dest) {
+            $resultado = $this->whatsAppService->sendMessage($dest, $mensagem);
+            $destFormatado = EvolutionWhatsAppService::formatPhoneNumber($dest);
 
-            return back()->with('success', "Mensagem de teste enviada com sucesso para {$destinatarioFormatado}!");
+            if (! empty($resultado['success'])) {
+                $sucessos[] = $destFormatado;
+            } elseif (! empty($resultado['simulated'])) {
+                return back()->with('info', 'Simulação realizada! Para envio real, preencha a chave EVOLUTION_API_KEY no arquivo .env.');
+            } else {
+                $erros[] = $destFormatado.': '.($resultado['error'] ?? 'Falha ao entregar');
+            }
         }
 
-        if (! empty($resultado['simulated'])) {
-            return back()->with('info', 'Simulação realizada! Para envio real, preencha a chave EVOLUTION_API_KEY no arquivo .env.');
+        if (! empty($sucessos)) {
+            $msg = 'Mensagem de teste enviada com sucesso para: '.implode(', ', $sucessos);
+            if (! empty($erros)) {
+                $msg .= ' (Falha para: '.implode('; ', $erros).')';
+            }
+
+            return back()->with('success', $msg);
         }
 
-        return back()->with('error', 'Não foi possível enviar o teste: '.($resultado['error'] ?? 'Verifique se o WhatsApp está realmente conectado.'));
+        return back()->with('error', 'Não foi possível enviar o teste: '.implode('; ', $erros));
     }
 }

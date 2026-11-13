@@ -272,10 +272,19 @@ class SiteAndAdminChamadosTest extends TestCase
         $response->assertRedirect();
         $response->assertSessionHas('success');
 
-        // 5. Teste de extração de número e disparo de teste
+        // 5. Teste de menu visível no Dashboard e na Barra Lateral
+        $responseDashboard = $this->actingAs($user)->get('/dashboard');
+        $responseDashboard->assertStatus(200);
+        $responseDashboard->assertSee('Conexão WhatsApp');
+        $responseDashboard->assertSee(route('admin.conexao.index'));
+
+        // 6. Teste de extração de número, formatação e destinatários do admin
         $this->assertEquals('5551992941111', EvolutionWhatsAppService::extractPhoneNumber('5551992941111:198@s.whatsapp.net'));
         $this->assertNull(EvolutionWhatsAppService::extractPhoneNumber('198'));
         $this->assertEquals('5551992941111', EvolutionWhatsAppService::formatPhoneNumber('(51) 99294-1111'));
+
+        $service = app(EvolutionWhatsAppService::class);
+        $this->assertIsArray($service->getAdminRecipients());
 
         $response = $this->actingAs($user)->post('/admin/conexao/teste', [
             'numero' => '',

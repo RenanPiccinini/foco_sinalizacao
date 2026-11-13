@@ -108,6 +108,43 @@ class EvolutionWhatsAppService
     }
 
     /**
+     * Retorna a lista de números de administradores que devem receber as notificações de novos chamados.
+     * Prioridade:
+     * 1. Número(s) definidos em WHATSAPP_ADMIN_NUMBER no .env (suporta múltiplos separados por vírgula)
+     * 2. Número atualmente conectado no WhatsApp da instância (se houver)
+     * 3. Fallback oficial cadastrado
+     *
+     * @return array<int, string>
+     */
+    public function getAdminRecipients(): array
+    {
+        $configured = config('services.evolution.admin_number') ?: env('WHATSAPP_ADMIN_NUMBER');
+
+        $recipients = [];
+        if (! empty($configured)) {
+            $parts = explode(',', (string) $configured);
+            foreach ($parts as $part) {
+                $trimmed = trim($part);
+                if (! empty($trimmed)) {
+                    $formatted = self::formatPhoneNumber($trimmed);
+                    if (strlen($formatted) >= 10) {
+                        $recipients[] = $formatted;
+                    }
+                }
+            }
+        }
+
+        if (empty($recipients)) {
+            $connected = $this->getConnectedNumber();
+            if (! empty($connected)) {
+                $recipients[] = $connected;
+            }
+        }
+
+        return array_values(array_unique($recipients));
+    }
+
+    /**
      * Verifica o estado de conexão da instância na Evolution API
      */
     public function getConnectionState(): array
@@ -471,15 +508,14 @@ class EvolutionWhatsAppService
      */
     public function notificarNovoChamado(Chamado $chamado): array
     {
-        // Envia para o próprio número que foi conectado via QR Code!
-        $adminNumber = $this->getConnectedNumber();
+        $recipients = $this->getAdminRecipients();
 
-        if (empty($adminNumber)) {
-            Log::info('Evolution API: Nenhum número conectado no momento para receber alerta de novo chamado.');
+        if (empty($recipients)) {
+            Log::info('Evolution API: Nenhum número de administrador configurado ou conectado no momento para receber alerta de novo chamado.');
 
             return [
                 'success' => false,
-                'message' => 'Nenhum WhatsApp conectado no momento.',
+                'message' => 'Nenhum WhatsApp conectado ou configurado no momento.',
             ];
         }
 
@@ -505,7 +541,12 @@ class EvolutionWhatsAppService
         $mensagem .= "\n🔗 *Atender no Gerenciador:* {$urlGerenciador}\n\n"
             .'_Central Operacional Automática - FOCO Sinalização_';
 
-        return $this->sendMessage($adminNumber, $mensagem);
+        $lastResult = ['success' => false];
+        foreach ($recipients as $recipient) {
+            $lastResult = $this->sendMessage($recipient, $mensagem);
+        }
+
+        return $lastResult;
     }
 
     /**
