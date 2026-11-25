@@ -51,7 +51,7 @@ class ContatoController extends Controller
             'novos' => $all->where('status', 'Novo')->count(),
             'em_analise' => $all->where('status', 'Em Análise')->count(),
             'respondidos' => $all->where('status', 'Respondido')->count(),
-            'orcamentos' => $all->filter(fn ($c) => str_contains($c->assunto, 'ORÇAMENTO'))->count(),
+            'orcamentos' => $all->filter(fn ($c) => stripos($c->assunto, 'orçamento') !== false || stripos($c->assunto, 'orcamento') !== false)->count(),
         ];
 
         $mailStatus = [

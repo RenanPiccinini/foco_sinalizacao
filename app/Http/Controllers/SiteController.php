@@ -173,7 +173,7 @@ class SiteController
      */
     public function orcamento(Request $request)
     {
-        $assuntoPredefinido = $request->query('assunto', Contato::ASSUNTO_COMPRA_DIRETA);
+        $assuntoPredefinido = $request->query('assunto', Contato::ASSUNTO_ORCAMENTOS);
 
         return view('site.contato', [
             'assuntoPredefinido' => $assuntoPredefinido,

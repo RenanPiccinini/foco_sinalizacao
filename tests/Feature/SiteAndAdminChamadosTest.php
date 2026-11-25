@@ -34,7 +34,7 @@ class SiteAndAdminChamadosTest extends TestCase
         $response = $this->get('/orcamento');
         $response->assertStatus(200);
         $response->assertSee('FORMULÁRIO');
-        $response->assertSee('ORÇAMENTO COMPRA DIRETA');
+        $response->assertSee('Orçamentos');
 
         $response = $this->get('/solucoes');
         $response->assertStatus(200);
@@ -70,9 +70,10 @@ class SiteAndAdminChamadosTest extends TestCase
         $response = $this->get('/contato');
         $response->assertStatus(200);
         $response->assertSee('FORMULÁRIO');
-        $response->assertSee('ORÇAMENTO COMPRA DIRETA');
-        $response->assertSee('ORÇAMENTO PARA MONTAR PROCESSO');
-        $response->assertSee('QUESTIONAMENTO/SOLICITAÇÃO/OUTROS');
+        $response->assertSee('Orçamentos');
+        $response->assertSee('Questionamento / Solicitação / Outros');
+        $response->assertDontSee('ORÇAMENTO COMPRA DIRETA');
+        $response->assertDontSee('ORÇAMENTO PARA MONTAR PROCESSO');
         $response->assertDontSee('99294-1111');
         $response->assertDontSee('wa.me');
 
@@ -384,8 +385,10 @@ class SiteAndAdminChamadosTest extends TestCase
         $response = $this->get('/orcamento');
         $response->assertStatus(200);
         $response->assertSee('FORMULÁRIO');
-        $response->assertSee('ORÇAMENTO COMPRA DIRETA');
-        $response->assertSee('ORÇAMENTO PARA MONTAR PROCESSO');
+        $response->assertSee('Orçamentos');
+        $response->assertSee('Questionamento / Solicitação / Outros');
+        $response->assertDontSee('ORÇAMENTO COMPRA DIRETA');
+        $response->assertDontSee('ORÇAMENTO PARA MONTAR PROCESSO');
     }
 
     /**

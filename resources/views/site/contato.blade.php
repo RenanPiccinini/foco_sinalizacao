@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="py-14 bg-foco-navy-950 relative overflow-hidden" @pageshow.window="enviando = false" x-data="{
-    assuntoSelecionado: '{{ old('assunto', $assuntoPredefinido ?: 'ORÇAMENTO COMPRA DIRETA') }}',
+    assuntoSelecionado: '{{ old('assunto', $assuntoPredefinido ?: 'Orçamentos') }}',
     enviando: false,
     arquivoNome: '',
     arquivoTamanho: '',
@@ -322,37 +322,26 @@
                     </label>
 
                     <div class="space-y-2.5">
-                        <!-- Opção 1: ORÇAMENTO COMPRA DIRETA -->
-                        <label @click="assuntoSelecionado = 'ORÇAMENTO COMPRA DIRETA'" class="cursor-pointer relative p-3.5 rounded-2xl border transition flex items-center justify-between"
-                            :class="assuntoSelecionado === 'ORÇAMENTO COMPRA DIRETA' ? 'bg-foco-yellow-500/15 border-foco-yellow-500 text-white shadow-glow-yellow' : 'bg-foco-navy-900 border-white/10 text-slate-300 hover:border-white/30'">
+                        <!-- Opção 1: Orçamentos -->
+                        <label @click="assuntoSelecionado = 'Orçamentos'" class="cursor-pointer relative p-3.5 rounded-2xl border transition flex items-center justify-between"
+                            :class="assuntoSelecionado === 'Orçamentos' ? 'bg-foco-yellow-500/15 border-foco-yellow-500 text-white shadow-glow-yellow' : 'bg-foco-navy-900 border-white/10 text-slate-300 hover:border-white/30'">
                             <div class="flex items-center gap-3">
-                                <input type="radio" name="assunto" value="ORÇAMENTO COMPRA DIRETA" class="sr-only" x-model="assuntoSelecionado" required>
+                                <input type="radio" name="assunto" value="Orçamentos" class="sr-only" x-model="assuntoSelecionado" required>
                                 <span class="font-mono text-foco-yellow-400 font-bold">➤</span>
-                                <span class="text-xs sm:text-sm font-bold uppercase tracking-wide">ORÇAMENTO COMPRA DIRETA</span>
+                                <span class="text-xs sm:text-sm font-bold uppercase tracking-wide">Orçamentos</span>
                             </div>
-                            <span class="font-mono text-xs text-slate-400" :class="assuntoSelecionado === 'ORÇAMENTO COMPRA DIRETA' ? 'text-foco-yellow-400 font-bold' : ''">( <span x-text="assuntoSelecionado === 'ORÇAMENTO COMPRA DIRETA' ? '✔' : ' '"></span> )</span>
+                            <span class="font-mono text-xs text-slate-400" :class="assuntoSelecionado === 'Orçamentos' ? 'text-foco-yellow-400 font-bold' : ''">( <span x-text="assuntoSelecionado === 'Orçamentos' ? '✔' : ' '"></span> )</span>
                         </label>
 
-                        <!-- Opção 2: ORÇAMENTO PARA MONTAR PROCESSO -->
-                        <label @click="assuntoSelecionado = 'ORÇAMENTO PARA MONTAR PROCESSO'" class="cursor-pointer relative p-3.5 rounded-2xl border transition flex items-center justify-between"
-                            :class="assuntoSelecionado === 'ORÇAMENTO PARA MONTAR PROCESSO' ? 'bg-purple-500/15 border-purple-400 text-white shadow-lg' : 'bg-foco-navy-900 border-white/10 text-slate-300 hover:border-white/30'">
+                        <!-- Opção 2: Questionamento / Solicitação / Outros -->
+                        <label @click="assuntoSelecionado = 'Questionamento / Solicitação / Outros'" class="cursor-pointer relative p-3.5 rounded-2xl border transition flex items-center justify-between"
+                            :class="assuntoSelecionado === 'Questionamento / Solicitação / Outros' ? 'bg-cyan-500/15 border-cyan-400 text-white shadow-glow-blue' : 'bg-foco-navy-900 border-white/10 text-slate-300 hover:border-white/30'">
                             <div class="flex items-center gap-3">
-                                <input type="radio" name="assunto" value="ORÇAMENTO PARA MONTAR PROCESSO" class="sr-only" x-model="assuntoSelecionado" required>
-                                <span class="font-mono text-purple-400 font-bold">➤</span>
-                                <span class="text-xs sm:text-sm font-bold uppercase tracking-wide">ORÇAMENTO PARA MONTAR PROCESSO</span>
-                            </div>
-                            <span class="font-mono text-xs text-slate-400" :class="assuntoSelecionado === 'ORÇAMENTO PARA MONTAR PROCESSO' ? 'text-purple-400 font-bold' : ''">( <span x-text="assuntoSelecionado === 'ORÇAMENTO PARA MONTAR PROCESSO' ? '✔' : ' '"></span> )</span>
-                        </label>
-
-                        <!-- Opção 3: QUESTIONAMENTO/SOLICITAÇÃO/OUTROS -->
-                        <label @click="assuntoSelecionado = 'QUESTIONAMENTO/SOLICITAÇÃO/OUTROS'" class="cursor-pointer relative p-3.5 rounded-2xl border transition flex items-center justify-between"
-                            :class="assuntoSelecionado === 'QUESTIONAMENTO/SOLICITAÇÃO/OUTROS' ? 'bg-cyan-500/15 border-cyan-400 text-white shadow-glow-blue' : 'bg-foco-navy-900 border-white/10 text-slate-300 hover:border-white/30'">
-                            <div class="flex items-center gap-3">
-                                <input type="radio" name="assunto" value="QUESTIONAMENTO/SOLICITAÇÃO/OUTROS" class="sr-only" x-model="assuntoSelecionado" required>
+                                <input type="radio" name="assunto" value="Questionamento / Solicitação / Outros" class="sr-only" x-model="assuntoSelecionado" required>
                                 <span class="font-mono text-cyan-400 font-bold">➤</span>
-                                <span class="text-xs sm:text-sm font-bold uppercase tracking-wide">QUESTIONAMENTO / SOLICITAÇÃO / OUTROS</span>
+                                <span class="text-xs sm:text-sm font-bold uppercase tracking-wide">Questionamento / Solicitação / Outros</span>
                             </div>
-                            <span class="font-mono text-xs text-slate-400" :class="assuntoSelecionado === 'QUESTIONAMENTO/SOLICITAÇÃO/OUTROS' ? 'text-cyan-400 font-bold' : ''">( <span x-text="assuntoSelecionado === 'QUESTIONAMENTO/SOLICITAÇÃO/OUTROS' ? '✔' : ' '"></span> )</span>
+                            <span class="font-mono text-xs text-slate-400" :class="assuntoSelecionado === 'Questionamento / Solicitação / Outros' ? 'text-cyan-400 font-bold' : ''">( <span x-text="assuntoSelecionado === 'Questionamento / Solicitação / Outros' ? '✔' : ' '"></span> )</span>
                         </label>
                     </div>
 

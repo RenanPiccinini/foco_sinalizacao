@@ -10,7 +10,7 @@
                 </div>
                 <h1 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">Solicitações & Orçamentos</h1>
                 <p class="text-xs sm:text-sm text-slate-400 mt-1">
-                    Gerencie orçamentos para compra direta, montagem de processos e mensagens enviadas pelo formulário oficial.
+                    Gerencie orçamentos e mensagens enviadas pelo formulário oficial.
                 </p>
             </div>
         </div>
@@ -134,7 +134,7 @@
                                 <div class="text-[11px] text-slate-400">{{ $c->email }}</div>
                             </td>
                             <td class="py-3.5 px-3">
-                                <span class="px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold {{ str_contains($c->assunto, 'COMPRA') ? 'bg-amber-500/20 text-amber-300' : (str_contains($c->assunto, 'PROCESSO') ? 'bg-purple-500/20 text-purple-300' : 'bg-cyan-500/20 text-cyan-300') }}">
+                                <span class="px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold {{ (stripos($c->assunto, 'orçamento') !== false || stripos($c->assunto, 'orcamento') !== false) ? 'bg-amber-500/20 text-amber-300' : 'bg-cyan-500/20 text-cyan-300' }}">
                                     {{ $c->assunto }}
                                 </span>
                             </td>

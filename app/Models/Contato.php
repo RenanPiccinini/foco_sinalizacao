@@ -29,20 +29,25 @@ class Contato extends Model
         'ip',
     ];
 
+    public const ASSUNTO_ORCAMENTOS = 'Orçamentos';
+
+    public const ASSUNTO_QUESTIONAMENTO = 'Questionamento / Solicitação / Outros';
+
+    // Constantes legadas mantidas para retrocompatibilidade
     public const ASSUNTO_COMPRA_DIRETA = 'ORÇAMENTO COMPRA DIRETA';
 
     public const ASSUNTO_MONTAR_PROCESSO = 'ORÇAMENTO PARA MONTAR PROCESSO';
 
-    public const ASSUNTO_QUESTIONAMENTO = 'QUESTIONAMENTO/SOLICITAÇÃO/OUTROS';
+    public const ASSUNTO_ORCAMENTO_COMPRA_DIRETA = self::ASSUNTO_ORCAMENTOS;
 
-    public const ASSUNTO_ORCAMENTO_COMPRA_DIRETA = self::ASSUNTO_COMPRA_DIRETA;
-
-    public const ASSUNTO_ORCAMENTO_MONTAR_PROCESSO = self::ASSUNTO_MONTAR_PROCESSO;
+    public const ASSUNTO_ORCAMENTO_MONTAR_PROCESSO = self::ASSUNTO_ORCAMENTOS;
 
     public const ASSUNTOS = [
+        self::ASSUNTO_ORCAMENTOS,
+        self::ASSUNTO_QUESTIONAMENTO,
         self::ASSUNTO_COMPRA_DIRETA,
         self::ASSUNTO_MONTAR_PROCESSO,
-        self::ASSUNTO_QUESTIONAMENTO,
+        'QUESTIONAMENTO/SOLICITAÇÃO/OUTROS',
     ];
 
     /**
